@@ -14,8 +14,8 @@ class DataManager(private val sharedPreferences: SharedPreferences) {
 
     fun getUser():User{
         val id = sharedPreferences.getInt("id",0)
-        val username = sharedPreferences.getString("username", "") ?: "ali23"
-        val fullname = sharedPreferences.getString("fullname", "ali") ?: "ali"
+        val username = sharedPreferences.getString("username", "abcd@gmail.com") ?: "abcd@gmail.com"
+        val fullname = sharedPreferences.getString("fullname", "Azizov Ali") ?: "Azizov Ali"
         val token = sharedPreferences.getString("token", "34tga5") ?: "234gt112"
         return User(id, username, fullname, token)
     }

@@ -2,7 +2,6 @@ package com.example.handybook.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,10 +11,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.DrawerState
+import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -23,10 +26,16 @@ import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
+import androidx.compose.material3.NavigationDrawerItem
+import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -36,67 +45,50 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.example.handybook.R
+import com.example.handybook.dataclass.User
 import com.example.handybook.db.DataManager
+import com.example.handybook.navigation.Routes
 import com.example.handybook.navigation.Screen
 import com.example.handybook.ui.theme.DarkBlue
 import com.example.handybook.ui.theme.SkyBlue
+import kotlinx.coroutines.launch
 
 @Composable
 fun MainScreen(
     content: @Composable ()-> Unit,
     navController: NavHostController,
     dataManager: DataManager) {
+    val drawerState = DrawerState(initialValue = DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
+    var selectedIndex by rememberSaveable { mutableIntStateOf(0) }
     ModalNavigationDrawer(
+        drawerState = drawerState,
         drawerContent = {
-            ModalDrawerSheet {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Top
-                ){
-                    Box(
-                        modifier = Modifier.background(DarkBlue)
-                    ){
-                        Column(
-                            modifier = Modifier.padding(start = 16.dp).fillMaxWidth(),
-                            horizontalAlignment = Alignment.Start,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            IconButton(
-                                onClick = {},
-                                colors = IconButtonDefaults.iconButtonColors(
-                                    containerColor = SkyBlue,
-                                    contentColor = DarkBlue
-                                )
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Filled.Person,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(48.dp),
-                                )
-                            }
-                            Spacer(Modifier.height(12.dp))
-                            Text(
-                                text = "Aliyev Ali",
-                                fontWeight = FontWeight.W500,
-                                fontSize = 20.sp)
-                            Spacer(Modifier.height(4.dp))
-                            Text(
-                                text = "abcd@gmail.com",
-                                fontWeight = FontWeight.W200,
-                                fontSize = 16.sp
-                            )
+            NavigationDrawerSheet(
+                selectedIndex = selectedIndex,
+                onClick = { route, index ->
+                    selectedIndex = index
+                    when(route){
+                        "Teleram" -> { TODO("go to the TG channel") }
+                        "Share" ->   { TODO("share the link") }
+                        else -> {
+                            navController.navigate(route)
                         }
                     }
-                }
-            }
+
+                },
+                onProfileClick = {},
+                user = User(id = 0, fullname = "Azizov Ali", username = "abcd@gmail.com", access_token = "41")
+            )
         }
     ) {
         Scaffold(
             topBar = {
                 TopNavigationBar(
                     navController,
-                    onMenuClick = {},
-                    onProfileClick = {}
+                    onMenuClick = { scope.launch { drawerState.open()}},
+                    onProfileClick = { /*todo: navigate to profile*/ }
                 )
             },
             bottomBar = { BottomNavigationBar(navController) },
@@ -108,6 +100,130 @@ fun MainScreen(
         }
     }
 }
+
+@Composable
+fun NavigationDrawerSheet(
+    selectedIndex:Int,
+    user: User,
+    onClick:(String,Int) -> Unit,
+    onProfileClick: () -> Unit,
+){
+    val navigationItems = listOf(
+        DrawerItem(
+            title = "Bosh Sahifa",
+            route = Routes.Home.name,
+            icon = R.drawable.book
+        ),
+        DrawerItem(
+            title = "Qidiruv",
+            route = Routes.Search.name,
+            icon = R.drawable.search
+        ),
+        DrawerItem(
+            title = "Maqolalar",
+            route = Routes.Articles.name,
+            icon = R.drawable.feather
+        ),
+        DrawerItem(
+            title = "Saqlangan kitoblar",
+            route = Routes.Saved.name,
+            icon = R.drawable.saved
+        ),
+        DrawerItem(
+            title = "Sozlamalar",
+            route = Routes.Settings.name,
+            icon = R.drawable.setting
+        ),
+        //divider
+        DrawerItem(
+            title = "Telegram kanalimiz",
+            route = "Telegram",
+            icon = R.drawable.telegram
+        ),
+        DrawerItem(
+            title = "Ulashish",
+            route = "Share",
+            icon = R.drawable.share
+        ),
+        //divider
+        DrawerItem(
+            title = "Hisobdan chiqish",
+            route = Routes.Login.name,
+            icon = R.drawable.exit
+        )
+    )
+
+    ModalDrawerSheet {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top
+        ){
+            Column(
+                modifier = Modifier.fillMaxWidth().background(DarkBlue).padding(horizontal = 16.dp),
+                horizontalAlignment = Alignment.Start,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Spacer(Modifier.height(24.dp))
+                IconButton(
+                    onClick = {onProfileClick()},
+                    colors = IconButtonDefaults.iconButtonColors(
+                        containerColor = SkyBlue,
+                        contentColor = DarkBlue
+                    )
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Person,
+                        contentDescription = null,
+                        modifier = Modifier.size(48.dp),
+                    )
+                }
+                Spacer(Modifier.height(12.dp))
+                Text(
+                    text = user.fullname,
+                    fontWeight = FontWeight.W500,
+                    fontSize = 20.sp)
+                Spacer(Modifier.height(4.dp))
+                Text(
+                    text = user.username,
+                    fontWeight = FontWeight.W200,
+                    fontSize = 16.sp
+                )
+                Spacer(Modifier.height(16.dp))
+            }
+            HorizontalDivider(modifier = Modifier.fillMaxWidth(), thickness = 2.dp, color = Color.LightGray)
+            navigationItems.forEachIndexed { index, drawerItem ->
+                NavigationDrawerItem(
+                    label = { Text(drawerItem.title, fontWeight = FontWeight.W400, fontSize = 12.sp) },
+                    icon = { Icon(painter = painterResource(drawerItem.icon), null, modifier = Modifier.size(24.dp)) },
+                    onClick = {onClick(drawerItem.route, index)},
+                    selected = index == selectedIndex,
+                    colors = NavigationDrawerItemDefaults.colors(
+                        selectedIconColor = Color.White,
+                        selectedTextColor = Color.White,
+                        selectedContainerColor = DarkBlue,
+                        unselectedIconColor = DarkBlue,
+                        unselectedTextColor = DarkBlue,
+                        unselectedContainerColor = Color.White,
+                    ),
+                    shape = RoundedCornerShape(25.dp)
+                )
+                if(index == 4 || index == 6){
+                    HorizontalDivider(modifier = Modifier.fillMaxWidth(), thickness = 2.dp, color = Color.LightGray)
+                }
+            }
+
+
+
+        }
+    }
+
+}
+
+data class DrawerItem(
+    val title: String,
+    val route: String,
+    val icon: Int,
+)
 
 @Composable
 fun TopNavigationBar(

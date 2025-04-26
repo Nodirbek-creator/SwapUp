@@ -33,7 +33,7 @@ class MainActivity : ComponentActivity() {
             val navController = rememberNavController()
             AppNavHost(
                 navController,
-                startDestination = Routes.Login.name,
+                startDestination = Routes.Home.name,
                 apiService,
                 dataManager)
         }
