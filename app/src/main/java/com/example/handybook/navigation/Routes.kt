@@ -5,11 +5,13 @@ import com.example.handybook.R
 enum class Routes {
     Login,
     SignUp,
+    Main,
     Home,
     Search,
     Articles,
     Saved,
-    Settings
+    Settings,
+    Profile
 }
 sealed class Screen(val route: String, val icon: Int){
     object Home: Screen(Routes.Home.name, R.drawable.book)

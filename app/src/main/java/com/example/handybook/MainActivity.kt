@@ -5,37 +5,90 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
-import com.example.handybook.db.DataManager
-import com.example.handybook.navigation.AppNavHost
 import com.example.handybook.navigation.Routes
-import com.example.handybook.network.ApiService
-import com.example.handybook.network.RetrofitBuilder
-import com.example.handybook.ui.theme.HandybookTheme
+import com.example.handybook.screens.HomeScreen
+import com.example.handybook.screens.LoginScreen
+import com.example.handybook.screens.MainScreen
+import com.example.handybook.screens.SignUpScreen
+import com.example.handybook.viewmodel.AuthViewModel
+import com.example.handybook.viewmodel.BookViewModel
+import com.example.handybook.viewmodel.MainViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        val apiService = RetrofitBuilder.getInstance().create(ApiService::class.java)
-        val sharedPreference = this@MainActivity.getPreferences(Context.MODE_PRIVATE)
-        val dataManager = DataManager(sharedPreference)
+
         setContent {
             val navController = rememberNavController()
-            AppNavHost(
-                navController,
-                startDestination = Routes.Home.name,
-                apiService,
-                dataManager)
+            val authViewModel = AuthViewModel()
+            val mainViewModel = MainViewModel(authViewModel, navController)
+            val bookViewModel = BookViewModel()
+            NavHost(
+                navController = navController,
+                startDestination = Routes.Login.name
+            ){
+                composable(Routes.Login.name){
+                    LoginScreen(navController, authViewModel )
+                }
+                composable(Routes.SignUp.name){
+                    SignUpScreen(navController, authViewModel)
+                }
+                navigation(startDestination = Routes.Home.name, route = Routes.Main.name){
+                    composable(Routes.Home.name){
+                        MainScreen(
+                            navController = navController,
+                            vm = mainViewModel,
+                            content = {
+                                HomeScreen(
+                                    navController = navController,
+                                    bookVM = bookViewModel,
+                                )
+                            }
+                        )
+                    }
+                    composable(Routes.Search.name){
+                        MainScreen(
+                            navController = navController,
+                            vm = mainViewModel,
+                            content = {
+
+                            }
+                        )
+                    }
+                    composable(Routes.Articles.name){
+                        MainScreen(
+                            navController = navController,
+                            vm = mainViewModel,
+                            content = {
+                            }
+                        )
+                    }
+                    composable(Routes.Saved.name){
+                        MainScreen(
+                            navController = navController,
+                            vm = mainViewModel,
+                            content = {
+
+                            }
+                        )
+                    }
+                    composable(Routes.Settings.name){
+                        MainScreen(
+                            navController = navController,
+                            vm = mainViewModel,
+                            content = {
+
+                            }
+                        )
+                    }
+                }
+
+            }
         }
     }
 }

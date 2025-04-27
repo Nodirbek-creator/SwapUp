@@ -6,11 +6,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
@@ -32,6 +34,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -46,42 +49,40 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.handybook.R
-import com.example.handybook.dataclass.User
-import com.example.handybook.db.DataManager
+import com.example.handybook.data.model.User
+import com.example.handybook.data.sharedpref.DataManager
 import com.example.handybook.navigation.Routes
 import com.example.handybook.navigation.Screen
 import com.example.handybook.ui.theme.DarkBlue
 import com.example.handybook.ui.theme.SkyBlue
+import com.example.handybook.viewmodel.AuthViewModel
+import com.example.handybook.viewmodel.MainViewModel
 import kotlinx.coroutines.launch
 
 @Composable
 fun MainScreen(
     content: @Composable ()-> Unit,
     navController: NavHostController,
-    dataManager: DataManager) {
+    vm: MainViewModel
+) {
     val drawerState = DrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
-    var selectedIndex by rememberSaveable { mutableIntStateOf(0) }
+    val selectedIndex = vm.selectedIndex
+    val currentUser by vm.currentUser.observeAsState()
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
             NavigationDrawerSheet(
                 selectedIndex = selectedIndex,
                 onClick = { route, index ->
-                    selectedIndex = index
-                    when(route){
-                        "Teleram" -> { TODO("go to the TG channel") }
-                        "Share" ->   { TODO("share the link") }
-                        else -> {
-                            navController.navigate(route)
-                        }
-                    }
-
+                    vm.onIndexChange(index)
+                    vm.navigateToScreen(route)
                 },
-                onProfileClick = {},
-                user = User(id = 0, fullname = "Azizov Ali", username = "abcd@gmail.com", access_token = "41")
+                onProfileClick = {vm.navigateToScreen(Routes.Profile.name)},
+                user = currentUser!!
             )
-        }
+        },
+        modifier = Modifier.windowInsetsPadding(WindowInsets.systemBars)
     ) {
         Scaffold(
             topBar = {
@@ -94,7 +95,9 @@ fun MainScreen(
             bottomBar = { BottomNavigationBar(navController) },
             contentWindowInsets = WindowInsets.systemBars
         ) { padding->
-            Column(modifier = Modifier.padding(padding)) {
+            Column(
+                modifier = Modifier.fillMaxSize().padding(padding)
+            ) {
                 content()
             }
         }
@@ -153,7 +156,9 @@ fun NavigationDrawerSheet(
         )
     )
 
-    ModalDrawerSheet {
+    ModalDrawerSheet(
+        drawerContainerColor = Color.White
+    ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
@@ -167,50 +172,59 @@ fun NavigationDrawerSheet(
                 IconButton(
                     onClick = {onProfileClick()},
                     colors = IconButtonDefaults.iconButtonColors(
-                        containerColor = SkyBlue,
+                        containerColor = Color(0xFFC5E5E2),
                         contentColor = DarkBlue
                     )
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Person,
                         contentDescription = null,
-                        modifier = Modifier.size(48.dp),
+                        modifier = Modifier.size(64.dp),
                     )
                 }
                 Spacer(Modifier.height(12.dp))
                 Text(
                     text = user.fullname,
                     fontWeight = FontWeight.W500,
-                    fontSize = 20.sp)
+                    fontSize = 20.sp,
+                    color = Color.White)
                 Spacer(Modifier.height(4.dp))
                 Text(
-                    text = user.username,
+                    text = user.username+"@gmail.com",
                     fontWeight = FontWeight.W200,
-                    fontSize = 16.sp
+                    fontSize = 16.sp,
+                    color = Color.White
                 )
                 Spacer(Modifier.height(16.dp))
             }
             HorizontalDivider(modifier = Modifier.fillMaxWidth(), thickness = 2.dp, color = Color.LightGray)
-            navigationItems.forEachIndexed { index, drawerItem ->
-                NavigationDrawerItem(
-                    label = { Text(drawerItem.title, fontWeight = FontWeight.W400, fontSize = 12.sp) },
-                    icon = { Icon(painter = painterResource(drawerItem.icon), null, modifier = Modifier.size(24.dp)) },
-                    onClick = {onClick(drawerItem.route, index)},
-                    selected = index == selectedIndex,
-                    colors = NavigationDrawerItemDefaults.colors(
-                        selectedIconColor = Color.White,
-                        selectedTextColor = Color.White,
-                        selectedContainerColor = DarkBlue,
-                        unselectedIconColor = DarkBlue,
-                        unselectedTextColor = DarkBlue,
-                        unselectedContainerColor = Color.White,
-                    ),
-                    shape = RoundedCornerShape(25.dp)
-                )
-                if(index == 4 || index == 6){
-                    HorizontalDivider(modifier = Modifier.fillMaxWidth(), thickness = 2.dp, color = Color.LightGray)
+            Spacer(Modifier.height(8.dp))
+            Column(
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 6.dp)
+            ) {
+                navigationItems.forEachIndexed { index, drawerItem ->
+                    NavigationDrawerItem(
+                        label = { Text(drawerItem.title, fontWeight = FontWeight.W400, fontSize = 12.sp) },
+                        icon = { Icon(painter = painterResource(drawerItem.icon), null, modifier = Modifier.size(24.dp)) },
+                        onClick = {onClick(drawerItem.route, index)},
+                        selected = index == selectedIndex,
+                        colors = NavigationDrawerItemDefaults.colors(
+                            selectedIconColor = Color.White,
+                            selectedTextColor = Color.White,
+                            selectedContainerColor = DarkBlue,
+                            unselectedIconColor = DarkBlue,
+                            unselectedTextColor = DarkBlue,
+                            unselectedContainerColor = Color.White,
+                        ),
+                        shape = RoundedCornerShape(25.dp)
+                    )
+                    Spacer(Modifier.height(4.dp))
+                    if(index == 4 || index == 6){
+                        HorizontalDivider(modifier = Modifier.fillMaxWidth(), thickness = 1.dp, color = Color.LightGray)
+                    }
                 }
             }
+
 
 
 
@@ -231,7 +245,7 @@ fun TopNavigationBar(
     onMenuClick:() -> Unit,
     onProfileClick:() -> Unit){
     val currentRoute = getCurrentRoute(navController)
-    val title = when(currentRoute!!){
+    val title = when(currentRoute?: ""){
         Screen.Home.route -> "Bosh Sahifa"
         Screen.Search.route -> "Qidiruv"
         Screen.Articles.route -> "Maqolalar"
@@ -280,15 +294,22 @@ fun BottomNavigationBar(navController: NavHostController){
     val screens = listOf(Screen.Home, Screen.Search, Screen.Articles, Screen.Saved, Screen.Settings)
     val currentRoute = getCurrentRoute(navController)
 
-    BottomAppBar {
+    BottomAppBar(
+        containerColor = Color.White
+    ) {
         screens.forEach { screen->
             NavigationBarItem(
                 selected = currentRoute == screen.route,
-                icon = { Icon(painter = painterResource(screen.icon), contentDescription = null) },
+                icon = {
+                    Icon(
+                        painter = painterResource(screen.icon),
+                        contentDescription = null,
+                        modifier = Modifier.size(24.dp)) },
                 onClick = {navController.navigate(screen.route)},
                 colors = NavigationBarItemDefaults.colors(
                     selectedIconColor = DarkBlue,
-                    unselectedIconColor = Color.LightGray
+                    unselectedIconColor = Color.LightGray,
+                    indicatorColor = Color.Transparent
                 )
             )
         }

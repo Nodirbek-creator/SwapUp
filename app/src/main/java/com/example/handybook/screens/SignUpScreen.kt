@@ -1,6 +1,5 @@
 package com.example.handybook.screens
 
-import android.content.SharedPreferences
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -47,13 +46,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.handybook.R
-import com.example.handybook.dataclass.SignUp
-import com.example.handybook.dataclass.User
-import com.example.handybook.db.DataManager
+import com.example.handybook.data.model.SignUp
+import com.example.handybook.data.model.User
+import com.example.handybook.data.sharedpref.DataManager
 import com.example.handybook.navigation.Routes
-import com.example.handybook.network.ApiService
+import com.example.handybook.data.network.ApiService
 import com.example.handybook.ui.theme.DarkBlue
 import com.example.handybook.ui.theme.SkyBlue
+import com.example.handybook.viewmodel.AuthViewModel
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -61,16 +61,15 @@ import retrofit2.Response
 @Composable
 fun SignUpScreen(
     navController: NavHostController,
-    apiService: ApiService,
-    dataManager: DataManager
+    vm: AuthViewModel
 ) {
     //txtField vars
-    var username by rememberSaveable { mutableStateOf("") }
-    var fullname by rememberSaveable { mutableStateOf("") }
-    var email by rememberSaveable { mutableStateOf("") }
-    var password by rememberSaveable { mutableStateOf("") }
+    val username = vm.username
+    var fullname = vm.fullname
+    var email = vm.email
+    var password = vm.password
 
-    var passwordVisible by rememberSaveable { mutableStateOf(false) }
+    var passwordVisible = vm.passwordVisible
 
     val context = LocalContext.current
     Column(
@@ -82,7 +81,7 @@ fun SignUpScreen(
         Image(
             painter = painterResource(R.drawable.logo_dark),
             contentDescription = null,
-            modifier = Modifier.size(120.dp),
+            modifier = Modifier.size(160.dp),
             contentScale = ContentScale.Crop
         )
         Spacer(Modifier.height(32.dp))
@@ -109,7 +108,7 @@ fun SignUpScreen(
             OutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
                 value = username,
-                onValueChange = {username = it},
+                onValueChange = vm::onUsernameChange,
                 placeholder = { Text("admin123") },
                 shape = RoundedCornerShape(12.dp),
                 colors = OutlinedTextFieldDefaults.colors(
@@ -135,7 +134,7 @@ fun SignUpScreen(
             OutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
                 value = fullname,
-                onValueChange = {fullname = it},
+                onValueChange = vm::onFullnameChange,
                 placeholder = { Text("Ali Valiyev") },
                 shape = RoundedCornerShape(12.dp),
                 colors = OutlinedTextFieldDefaults.colors(
@@ -161,7 +160,7 @@ fun SignUpScreen(
             OutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
                 value = email,
-                onValueChange = {email = it},
+                onValueChange = vm::onEmailChange,
                 placeholder = { Text("ali@gmail.com") },
                 shape = RoundedCornerShape(12.dp),
                 colors = OutlinedTextFieldDefaults.colors(
@@ -187,7 +186,7 @@ fun SignUpScreen(
             OutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
                 value = password,
-                onValueChange = {password = it},
+                onValueChange = vm::onPasswordChange,
                 placeholder = { Text("12345") },
                 shape = RoundedCornerShape(12.dp),
                 colors = OutlinedTextFieldDefaults.colors(
@@ -208,30 +207,11 @@ fun SignUpScreen(
                 visualTransformation = if(!passwordVisible) PasswordVisualTransformation() else VisualTransformation.None
             )
         }
-        Spacer(Modifier.height(48.dp))
+        Spacer(Modifier.height(64.dp))
         Button(
             modifier = Modifier.padding(horizontal = 16.dp).fillMaxWidth(),
             onClick = {
-                apiService.signUp(SignUp(username,fullname,email,password)).enqueue(object: Callback<User> {
-                    override fun onResponse(
-                        call: Call<User>,
-                        response: Response<User>
-                    ) {
-                        if(response.isSuccessful){
-                            val user = response.body()
-                            dataManager.saveUser(user!!)
-                            navController.navigate(Routes.Home.name)
-                        }
-                    }
-
-                    override fun onFailure(
-                        call: Call<User>,
-                        t: Throwable) {
-                        Log.d("onFailure", "${t.localizedMessage}")
-                        Log.d("onFailure", "${t.cause}")
-                    }
-
-                })
+                vm.signUp()
             },
             shape = RoundedCornerShape(16.dp),
             colors = ButtonDefaults.buttonColors(
@@ -240,13 +220,13 @@ fun SignUpScreen(
             )
         ) {
             Text(
-                text = "Kirish",
+                text = "Ro'yhatdan o'tish",
                 fontWeight = FontWeight.W500,
                 fontSize = 15.sp,
                 modifier = Modifier.padding(vertical = 8.dp)
             )
         }
-        Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(8.dp))
         Row(
             modifier = Modifier.wrapContentSize(),
             verticalAlignment = Alignment.CenterVertically

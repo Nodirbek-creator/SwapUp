@@ -1,7 +1,7 @@
-package com.example.handybook.db
+package com.example.handybook.data.sharedpref
 
 import android.content.SharedPreferences
-import com.example.handybook.dataclass.User
+import com.example.handybook.data.model.User
 
 class DataManager(private val sharedPreferences: SharedPreferences) {
     fun saveUser(user: User){
@@ -12,7 +12,7 @@ class DataManager(private val sharedPreferences: SharedPreferences) {
         editor.putString("token", user.access_token)
     }
 
-    fun getUser():User{
+    fun getUser(): User {
         val id = sharedPreferences.getInt("id",0)
         val username = sharedPreferences.getString("username", "abcd@gmail.com") ?: "abcd@gmail.com"
         val fullname = sharedPreferences.getString("fullname", "Azizov Ali") ?: "Azizov Ali"

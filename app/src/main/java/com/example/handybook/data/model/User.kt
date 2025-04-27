@@ -1,4 +1,4 @@
-package com.example.handybook.dataclass
+package com.example.handybook.data.model
 
 data class User(
     val id: Int,
