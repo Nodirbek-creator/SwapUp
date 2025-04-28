@@ -11,7 +11,8 @@ enum class Routes {
     Articles,
     Saved,
     Settings,
-    Profile
+    Profile,
+    Category,
 }
 sealed class Screen(val route: String, val icon: Int){
     object Home: Screen(Routes.Home.name, R.drawable.book)
@@ -19,4 +20,5 @@ sealed class Screen(val route: String, val icon: Int){
     object Articles: Screen(Routes.Articles.name, R.drawable.feather)
     object Saved: Screen(Routes.Saved.name, R.drawable.saved)
     object Settings: Screen(Routes.Settings.name, R.drawable.setting)
+    object Category: Screen(Routes.Category.name, R.drawable.book)
 }

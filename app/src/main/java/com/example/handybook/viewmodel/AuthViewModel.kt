@@ -15,6 +15,7 @@ import com.example.handybook.data.model.User
 import com.example.handybook.data.network.RetrofitInstance
 import com.example.handybook.data.repository.AuthRepository
 import com.example.handybook.state.UiState
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class AuthViewModel(): ViewModel() {
@@ -62,10 +63,6 @@ class AuthViewModel(): ViewModel() {
         passwordVisible = !passwordVisible
     }
 
-    fun resetUiState(){
-        _uiState.value = UiState.Idle
-    }
-
     fun login(){
         viewModelScope.launch {
             _uiState.value = UiState.Loading
@@ -75,6 +72,10 @@ class AuthViewModel(): ViewModel() {
                     _uiState.value = UiState.Success
                     _currentUser.value = response.body()
                     Log.d("Login","Success")
+                    delay(1000)
+                    _uiState.value = UiState.Idle
+                    onUsernameChange("")
+                    onPasswordChange("")
                 }
             } catch (e: Exception){
                 _uiState.value = UiState.Error(e.localizedMessage ?: "Unknown error")
@@ -91,6 +92,12 @@ class AuthViewModel(): ViewModel() {
                 if(response.isSuccessful){
                     _uiState.value = UiState.Success
                     _currentUser.value = response.body()
+                    delay(1000)
+                    _uiState.value = UiState.Idle
+                    onUsernameChange("")
+                    onPasswordChange("")
+                    onEmailChange("")
+                    onFullnameChange("")
                 }
             } catch (e: Exception){
                 _uiState.value = UiState.Error(e.localizedMessage ?: "Unknown error")
@@ -98,10 +105,4 @@ class AuthViewModel(): ViewModel() {
         }
     }
 
-    fun logOut(){
-        viewModelScope.launch {
-            _uiState.value = UiState.Loading
-
-        }
-    }
 }

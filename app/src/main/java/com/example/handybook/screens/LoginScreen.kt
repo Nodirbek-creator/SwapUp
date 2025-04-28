@@ -216,7 +216,6 @@ fun LoginScreen(
         is UiState.Success ->{
             SuccessScreen {
                 navController.navigate(Routes.Main.name)
-                vm.resetUiState()
             }
         }
         else ->{}

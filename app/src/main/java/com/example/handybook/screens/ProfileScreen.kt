@@ -7,13 +7,16 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -45,6 +48,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.handybook.data.model.Book
 import com.example.handybook.data.model.User
+import com.example.handybook.navigation.Routes
 import com.example.handybook.ui.theme.DarkBlue
 import com.example.handybook.ui.theme.SkyBlue
 import com.example.handybook.viewmodel.AuthViewModel
@@ -61,9 +65,10 @@ fun ProfileScreen(
     val bookList1 by bookVM.bookList.observeAsState(emptyList())
     val context = LocalContext.current
     Scaffold(
+        modifier = Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.systemBars),
         topBar = {
             Row(
-                modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
@@ -94,10 +99,10 @@ fun ProfileScreen(
                     )
                 }
             }
-        }
+        },
     ) {padding->
         LazyColumn(
-            modifier = Modifier.fillMaxSize().padding(padding),
+            modifier = Modifier.fillMaxWidth().padding(padding),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
@@ -109,7 +114,9 @@ fun ProfileScreen(
             item {
                 Spacer(Modifier.height(20.dp))
                 TitleText(
-                    onViewAll = {},
+                    onViewAll = {
+                        navController.navigate(Routes.Category.name)
+                    },
                     category = null,
                     title = "O'qilayotgan kitoblar")
                 Spacer(Modifier.height(8.dp))
@@ -133,7 +140,9 @@ fun ProfileScreen(
             item {
                 Spacer(Modifier.height(12.dp))
                 TitleText(
-                    onViewAll = {},
+                    onViewAll = {
+                        navController.navigate(Routes.Category.name)
+                    },
                     category = null,
                     title = "O'qilgan kitoblar")
                 LazyRow(
@@ -156,7 +165,9 @@ fun ProfileScreen(
             item {
                 Spacer(Modifier.height(12.dp))
                 TitleText(
-                    onViewAll = {},
+                    onViewAll = {
+                        navController.navigate(Routes.Category.name)
+                    },
                     category = null,
                     title = "Saqlangan kitoblar")
                 LazyRow(
@@ -191,6 +202,7 @@ fun ProfileBox(
     ) {
         user?.let {
             IconButton(
+                modifier = Modifier.size(72.dp),
                 onClick = {/*todo: change the photo*/},
                 colors = IconButtonDefaults.filledIconButtonColors(
                     contentColor = DarkBlue,
@@ -200,18 +212,18 @@ fun ProfileBox(
                 Icon(
                     imageVector = Icons.Filled.Person,
                     contentDescription = null,
-                    modifier = Modifier.size(32.dp),
+                    modifier = Modifier.size(64.dp),
                 )
             }
             Text(
                 text = user.fullname,
                 fontWeight = FontWeight.W600,
-                fontSize = 20.sp,
+                fontSize = 24.sp,
                 color = DarkBlue)
             Text(
                 text = user.username+"@gmail.com",
                 fontWeight = FontWeight.W200,
-                fontSize = 16.sp,
+                fontSize = 18.sp,
                 color = Color.LightGray
             )
         }
@@ -222,7 +234,7 @@ fun ProfileBox(
 fun BookStats(){
     Card(
         colors = CardDefaults.cardColors(
-            containerColor = Color.LightGray
+            containerColor = Color(0xFFD9D9D9)
         ),
         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
     ) {
@@ -232,6 +244,7 @@ fun BookStats(){
             horizontalArrangement = Arrangement.Absolute.SpaceEvenly
         ) {
             Column(
+                modifier = Modifier.padding(12.dp),
                 verticalArrangement = Arrangement.SpaceEvenly,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -244,12 +257,13 @@ fun BookStats(){
                 Text(
                     text = "o'qilayotgan\nkitoblar",
                     textAlign = TextAlign.Center,
-                    color = Color.LightGray,
+                    color = Color.DarkGray,
                     fontSize = 12.sp,
                     fontWeight = FontWeight.W500
                 )
             }
             Column(
+                modifier = Modifier.padding(12.dp),
                 verticalArrangement = Arrangement.SpaceEvenly,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -262,12 +276,13 @@ fun BookStats(){
                 Text(
                     text = "o'qilgan\nkitoblar",
                     textAlign = TextAlign.Center,
-                    color = Color.LightGray,
+                    color = Color.DarkGray,
                     fontSize = 12.sp,
                     fontWeight = FontWeight.W500
                 )
             }
             Column(
+                modifier = Modifier.padding(12.dp),
                 verticalArrangement = Arrangement.SpaceEvenly,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -280,7 +295,7 @@ fun BookStats(){
                 Text(
                     text = "saqlangan\nkitoblar",
                     textAlign = TextAlign.Center,
-                    color = Color.LightGray,
+                    color = Color.DarkGray,
                     fontSize = 12.sp,
                     fontWeight = FontWeight.W500
                 )

@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.BottomAppBar
@@ -42,6 +43,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -56,6 +58,7 @@ import com.example.handybook.navigation.Screen
 import com.example.handybook.ui.theme.DarkBlue
 import com.example.handybook.ui.theme.SkyBlue
 import com.example.handybook.viewmodel.AuthViewModel
+import com.example.handybook.viewmodel.BookViewModel
 import com.example.handybook.viewmodel.MainViewModel
 import kotlinx.coroutines.launch
 
@@ -63,12 +66,14 @@ import kotlinx.coroutines.launch
 fun MainScreen(
     content: @Composable ()-> Unit,
     navController: NavHostController,
-    vm: MainViewModel
+    vm: MainViewModel,
+    bookVM: BookViewModel,
 ) {
     val drawerState = DrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     val selectedIndex = vm.selectedIndex
     val currentUser by vm.currentUser.observeAsState()
+
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
@@ -82,18 +87,19 @@ fun MainScreen(
                 user = currentUser!!
             )
         },
+        scrimColor = Color.Black.copy(alpha = 0.9f),
         modifier = Modifier.windowInsetsPadding(WindowInsets.systemBars)
     ) {
         Scaffold(
             topBar = {
                 TopNavigationBar(
                     navController,
+                    bookVM = bookVM,
                     onMenuClick = { scope.launch { drawerState.open()}},
                     onProfileClick = { vm.navigateToScreen(Routes.Profile.name) }
                 )
             },
             bottomBar = { BottomNavigationBar(navController) },
-            contentWindowInsets = WindowInsets.systemBars
         ) { padding->
             Column(
                 modifier = Modifier.fillMaxSize().padding(padding)
@@ -157,7 +163,9 @@ fun NavigationDrawerSheet(
     )
 
     ModalDrawerSheet(
-        drawerContainerColor = Color.White
+        drawerContainerColor = Color.White,
+        drawerShape = RectangleShape,
+        modifier = Modifier.fillMaxWidth(0.8f)
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -174,7 +182,8 @@ fun NavigationDrawerSheet(
                     colors = IconButtonDefaults.iconButtonColors(
                         containerColor = Color(0xFFB1DAEF),
                         contentColor = DarkBlue
-                    )
+                    ),
+                    modifier = Modifier.size(72.dp)
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Person,
@@ -242,30 +251,46 @@ data class DrawerItem(
 @Composable
 fun TopNavigationBar(
     navController: NavHostController,
+    bookVM: BookViewModel,
     onMenuClick:() -> Unit,
     onProfileClick:() -> Unit){
-    val currentRoute = getCurrentRoute(navController)
-    val title = when(currentRoute?: ""){
+    val currentRoute = getCurrentRoute(navController) ?: ""
+    val title = when(currentRoute){
         Screen.Home.route -> "Bosh Sahifa"
         Screen.Search.route -> "Qidiruv"
         Screen.Articles.route -> "Maqolalar"
         Screen.Saved.route -> "Saqlanganlar"
         Screen.Settings.route -> "Sozlamalar"
+        Screen.Category.route -> bookVM.selectedCategory.typename ?: ""
         else -> ""
     }
     Row(
         modifier = Modifier.padding(horizontal = 16.dp).fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,) {
-        IconButton(
-            onClick = {onMenuClick()}
-        ) {
-            Icon(
-                imageVector = Icons.Default.Menu,
-                contentDescription = null,
-                modifier = Modifier.size(32.dp),
-                tint = DarkBlue
-            )
+        if(currentRoute != Screen.Category.route){
+            IconButton(
+                onClick = {onMenuClick()}
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Menu,
+                    contentDescription = null,
+                    modifier = Modifier.size(32.dp),
+                    tint = DarkBlue
+                )
+            }
+        }
+        else{
+            IconButton(
+                onClick = {navController.popBackStack()}
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = null,
+                    modifier = Modifier.size(32.dp),
+                    tint = DarkBlue
+                )
+            }
         }
         Text(
             text = title,

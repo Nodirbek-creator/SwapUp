@@ -1,6 +1,5 @@
 package com.example.handybook
 
-import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -10,6 +9,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import com.example.handybook.navigation.Routes
+import com.example.handybook.screens.CategoryScreen
 import com.example.handybook.screens.HomeScreen
 import com.example.handybook.screens.LoginScreen
 import com.example.handybook.screens.MainScreen
@@ -49,7 +49,21 @@ class MainActivity : ComponentActivity() {
                                     navController = navController,
                                     bookVM = bookViewModel,
                                 )
-                            }
+                            },
+                            bookVM = bookViewModel
+                        )
+                    }
+                    composable(Routes.Category.name){
+                        MainScreen(
+                            navController = navController,
+                            vm = mainViewModel,
+                            content = {
+                                CategoryScreen(
+                                    navController,
+                                    bookVM = bookViewModel
+                                )
+                            },
+                            bookVM = bookViewModel
                         )
                     }
                     composable(Routes.Search.name){
@@ -58,7 +72,8 @@ class MainActivity : ComponentActivity() {
                             vm = mainViewModel,
                             content = {
 
-                            }
+                            },
+                            bookVM = bookViewModel
                         )
                     }
                     composable(Routes.Articles.name){
@@ -66,7 +81,8 @@ class MainActivity : ComponentActivity() {
                             navController = navController,
                             vm = mainViewModel,
                             content = {
-                            }
+                            },
+                            bookVM = bookViewModel
                         )
                     }
                     composable(Routes.Saved.name){
@@ -75,7 +91,8 @@ class MainActivity : ComponentActivity() {
                             vm = mainViewModel,
                             content = {
 
-                            }
+                            },
+                            bookVM = bookViewModel
                         )
                     }
                     composable(Routes.Settings.name){
@@ -84,7 +101,8 @@ class MainActivity : ComponentActivity() {
                             vm = mainViewModel,
                             content = {
 
-                            }
+                            },
+                            bookVM = bookViewModel
                         )
                     }
                 }

@@ -9,6 +9,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -154,10 +155,10 @@ fun HomeScreen(
                             colors = OutlinedTextFieldDefaults.colors(
                                 unfocusedLeadingIconColor = Color.LightGray,
                                 unfocusedPlaceholderColor = Color.LightGray,
-                                cursorColor = DarkBlue,
                                 unfocusedBorderColor = Color.Transparent,
                                 focusedBorderColor = DarkBlue,
-                                focusedTextColor = DarkBlue
+                                focusedTextColor = DarkBlue,
+                                cursorColor = DarkBlue,
                             )
                         )
                         Spacer(Modifier.height(16.dp))
@@ -172,7 +173,9 @@ fun HomeScreen(
                     item{
                         val title = if(selectedCategory.typename == "Barchasi") "Barcha kitoblar" else selectedCategory.typename
                         TitleText(
-                            onViewAll = {},
+                            onViewAll = {
+                                navController.navigate(Routes.Category.name)
+                            },
                             title = title,
                             category = selectedCategory
                         )
@@ -231,7 +234,7 @@ fun Categories(
                     Text(
                         text = it.typename,
                         fontWeight = FontWeight.W500,
-                        fontSize = 10.sp
+                        fontSize = 14.sp
                     )
                 }
             }
@@ -300,7 +303,8 @@ fun TitleText(
             color = DarkBlue
         )
         TextButton(
-            onClick = {onViewAll(category)}
+            onClick = {onViewAll(category)},
+            contentPadding = PaddingValues(0.dp)
         ) {
             Text(
                 text = "Barchasini ko'rish",
