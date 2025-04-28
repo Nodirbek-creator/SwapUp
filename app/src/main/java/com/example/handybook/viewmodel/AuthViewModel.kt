@@ -1,9 +1,6 @@
 package com.example.handybook.viewmodel
 
-import android.content.Context
 import android.util.Log
-import android.util.Patterns.EMAIL_ADDRESS
-import android.widget.Toast
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -17,7 +14,6 @@ import com.example.handybook.data.model.SignUp
 import com.example.handybook.data.model.User
 import com.example.handybook.data.network.RetrofitInstance
 import com.example.handybook.data.repository.AuthRepository
-import com.example.handybook.data.sharedpref.DataManager
 import com.example.handybook.state.UiState
 import kotlinx.coroutines.launch
 
@@ -66,6 +62,9 @@ class AuthViewModel(): ViewModel() {
         passwordVisible = !passwordVisible
     }
 
+    fun resetUiState(){
+        _uiState.value = UiState.Idle
+    }
 
     fun login(){
         viewModelScope.launch {

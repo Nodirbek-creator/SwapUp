@@ -13,6 +13,7 @@ import com.example.handybook.navigation.Routes
 import com.example.handybook.screens.HomeScreen
 import com.example.handybook.screens.LoginScreen
 import com.example.handybook.screens.MainScreen
+import com.example.handybook.screens.ProfileScreen
 import com.example.handybook.screens.SignUpScreen
 import com.example.handybook.viewmodel.AuthViewModel
 import com.example.handybook.viewmodel.BookViewModel
@@ -86,6 +87,14 @@ class MainActivity : ComponentActivity() {
                             }
                         )
                     }
+                }
+
+                composable(Routes.Profile.name){
+                    ProfileScreen(
+                        navController = navController,
+                        authVM = authViewModel,
+                        bookVM = bookViewModel
+                    )
                 }
 
             }

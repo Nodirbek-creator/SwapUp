@@ -14,10 +14,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -78,22 +81,30 @@ fun SignUpScreen(
         verticalArrangement = Arrangement.Top
     ) {
         Spacer(Modifier.height(8.dp))
-        Image(
-            painter = painterResource(R.drawable.logo_dark),
-            contentDescription = null,
-            modifier = Modifier.size(160.dp),
-            contentScale = ContentScale.Crop
-        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            IconButton(onClick = {navController.navigate(Routes.Login.name)}) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = null,
+                    modifier = Modifier.size(32.dp),
+                    tint = DarkBlue
+                )
+            }
+            Text(
+                text = "Ro'yhatdan o'tish",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.W700,
+                color = DarkBlue,
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                textAlign = TextAlign.Start
+            )
+            Spacer(Modifier.width(12.dp))
+        }
         Spacer(Modifier.height(32.dp))
-        Text(
-            text = "Ro'yhatdan o'ting",
-            fontSize = 20.sp,
-            fontWeight = FontWeight.W700,
-            color = DarkBlue,
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-            textAlign = TextAlign.Start
-        )
-        Spacer(Modifier.height(20.dp))
         Column(
             modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
             horizontalAlignment = Alignment.Start,
@@ -126,7 +137,7 @@ fun SignUpScreen(
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             Text(
-                text = "Fullname",
+                text = "Familiya va Ism",
                 fontSize = 16.sp,
                 fontWeight = FontWeight.W600,
                 color = DarkBlue,
@@ -178,7 +189,7 @@ fun SignUpScreen(
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             Text(
-                text = "Password",
+                text = "Parol",
                 fontSize = 16.sp,
                 fontWeight = FontWeight.W600,
                 color = DarkBlue,
@@ -212,6 +223,7 @@ fun SignUpScreen(
             modifier = Modifier.padding(horizontal = 16.dp).fillMaxWidth(),
             onClick = {
                 vm.signUp()
+                vm.resetUiState()
             },
             shape = RoundedCornerShape(16.dp),
             colors = ButtonDefaults.buttonColors(

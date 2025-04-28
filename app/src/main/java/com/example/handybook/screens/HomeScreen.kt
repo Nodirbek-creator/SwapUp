@@ -94,12 +94,12 @@ fun HomeScreen(
     val mainBook by bookVM.mainBook.observeAsState()
     val bookList by bookVM.bookList.observeAsState(emptyList())
 
-    Log.d("uiState","${uiState}")
-    Log.d("selectedCategory","${selectedCategory}")
-    Log.d("searchQuery","${searchQuery}")
-    Log.d("categoryList","${categoryList}")
-    Log.d("mainbook","${mainBook?.name}")
-    Log.d("bookList","${bookList.size}")
+//    Log.d("uiState","${uiState}")
+//    Log.d("selectedCategory","${selectedCategory}")
+//    Log.d("searchQuery","${searchQuery}")
+//    Log.d("categoryList","${categoryList}")
+//    Log.d("mainbook","${mainBook?.name}")
+//    Log.d("bookList","${bookList.size}")
 
 
     LaunchedEffect(uiState) {
@@ -170,32 +170,13 @@ fun HomeScreen(
                         Spacer(Modifier.height(12.dp))
                     }
                     item{
-                        Row(
-                            modifier = Modifier.padding(horizontal = 16.dp).fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                text = if(selectedCategory.typename == "Barchasi") "Barcha kitoblar" else selectedCategory.typename,
-                                fontWeight = FontWeight.W700,
-                                fontSize = 18.sp,
-                                color = DarkBlue
-                            )
-                            TextButton(
-                                onClick = {/*todo on view all*/}
-                            ) {
-                                Text(
-                                    text = "Barchasini ko'rish",
-                                    fontSize = 14.sp,
-                                    fontWeight = FontWeight.W500,
-                                    color = SkyBlue
-                                )
-                            }
-                        }
+                        val title = if(selectedCategory.typename == "Barchasi") "Barcha kitoblar" else selectedCategory.typename
+                        TitleText(
+                            onViewAll = {},
+                            title = title,
+                            category = selectedCategory
+                        )
                         Spacer(Modifier.height(8.dp))
-                    }
-                    items(bookList){
-
                     }
                     item{
                         BooksCollection(
@@ -298,6 +279,36 @@ fun MainBook(
                 .align(Alignment.BottomEnd)
                 .padding(end = 16.dp)
         )
+    }
+}
+
+@Composable
+fun TitleText(
+    onViewAll:(Category?)-> Unit,
+    category: Category?,
+    title: String
+){
+    Row(
+        modifier = Modifier.padding(horizontal = 16.dp).fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = title,
+            fontWeight = FontWeight.W700,
+            fontSize = 18.sp,
+            color = DarkBlue
+        )
+        TextButton(
+            onClick = {onViewAll(category)}
+        ) {
+            Text(
+                text = "Barchasini ko'rish",
+                fontSize = 14.sp,
+                fontWeight = FontWeight.W500,
+                color = SkyBlue
+            )
+        }
     }
 }
 

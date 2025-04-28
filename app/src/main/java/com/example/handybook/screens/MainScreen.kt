@@ -89,7 +89,7 @@ fun MainScreen(
                 TopNavigationBar(
                     navController,
                     onMenuClick = { scope.launch { drawerState.open()}},
-                    onProfileClick = { /*todo: navigate to profile*/ }
+                    onProfileClick = { vm.navigateToScreen(Routes.Profile.name) }
                 )
             },
             bottomBar = { BottomNavigationBar(navController) },
@@ -172,7 +172,7 @@ fun NavigationDrawerSheet(
                 IconButton(
                     onClick = {onProfileClick()},
                     colors = IconButtonDefaults.iconButtonColors(
-                        containerColor = Color(0xFFC5E5E2),
+                        containerColor = Color(0xFFB1DAEF),
                         contentColor = DarkBlue
                     )
                 ) {
