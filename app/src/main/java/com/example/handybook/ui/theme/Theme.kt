@@ -9,7 +9,10 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
 
 private val DarkColorScheme = darkColorScheme(
     primary = Purple80,
@@ -49,6 +52,11 @@ fun HandybookTheme(
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }
+
+    val view = LocalView.current
+
+    val window = (view.context as Activity).window
+    window.statusBarColor = Color.Transparent.toArgb()
 
     MaterialTheme(
         colorScheme = colorScheme,

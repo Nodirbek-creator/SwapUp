@@ -13,6 +13,7 @@ enum class Routes {
     Settings,
     Profile,
     Category,
+    Info
 }
 sealed class Screen(val route: String, val icon: Int){
     object Home: Screen(Routes.Home.name, R.drawable.book)

@@ -11,6 +11,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.handybook.navigation.Routes
 import com.example.handybook.screens.CategoryScreen
 import com.example.handybook.screens.HomeScreen
+import com.example.handybook.screens.InfoScreen
 import com.example.handybook.screens.LoginScreen
 import com.example.handybook.screens.MainScreen
 import com.example.handybook.screens.ProfileScreen
@@ -103,6 +104,11 @@ class MainActivity : ComponentActivity() {
 
                             },
                             bookVM = bookViewModel
+                        )
+                    }
+                    composable(Routes.Info.name){
+                        InfoScreen(
+
                         )
                     }
                 }
