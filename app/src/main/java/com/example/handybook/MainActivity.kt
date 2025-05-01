@@ -116,7 +116,10 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                         composable(Routes.Info.name) {
-                            InfoScreen(navController)
+                            InfoScreen(
+                                    navController = navController,
+                                    bookVM = bookViewModel
+                                )
                         }
                         composable(Routes.Comment.name) {
                             CommentScreen(

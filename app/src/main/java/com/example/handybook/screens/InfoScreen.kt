@@ -1,6 +1,5 @@
 package com.example.handybook.screens
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -34,6 +33,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -45,6 +45,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -55,19 +56,24 @@ import com.example.handybook.R
 import com.example.handybook.navigation.Routes
 import com.example.handybook.ui.theme.DarkBlue
 import com.example.handybook.ui.theme.SkyBlue
+import com.example.handybook.viewmodel.BookViewModel
 
 @Composable
 fun InfoScreen(
-    navController: NavHostController
+    navController: NavHostController,
+    bookVM: BookViewModel
 ) {
+
+    val bookList by bookVM.bookList.observeAsState(emptyList())
+    val selectedBook = bookVM.selectedBook
+
+    val book = bookList.find { it.id == selectedBook }!!
+
     var bookType by remember {
         mutableStateOf("E-Book")
     }
     var bookInfo by remember {
-        mutableStateOf("Sharh")
-    }
-    val loremIpsum by remember {
-        mutableStateOf("Modomiki, biz yangi davrga oyoq qo‘ydik, bas, biz har bir yo‘sunda ham shu yangi davrning yangiliklari ketidan ergashamiz va shunga o‘xshash dostonchiliq, ro‘monchiliq va hikoyachiliqlarda ham yangarishg‘a, xalqimizni shu zamonning «Tohir-Zuhra»lari, «Chor darvesh»lari, «Farhod-Shirin» va «Bahromgo‘r»lari bilan tanishdirishka o‘zimizda majburiyat his etamiz. Yozmoqqa niyatlanganim ushbu — «O‘tkan kunlar», yangi zamon ro‘monchilig‘i bilan tanishish yo‘lida kichkina bir tajriba, yana to‘g‘risi, bir havasdir. Ma’lumki, har bir ishning ham yangi — ibtidoiy davrida talay kamchilik-lar bilan maydong‘a chiqishi, ahllarining yetishmaklari ila sekin-sekin tuzalib, takomulga yuz tutishi tabiiy bir holdir. Mana shuning daldasida havasimda jasorat etdim, havaskorlik orqasida kechaturgan qusur va xatolardan cho‘chib turmadim. Moziyg‘a qaytib ish ko‘rish xayrlik, deydilar. Shunga ko‘ra mavzu’ni moziydan, yaqin o‘tkan kunlardan, tari-ximizning eng kirlik, qora kunlari bo‘lg‘an keyingi «xon zamonlari»dan belguladim.")
+        mutableStateOf("Tavsif")
     }
     Scaffold (
         topBar = {
@@ -156,15 +162,15 @@ fun InfoScreen(
                         Row (
                             verticalAlignment = Alignment.Bottom
                         ){
-                            Text("4.0", color = DarkBlue, fontSize = 24.sp)
+                            Text("${book.reyting}.0", color = DarkBlue, fontSize = 24.sp)
                             Spacer(modifier = Modifier.width(4.dp))
                             Text("52 ta sharhlar", color = Color.LightGray, fontSize = 6.sp, modifier = Modifier.offset(y = (-4).dp))
                         }
                         Row {
-                            for(i in 1..4){
+                            for(i in 1..book.reyting){
                                 Icon(Icons.Default.Star, "Rating", tint = SkyBlue, modifier = Modifier.size(16.dp))
                             }
-                            for(i in 1..1){
+                            for(i in 1..(5-book.reyting)){
                                 Icon(Icons.Default.Star, "Rating", tint = Color.LightGray, modifier = Modifier.size(16.dp))
                             }
                         }
@@ -268,17 +274,17 @@ fun InfoScreen(
                                 }
                                 Spacer(modifier = Modifier.height(100.dp))
                                 Text(
-                                    "O'tkan kunlar",
+                                    book.name,
                                     fontSize = 22.sp,
                                     fontWeight = FontWeight.W600,
                                     color = DarkBlue
                                 )
-                                Text("Abdulla Qodiriy", color = Color.LightGray)
+                                Text(book.author, color = Color.LightGray)
                                 Row(
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Icon(Icons.Default.Star, "Rating", tint = SkyBlue)
-                                    Text("5.0", color = DarkBlue)
+                                    Text("${book.reyting}.0", color = DarkBlue)
                                 }
                                 Row(
                                     modifier = Modifier.fillMaxWidth(0.95f),
@@ -321,12 +327,12 @@ fun InfoScreen(
                                 }
                             }
                             if (bookType == "E-Book") {
-                                Image(
-                                    painter = painterResource(R.drawable.kitob),
-                                    contentDescription = "Kitob",
-                                    modifier = Modifier
-                                        .size((LocalConfiguration.current.screenHeightDp / 3.75).dp)
-                                        .offset(y = (-24).dp)
+                                ImageLoader(
+                                    context = LocalContext.current,
+                                    imageUrl = book.image,
+                                    modifier = Modifier.size((LocalConfiguration.current.screenHeightDp / 3.75).dp)
+                                        .offset(y = (-24).dp),
+                                    contentScale = ContentScale.Fit
                                 )
                             } else {
                                 Box(
@@ -335,11 +341,10 @@ fun InfoScreen(
                                         .size((LocalConfiguration.current.screenHeightDp / 4.5).dp),
                                     contentAlignment = Alignment.Center
                                 ) {
-                                    Image(
-                                        painter = painterResource(R.drawable.kitob),
-                                        contentDescription = "Kitob",
-                                        modifier = Modifier
-                                            .size((LocalConfiguration.current.screenHeightDp / 4.5).dp),
+                                    ImageLoader(
+                                        context = LocalContext.current,
+                                        imageUrl = book.image,
+                                        modifier = Modifier.size((LocalConfiguration.current.screenHeightDp / 4.5).dp),
                                         contentScale = ContentScale.FillWidth
                                     )
                                     Box(
@@ -379,15 +384,15 @@ fun InfoScreen(
                                         tint = Color.LightGray,
                                         modifier = Modifier.size(20.dp)
                                     )
-                                    Text("209 bet", color = Color.LightGray, fontSize = 12.sp)
+                                    Text("${book.count_page} bet", color = Color.LightGray, fontSize = 12.sp)
                                     Spacer(modifier = Modifier.width(16.dp))
                                     Icon(
-                                        painterResource(R.drawable.outline_headphones_24),
+                                        painterResource(R.drawable.book),
                                         "vaqt",
                                         tint = Color.LightGray,
                                         modifier = Modifier.size(20.dp)
                                     )
-                                    Text("12 soat", color = Color.LightGray, fontSize = 12.sp)
+                                    Text("${book.year} yil", color = Color.LightGray, fontSize = 12.sp)
                                     Spacer(modifier = Modifier.width(16.dp))
                                     Icon(
                                         painterResource(R.drawable.outline_language_24),
@@ -396,7 +401,7 @@ fun InfoScreen(
                                         modifier = Modifier.size(20.dp)
                                     )
                                     Text(
-                                        "O'zbek tilida",
+                                        book.lang,
                                         color = Color.LightGray,
                                         fontSize = 12.sp,
                                         overflow = TextOverflow.Ellipsis,
@@ -405,7 +410,7 @@ fun InfoScreen(
                                 }
                                 Spacer(modifier = Modifier.height(24.dp))
                                 Text(
-                                    loremIpsum,
+                                    book.description,
                                     color = DarkBlue,
                                     overflow = TextOverflow.Ellipsis,
                                     modifier = Modifier.graphicsLayer { alpha = 0.99F })

@@ -169,7 +169,8 @@ fun HomeScreen(
                         BooksCollection(
                             bookList = bookList,
                             context = context,
-                            onBookClick = {
+                            onBookClick = { id->
+                                bookVM.selectBook(id)
                                 navController.navigate(Routes.Info.name)
                             }
                         )
@@ -400,7 +401,8 @@ fun buildImageRequest(
 fun ImageLoader(
     context: Context,
     imageUrl: String?,
-    modifier: Modifier
+    modifier: Modifier,
+    contentScale: ContentScale = ContentScale.Crop
 ){
     imageUrl?.let {
         AsyncImage(
@@ -411,7 +413,7 @@ fun ImageLoader(
             ),
             contentDescription = null,
             modifier = modifier,
-            contentScale = ContentScale.Crop
+            contentScale = contentScale
         )
     }
 }

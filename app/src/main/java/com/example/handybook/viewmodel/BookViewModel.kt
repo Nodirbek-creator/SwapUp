@@ -2,6 +2,7 @@ package com.example.handybook.viewmodel
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.LiveData
@@ -37,9 +38,13 @@ class BookViewModel: ViewModel() {
     private val _bookList = MutableLiveData<List<Book>>()
     val bookList: LiveData<List<Book>> get() = _bookList
 
+    var selectedBook by mutableIntStateOf(0)
+        private set
+
     init {
         loadInitialData()
     }
+
     fun onCategoryChange(newCategory: Category){
         selectedCategory = newCategory
         viewModelScope.launch {
@@ -98,4 +103,7 @@ class BookViewModel: ViewModel() {
     }
 
 
+    fun selectBook(id: Int){
+        selectedBook = id
+    }
 }
