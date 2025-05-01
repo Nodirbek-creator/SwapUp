@@ -21,6 +21,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
@@ -51,19 +52,22 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.handybook.R
 import com.example.handybook.data.model.Book
+import com.example.handybook.navigation.Routes
 import com.example.handybook.ui.theme.DarkBlue
 import com.example.handybook.ui.theme.SkyBlue
 
-@Preview(showBackground = true)
 @Composable
-fun InfoScreen(){
+fun InfoScreen(
+    navController: NavHostController
+) {
     var bookType by remember {
         mutableStateOf("E-Book")
     }
     var bookInfo by remember {
-        mutableStateOf("Tavsif")
+        mutableStateOf("Sharh")
     }
     val loremIpsum by remember {
         mutableStateOf("Modomiki, biz yangi davrga oyoq qo‘ydik, bas, biz har bir yo‘sunda ham shu yangi davrning yangiliklari ketidan ergashamiz va shunga o‘xshash dostonchiliq, ro‘monchiliq va hikoyachiliqlarda ham yangarishg‘a, xalqimizni shu zamonning «Tohir-Zuhra»lari, «Chor darvesh»lari, «Farhod-Shirin» va «Bahromgo‘r»lari bilan tanishdirishka o‘zimizda majburiyat his etamiz. Yozmoqqa niyatlanganim ushbu — «O‘tkan kunlar», yangi zamon ro‘monchilig‘i bilan tanishish yo‘lida kichkina bir tajriba, yana to‘g‘risi, bir havasdir. Ma’lumki, har bir ishning ham yangi — ibtidoiy davrida talay kamchilik-lar bilan maydong‘a chiqishi, ahllarining yetishmaklari ila sekin-sekin tuzalib, takomulga yuz tutishi tabiiy bir holdir. Mana shuning daldasida havasimda jasorat etdim, havaskorlik orqasida kechaturgan qusur va xatolardan cho‘chib turmadim. Moziyg‘a qaytib ish ko‘rish xayrlik, deydilar. Shunga ko‘ra mavzu’ni moziydan, yaqin o‘tkan kunlardan, tari-ximizning eng kirlik, qora kunlari bo‘lg‘an keyingi «xon zamonlari»dan belguladim.")
@@ -80,7 +84,8 @@ fun InfoScreen(){
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 IconButton(
-                    onClick = {}
+                    onClick = {
+                    }
                 ) {
                     Icon(
                         Icons.Default.ArrowBack,
@@ -102,45 +107,89 @@ fun InfoScreen(){
             }
         },
         floatingActionButton = {
-            if(bookType == "E-Book"){
-                Card(
-                    modifier = Modifier.fillMaxWidth(0.9f),
-                    onClick = {
-                        /*TODO: OPEN BOOK PDF*/
-                    }
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth()
+            if(bookInfo == "Tavsif"){
+                if (bookType == "E-Book") {
+                    Card(
+                        modifier = Modifier.fillMaxWidth(0.9f),
+                        onClick = {
+                            /*TODO: OPEN BOOK PDF*/
+                        }
                     ) {
                         Row(
-                            modifier = Modifier
-                                .weight(8f)
-                                .background(DarkBlue)
-                                .height(54.dp),
-                            horizontalArrangement = Arrangement.Center,
-                            verticalAlignment = Alignment.CenterVertically
+                            modifier = Modifier.fillMaxWidth()
                         ) {
-                            Text("O'qishni davom ettirish", color = SkyBlue, fontSize = 18.sp)
-                        }
-                        Row(
-                            modifier = Modifier
-                                .weight(2f)
-                                .background(SkyBlue)
-                                .height(54.dp),
-                            horizontalArrangement = Arrangement.Center,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text("87%", color = DarkBlue, fontSize = 18.sp)
+                            Row(
+                                modifier = Modifier
+                                    .weight(8f)
+                                    .background(DarkBlue)
+                                    .height(54.dp),
+                                horizontalArrangement = Arrangement.Center,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text("O'qishni davom ettirish", color = SkyBlue, fontSize = 18.sp)
+                            }
+                            Row(
+                                modifier = Modifier
+                                    .weight(2f)
+                                    .background(SkyBlue)
+                                    .height(54.dp),
+                                horizontalArrangement = Arrangement.Center,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text("87%", color = DarkBlue, fontSize = 18.sp)
+                            }
                         }
                     }
+                } else {
+                    Card(
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        /*TODO: AUDIO PLAYER FOR BOOK HERE!!!!!*/
+                    }
                 }
-            }else{
-                Card(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    /*TODO: AUDIO PLAYER FOR BOOK HERE!!!!!*/
+            }else if(bookInfo == "Sharh"){
+                Row (
+                    modifier = Modifier.fillMaxWidth(0.9f),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ){
+                    Column (
+                        horizontalAlignment = Alignment.Start
+                    ){
+                        Row (
+                            verticalAlignment = Alignment.Bottom
+                        ){
+                            Text("4.0", color = DarkBlue, fontSize = 24.sp)
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text("52 ta sharhlar", color = Color.LightGray, fontSize = 6.sp, modifier = Modifier.offset(y = (-4).dp))
+                        }
+                        Row {
+                            for(i in 1..4){
+                                Icon(Icons.Default.Star, "Rating", tint = SkyBlue, modifier = Modifier.size(16.dp))
+                            }
+                            for(i in 1..1){
+                                Icon(Icons.Default.Star, "Rating", tint = Color.LightGray, modifier = Modifier.size(16.dp))
+                            }
+                        }
+                    }
+                    Button(
+                        onClick = {
+                            navController.navigate(Routes.Comment.name)
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = SkyBlue,
+                            contentColor = DarkBlue
+                        ),
+                        modifier = Modifier.height(48.dp),
+                        shape = RoundedCornerShape(9.dp)
+                    ) {
+                        Text("O'z sharhingizni yozib qoldiring", fontSize = 10.sp)
+                    }
                 }
             }
+        },
+        bottomBar = {
+            if(bookInfo == "Iqtibos"){ BottomNavigationBar(navController) }
         }
     ){paddingValues ->
         Box(
@@ -155,7 +204,7 @@ fun InfoScreen(){
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(bottom = 74.dp)
+                        .padding(bottom = if(bookInfo != "Iqtibos") 74.dp else 0.dp)
                 ) {
                     item {
                         Box(
@@ -373,21 +422,28 @@ fun InfoScreen(){
                             Spacer(modifier = Modifier.height(16.dp))
                             CommentCard()
                         }
+                    }else{
+                        items(23){
+                            Spacer(modifier = Modifier.height(16.dp))
+                            QuoteCard()
+                        }
                     }
                 }
             }
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .offset(y = (-70).dp)
-                    .height(150.dp)
-                    .align(Alignment.BottomCenter)
-                    .background(
-                        Brush.verticalGradient(
-                            colors = listOf(Color.Transparent, Color.White)
+            if(bookInfo == "Tavsif"){
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .offset(y = (-70).dp)
+                        .height(150.dp)
+                        .align(Alignment.BottomCenter)
+                        .background(
+                            Brush.verticalGradient(
+                                colors = listOf(Color.Transparent, Color.White)
+                            )
                         )
-                    )
-            )
+                )
+            }
         }
     }
 }
@@ -401,7 +457,7 @@ fun CommentCard(){
         )
     ){
         Column (
-            modifier = Modifier.padding(horizontal = 4.dp)
+            modifier = Modifier.padding(horizontal = 8.dp)
         ){
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -409,7 +465,7 @@ fun CommentCard(){
                 horizontalArrangement = Arrangement.SpaceBetween
             ){
                 Row{
-                    Image(painter = painterResource(R.drawable.comment_account), "comment", modifier = Modifier.size(56.dp))
+                    Icon(Icons.Default.AccountCircle, "comment", modifier = Modifier.size(56.dp), tint = DarkBlue)
                     Spacer(modifier = Modifier.width(12.dp))
                     Column(
                         horizontalAlignment = Alignment.Start,
@@ -430,6 +486,34 @@ fun CommentCard(){
             }
             Spacer(modifier = Modifier.height(8.dp))
             Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.", color = DarkBlue)
+        }
+    }
+}
+
+@Composable
+fun QuoteCard(){
+    Card(
+        modifier = Modifier.padding(horizontal = 16.dp)
+    ) {
+        Row (
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ){
+            Column(
+                modifier = Modifier.fillMaxWidth(0.8f)
+            ) {
+                Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Iaculis urna id volutpat lacus laoreet non curabitur gravida. Fames ac turpis egestas maecenas. Bibendum enim facilisis gravida neque convallis. Tincidunt dui ut ornare lectus. Accumsan tortor posuere ac ut consequat semper viverra nam.Faucibus et.Bibendum enim facilisis gravida neque convallis. ", fontSize = 10.sp, color = DarkBlue)
+                Spacer(modifier = Modifier.height(8.dp))
+                Text("123-sahifa", color = Color.LightGray, fontSize = 10.sp)
+            }
+            Spacer(modifier = Modifier.width(8.dp))
+            IconButton(
+                onClick = {}
+            ) {
+                Icon(painterResource(R.drawable.baseline_bookmark_24), "quote", modifier = Modifier.size(36.dp), tint = DarkBlue)
+            }
         }
     }
 }

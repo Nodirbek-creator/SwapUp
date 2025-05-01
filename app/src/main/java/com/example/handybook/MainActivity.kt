@@ -13,6 +13,7 @@ import com.example.handybook.connection.ConnectivityObserver
 import com.example.handybook.connection.NetworkConnectivityObserver
 import com.example.handybook.navigation.Routes
 import com.example.handybook.screens.CategoryScreen
+import com.example.handybook.screens.CommentScreen
 import com.example.handybook.screens.HomeScreen
 import com.example.handybook.screens.InfoScreen
 import com.example.handybook.screens.LoginScreen
@@ -115,8 +116,11 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                         composable(Routes.Info.name) {
-                            InfoScreen(
-
+                            InfoScreen(navController)
+                        }
+                        composable(Routes.Comment.name) {
+                            CommentScreen(
+                                navController
                             )
                         }
                     }

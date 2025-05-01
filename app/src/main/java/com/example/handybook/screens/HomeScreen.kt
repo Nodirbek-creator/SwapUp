@@ -186,7 +186,7 @@ fun HomeScreen(
                             bookList = bookList,
                             context = context,
                             onBookClick = {
-
+                                navController.navigate(Routes.Info.name)
                             }
                         )
                     }
