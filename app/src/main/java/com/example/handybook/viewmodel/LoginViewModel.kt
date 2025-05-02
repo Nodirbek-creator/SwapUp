@@ -18,11 +18,11 @@ import com.example.handybook.state.UiState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class LoginViewModel(): ViewModel() {
-    private val repository = AuthRepository(RetrofitInstance.api)
+class LoginViewModel(
+    private val repository: AuthRepository,
+): ViewModel() {
+//    private val repository = AuthRepository(RetrofitInstance.api)
 
-    private val _currentUser = MutableLiveData<User>()
-    val currentUser: LiveData<User> get() = _currentUser
 
     private val _uiState = mutableStateOf<UiState>(UiState.Idle)
     val uiState: State<UiState> get() = _uiState
@@ -46,6 +46,9 @@ class LoginViewModel(): ViewModel() {
     fun toggleVisibility(){
         passwordVisible = !passwordVisible
     }
+    fun resetUiState(){
+        _uiState.value = UiState.Idle
+    }
 
     fun login(){
         viewModelScope.launch {
@@ -55,7 +58,6 @@ class LoginViewModel(): ViewModel() {
                 when(response){
                     is AuthResult.Success ->{
                         _uiState.value = UiState.Success
-                        _currentUser.value = response.user
                         Log.d("Login","Success")
                         delay(1000)
                         _uiState.value = UiState.Idle

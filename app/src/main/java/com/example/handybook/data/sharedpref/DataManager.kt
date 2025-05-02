@@ -1,10 +1,13 @@
 package com.example.handybook.data.sharedpref
 
+import android.content.Context
 import android.content.SharedPreferences
+import androidx.activity.ComponentActivity
 import com.example.handybook.data.model.User
 
-class DataManager(private val sharedPreferences: SharedPreferences) {
-    fun loginUser(user: User){
+class DataManager(private val activity: ComponentActivity) {
+    private val sharedPreferences = activity.getPreferences(Context.MODE_PRIVATE)
+    fun saveUser(user: User){
         val editor = sharedPreferences.edit()
         editor.putInt("id", user.id)
         editor.putString("username", user.username)
@@ -13,7 +16,7 @@ class DataManager(private val sharedPreferences: SharedPreferences) {
         editor.apply()
     }
 
-    fun logoutUser(){
+    fun removeUser(){
         val editor = sharedPreferences.edit()
         editor.putInt("id", -1)
         editor.putString("username", "")

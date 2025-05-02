@@ -57,7 +57,6 @@ import com.example.handybook.navigation.Routes
 import com.example.handybook.navigation.Screen
 import com.example.handybook.ui.theme.DarkBlue
 import com.example.handybook.ui.theme.SkyBlue
-import com.example.handybook.viewmodel.AuthViewModel
 import com.example.handybook.viewmodel.BookViewModel
 import com.example.handybook.viewmodel.MainViewModel
 import kotlinx.coroutines.launch
@@ -83,7 +82,7 @@ fun MainScreen(
                     vm.onIndexChange(index)
                     vm.navigateToScreen(route)
                 },
-                onProfileClick = {vm.navigateToScreen(Routes.Profile.name)},
+                onProfileClick = {navController.navigate(Routes.Profile.name)},
                 user = currentUser
             )
         },
@@ -96,7 +95,7 @@ fun MainScreen(
                     navController,
                     bookVM = bookVM,
                     onMenuClick = { scope.launch { drawerState.open()}},
-                    onProfileClick = { vm.navigateToScreen(Routes.Profile.name) }
+                    onProfileClick = { navController.navigate(Routes.Profile.name) }
                 )
             },
             bottomBar = { BottomNavigationBar(navController) },

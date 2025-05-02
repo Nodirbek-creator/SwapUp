@@ -24,6 +24,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -56,7 +57,6 @@ import com.example.handybook.navigation.Routes
 import com.example.handybook.state.UiState
 import com.example.handybook.ui.theme.DarkBlue
 import com.example.handybook.ui.theme.SkyBlue
-import com.example.handybook.viewmodel.AuthViewModel
 import com.example.handybook.viewmodel.LoginViewModel
 import kotlinx.coroutines.delay
 
@@ -74,26 +74,50 @@ fun LoginScreen(
     val context = LocalContext.current
 
 
-    LaunchedEffect(uiState) {
-        if (uiState is UiState.Error) {
-            val errorMessage = (uiState as UiState.Error).msg
-            Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
-        }
-    }
+//    LaunchedEffect(uiState) {
+//        if (uiState is UiState.Error) {
+//            val errorMessage = (uiState as UiState.Error).msg
+//            Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+//        }
+//    }
     when(uiState){
-        is UiState.Idle ->{
-
-        }
-        is UiState.Loading ->{
-            LoadingScreen(
-                bgColor = DarkBlue,
-                contentColor = Color.White
+        is UiState.Error ->{
+            AlertDialog(
+                title = {
+                    Text(
+                        textAlign = TextAlign.Center,
+                        text = (uiState as UiState.Error).msg,
+                        fontSize = 18.sp
+                    )
+                },
+                onDismissRequest = {
+                    vm.resetUiState()
+                },
+                confirmButton = {
+                    Button(
+                        onClick = {vm.resetUiState()}
+                    ) {
+                        Text(
+                            text = "OK"
+                        )
+                    }
+                },
+                dismissButton = {
+                    Button(
+                        onClick = {vm.resetUiState()}
+                    ) {
+                        Text(
+                            text = "Cancel"
+                        )
+                    }
+                }
             )
         }
+        is UiState.Loading ->{
+            LoadingScreen()
+        }
         is UiState.Success ->{
-            SuccessScreen {
-                navController.navigate(Routes.Main.name)
-            }
+            navController.navigate(Routes.Main.name)
         }
         else ->{}
     }
@@ -228,8 +252,8 @@ fun LoginScreen(
 
 @Composable
 fun LoadingScreen(
-    bgColor: Color = Color.Unspecified,
-    contentColor: Color = ProgressIndicatorDefaults.circularColor
+    bgColor: Color = Color.Transparent,
+    contentColor: Color = DarkBlue
 ){
     Column(
         modifier = Modifier.fillMaxSize().background(bgColor),
@@ -237,13 +261,6 @@ fun LoadingScreen(
         verticalArrangement = Arrangement.Center
     ) {
         CircularProgressIndicator(color = contentColor)
-        Spacer(Modifier.height(8.dp))
-        Text(
-            text = "Iltimos kutib turing",
-            fontWeight = FontWeight.W300,
-            fontSize = 16.sp,
-            color = contentColor
-        )
     }
 }
 @Composable

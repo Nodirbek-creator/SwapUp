@@ -4,6 +4,7 @@ import com.example.handybook.data.model.Book
 import com.example.handybook.data.model.Category
 import com.example.handybook.data.network.ApiService
 import retrofit2.Response
+import retrofit2.http.Query
 
 class BookRepository(private val apiService: ApiService){
 
@@ -21,5 +22,9 @@ class BookRepository(private val apiService: ApiService){
 
     suspend fun getMainBook(): Response<Book>{
         return apiService.getMainBook()
+    }
+
+    suspend fun searchBook(query: String): Response<Book>{
+        return apiService.searchBook(query)
     }
 }

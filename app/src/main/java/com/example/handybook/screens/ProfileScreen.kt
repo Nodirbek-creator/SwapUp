@@ -1,8 +1,6 @@
 package com.example.handybook.screens
 
 import android.content.Context
-import android.widget.Space
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -51,16 +49,16 @@ import com.example.handybook.data.model.User
 import com.example.handybook.navigation.Routes
 import com.example.handybook.ui.theme.DarkBlue
 import com.example.handybook.ui.theme.SkyBlue
-import com.example.handybook.viewmodel.AuthViewModel
 import com.example.handybook.viewmodel.BookViewModel
+import com.example.handybook.viewmodel.ProfileViewModel
 
 @Composable
 fun ProfileScreen(
     navController: NavHostController,
-    authVM: AuthViewModel,
+    vm: ProfileViewModel,
     bookVM: BookViewModel
 ) {
-    val user by authVM.currentUser.observeAsState()
+    val user = vm.currentUser
 
     val bookList1 by bookVM.bookList.observeAsState(emptyList())
     val context = LocalContext.current

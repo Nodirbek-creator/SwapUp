@@ -7,8 +7,10 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
 import com.example.handybook.data.sharedpref.DataManager
+import com.example.handybook.navigation.Routes
 import com.example.handybook.navigation.Screen
 import com.example.handybook.screens.getCurrentRoute
+import okhttp3.Route
 
 class MainViewModel(
     private val dataManager: DataManager,
@@ -24,10 +26,15 @@ class MainViewModel(
         selectedIndex = newIndex
     }
 
+
     fun navigateToScreen(route: String){
         when(route){
             "Teleram" -> { TODO("go to the TG channel") }
             "Share" ->   { TODO("share the link") }
+            Routes.Login.name -> {
+                navController.navigate(route)
+                dataManager.removeUser()
+            }
             else -> {
                 navController.navigate(route)
             }

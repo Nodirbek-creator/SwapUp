@@ -59,7 +59,7 @@ import com.example.handybook.data.network.ApiService
 import com.example.handybook.state.UiState
 import com.example.handybook.ui.theme.DarkBlue
 import com.example.handybook.ui.theme.SkyBlue
-import com.example.handybook.viewmodel.AuthViewModel
+import com.example.handybook.viewmodel.SignUpViewModel
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -67,7 +67,7 @@ import retrofit2.Response
 @Composable
 fun SignUpScreen(
     navController: NavHostController,
-    vm: AuthViewModel
+    vm: SignUpViewModel
 ) {
     val uiState by vm.uiState
     //txtField vars
@@ -79,398 +79,207 @@ fun SignUpScreen(
     var passwordVisible = vm.passwordVisible
 
     val context = LocalContext.current
-    LaunchedEffect(uiState) {
-        if (uiState is UiState.Error) {
+//    LaunchedEffect(uiState) {
+//        if (uiState is UiState.Error) {
+//
+//        }
+//    }
+    when(uiState){
+        is UiState.Idle->{}
+        is UiState.Loading->{
+            LoadingScreen()
+        }
+        is UiState.Success-> {
+            navController.navigate(Routes.Main.name)
+        }
+        is UiState.Error-> {
             val errorMessage = (uiState as UiState.Error).msg
             Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
         }
     }
-    when(uiState){
-        is UiState.Idle->{
-            Column(
-                modifier = Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.systemBars),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Top
-            ) {
-                Spacer(Modifier.height(8.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    IconButton(onClick = {navController.navigate(Routes.Login.name)}) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = null,
-                            modifier = Modifier.size(32.dp),
-                            tint = DarkBlue
-                        )
-                    }
-                    Text(
-                        text = "Ro'yhatdan o'tish",
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.W700,
-                        color = DarkBlue,
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                        textAlign = TextAlign.Start
-                    )
-                    Spacer(Modifier.width(12.dp))
-                }
-                Spacer(Modifier.height(32.dp))
-                Column(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                    horizontalAlignment = Alignment.Start,
-                    verticalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    Text(
-                        text = "Username",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.W600,
-                        color = DarkBlue,
-                    )
-                    OutlinedTextField(
-                        modifier = Modifier.fillMaxWidth(),
-                        value = username,
-                        onValueChange = vm::onUsernameChange,
-                        placeholder = { Text("admin123") },
-                        shape = RoundedCornerShape(12.dp),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            unfocusedBorderColor = Color.Gray,
-                            unfocusedPlaceholderColor = Color.Gray,
-                            focusedBorderColor = DarkBlue,
-                            focusedTextColor = DarkBlue,
-                        )
-                    )
-                }
-                Spacer(Modifier.height(12.dp))
-                Column(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                    horizontalAlignment = Alignment.Start,
-                    verticalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    Text(
-                        text = "Familiya va Ism",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.W600,
-                        color = DarkBlue,
-                    )
-                    OutlinedTextField(
-                        modifier = Modifier.fillMaxWidth(),
-                        value = fullname,
-                        onValueChange = vm::onFullnameChange,
-                        placeholder = { Text("Ali Valiyev") },
-                        shape = RoundedCornerShape(12.dp),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            unfocusedBorderColor = Color.Gray,
-                            unfocusedPlaceholderColor = Color.Gray,
-                            focusedBorderColor = DarkBlue,
-                            focusedTextColor = DarkBlue,
-                        )
-                    )
-                }
-                Spacer(Modifier.height(12.dp))
-                Column(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                    horizontalAlignment = Alignment.Start,
-                    verticalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    Text(
-                        text = "Email",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.W600,
-                        color = DarkBlue,
-                    )
-                    OutlinedTextField(
-                        modifier = Modifier.fillMaxWidth(),
-                        value = email,
-                        onValueChange = vm::onEmailChange,
-                        placeholder = { Text("ali@gmail.com") },
-                        shape = RoundedCornerShape(12.dp),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            unfocusedBorderColor = Color.Gray,
-                            unfocusedPlaceholderColor = Color.Gray,
-                            focusedBorderColor = DarkBlue,
-                            focusedTextColor = DarkBlue,
-                        )
-                    )
-                }
-                Spacer(Modifier.height(12.dp))
-                Column(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                    horizontalAlignment = Alignment.Start,
-                    verticalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    Text(
-                        text = "Parol",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.W600,
-                        color = DarkBlue,
-                    )
-                    OutlinedTextField(
-                        modifier = Modifier.fillMaxWidth(),
-                        value = password,
-                        onValueChange = vm::onPasswordChange,
-                        placeholder = { Text("12345") },
-                        shape = RoundedCornerShape(12.dp),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            unfocusedBorderColor = Color.Gray,
-                            unfocusedPlaceholderColor = Color.Gray,
-                            focusedBorderColor = DarkBlue,
-                            focusedTextColor = DarkBlue
-                        ),
-                        trailingIcon = {
-                            IconButton(
-                                onClick = {passwordVisible = !passwordVisible}
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Lock,
-                                    contentDescription = null,)
-                            }
-                        },
-                        visualTransformation = if(!passwordVisible) PasswordVisualTransformation() else VisualTransformation.None
-                    )
-                }
-                Spacer(Modifier.height(64.dp))
-                Button(
-                    modifier = Modifier.padding(horizontal = 16.dp).fillMaxWidth(),
-                    onClick = {
-                        vm.signUp()
-                    },
-                    shape = RoundedCornerShape(16.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = SkyBlue,
-                        contentColor = DarkBlue
-                    )
-                ) {
-                    Text(
-                        text = "Ro'yhatdan o'tish",
-                        fontWeight = FontWeight.W500,
-                        fontSize = 15.sp,
-                        modifier = Modifier.padding(vertical = 8.dp)
-                    )
-                }
-                Spacer(Modifier.height(8.dp))
-                Row(
-                    modifier = Modifier.wrapContentSize(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "Hisobingiz bormi? ",
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.W500,
-                        color = DarkBlue
-                    )
-                    TextButton(
-                        onClick = {navController.navigate(Routes.Login.name)},
-                        contentPadding = PaddingValues(0.dp)
-                    ) {
-                        Text(
-                            text = "Hisobingiza kiring",
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.W500,
-                            color = SkyBlue
-                        )
-                    }
-                }
+    Column(
+        modifier = Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.systemBars),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Top
+    ) {
+        Spacer(Modifier.height(8.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            IconButton(onClick = {navController.navigate(Routes.Login.name)}) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = null,
+                    modifier = Modifier.size(32.dp),
+                    tint = DarkBlue
+                )
             }
+            Text(
+                text = "Ro'yhatdan o'tish",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.W700,
+                color = DarkBlue,
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                textAlign = TextAlign.Start
+            )
+            Spacer(Modifier.width(12.dp))
         }
-        is UiState.Loading->{
-            LoadingScreen(
-                bgColor = DarkBlue,
-                contentColor = Color.White
+        Spacer(Modifier.height(32.dp))
+        Column(
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+            horizontalAlignment = Alignment.Start,
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            Text(
+                text = "Username",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.W600,
+                color = DarkBlue,
+            )
+            OutlinedTextField(
+                modifier = Modifier.fillMaxWidth(),
+                value = username,
+                onValueChange = vm::onUsernameChange,
+                placeholder = { Text("admin123") },
+                shape = RoundedCornerShape(12.dp),
+                colors = OutlinedTextFieldDefaults.colors(
+                    unfocusedBorderColor = Color.Gray,
+                    unfocusedPlaceholderColor = Color.Gray,
+                    focusedBorderColor = DarkBlue,
+                    focusedTextColor = DarkBlue,
+                )
             )
         }
-        is UiState.Success ->{
-            SuccessScreen {
-                navController.navigate(Routes.Main.name)
-            }
+        Spacer(Modifier.height(12.dp))
+        Column(
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+            horizontalAlignment = Alignment.Start,
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            Text(
+                text = "Familiya va Ism",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.W600,
+                color = DarkBlue,
+            )
+            OutlinedTextField(
+                modifier = Modifier.fillMaxWidth(),
+                value = fullname,
+                onValueChange = vm::onFullnameChange,
+                placeholder = { Text("Ali Valiyev") },
+                shape = RoundedCornerShape(12.dp),
+                colors = OutlinedTextFieldDefaults.colors(
+                    unfocusedBorderColor = Color.Gray,
+                    unfocusedPlaceholderColor = Color.Gray,
+                    focusedBorderColor = DarkBlue,
+                    focusedTextColor = DarkBlue,
+                )
+            )
         }
-        else->{
-            Column(
-                modifier = Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.systemBars),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Top
-            ) {
-                Spacer(Modifier.height(8.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    IconButton(onClick = {navController.navigate(Routes.Login.name)}) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = null,
-                            modifier = Modifier.size(32.dp),
-                            tint = DarkBlue
-                        )
-                    }
-                    Text(
-                        text = "Ro'yhatdan o'tish",
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.W700,
-                        color = DarkBlue,
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                        textAlign = TextAlign.Start
-                    )
-                    Spacer(Modifier.width(12.dp))
-                }
-                Spacer(Modifier.height(32.dp))
-                Column(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                    horizontalAlignment = Alignment.Start,
-                    verticalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    Text(
-                        text = "Username",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.W600,
-                        color = DarkBlue,
-                    )
-                    OutlinedTextField(
-                        modifier = Modifier.fillMaxWidth(),
-                        value = username,
-                        onValueChange = vm::onUsernameChange,
-                        placeholder = { Text("admin123") },
-                        shape = RoundedCornerShape(12.dp),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            unfocusedBorderColor = Color.Gray,
-                            unfocusedPlaceholderColor = Color.Gray,
-                            focusedBorderColor = DarkBlue,
-                            focusedTextColor = DarkBlue,
-                        )
-                    )
-                }
-                Spacer(Modifier.height(12.dp))
-                Column(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                    horizontalAlignment = Alignment.Start,
-                    verticalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    Text(
-                        text = "Familiya va Ism",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.W600,
-                        color = DarkBlue,
-                    )
-                    OutlinedTextField(
-                        modifier = Modifier.fillMaxWidth(),
-                        value = fullname,
-                        onValueChange = vm::onFullnameChange,
-                        placeholder = { Text("Ali Valiyev") },
-                        shape = RoundedCornerShape(12.dp),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            unfocusedBorderColor = Color.Gray,
-                            unfocusedPlaceholderColor = Color.Gray,
-                            focusedBorderColor = DarkBlue,
-                            focusedTextColor = DarkBlue,
-                        )
-                    )
-                }
-                Spacer(Modifier.height(12.dp))
-                Column(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                    horizontalAlignment = Alignment.Start,
-                    verticalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    Text(
-                        text = "Email",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.W600,
-                        color = DarkBlue,
-                    )
-                    OutlinedTextField(
-                        modifier = Modifier.fillMaxWidth(),
-                        value = email,
-                        onValueChange = vm::onEmailChange,
-                        placeholder = { Text("ali@gmail.com") },
-                        shape = RoundedCornerShape(12.dp),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            unfocusedBorderColor = Color.Gray,
-                            unfocusedPlaceholderColor = Color.Gray,
-                            focusedBorderColor = DarkBlue,
-                            focusedTextColor = DarkBlue,
-                        )
-                    )
-                }
-                Spacer(Modifier.height(12.dp))
-                Column(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                    horizontalAlignment = Alignment.Start,
-                    verticalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    Text(
-                        text = "Parol",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.W600,
-                        color = DarkBlue,
-                    )
-                    OutlinedTextField(
-                        modifier = Modifier.fillMaxWidth(),
-                        value = password,
-                        onValueChange = vm::onPasswordChange,
-                        placeholder = { Text("12345") },
-                        shape = RoundedCornerShape(12.dp),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            unfocusedBorderColor = Color.Gray,
-                            unfocusedPlaceholderColor = Color.Gray,
-                            focusedBorderColor = DarkBlue,
-                            focusedTextColor = DarkBlue
-                        ),
-                        trailingIcon = {
-                            IconButton(
-                                onClick = {passwordVisible = !passwordVisible}
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Lock,
-                                    contentDescription = null,)
-                            }
-                        },
-                        visualTransformation = if(!passwordVisible) PasswordVisualTransformation() else VisualTransformation.None
-                    )
-                }
-                Spacer(Modifier.height(64.dp))
-                Button(
-                    modifier = Modifier.padding(horizontal = 16.dp).fillMaxWidth(),
-                    onClick = {
-                        vm.signUp()
-                    },
-                    shape = RoundedCornerShape(16.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = SkyBlue,
-                        contentColor = DarkBlue
-                    )
-                ) {
-                    Text(
-                        text = "Ro'yhatdan o'tish",
-                        fontWeight = FontWeight.W500,
-                        fontSize = 15.sp,
-                        modifier = Modifier.padding(vertical = 8.dp)
-                    )
-                }
-                Spacer(Modifier.height(8.dp))
-                Row(
-                    modifier = Modifier.wrapContentSize(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "Hisobingiz bormi? ",
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.W500,
-                        color = DarkBlue
-                    )
-                    TextButton(
-                        onClick = {navController.navigate(Routes.Login.name)},
-                        contentPadding = PaddingValues(0.dp)
+        Spacer(Modifier.height(12.dp))
+        Column(
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+            horizontalAlignment = Alignment.Start,
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            Text(
+                text = "Email",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.W600,
+                color = DarkBlue,
+            )
+            OutlinedTextField(
+                modifier = Modifier.fillMaxWidth(),
+                value = email,
+                onValueChange = vm::onEmailChange,
+                placeholder = { Text("ali@gmail.com") },
+                shape = RoundedCornerShape(12.dp),
+                colors = OutlinedTextFieldDefaults.colors(
+                    unfocusedBorderColor = Color.Gray,
+                    unfocusedPlaceholderColor = Color.Gray,
+                    focusedBorderColor = DarkBlue,
+                    focusedTextColor = DarkBlue,
+                )
+            )
+        }
+        Spacer(Modifier.height(12.dp))
+        Column(
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+            horizontalAlignment = Alignment.Start,
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            Text(
+                text = "Parol",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.W600,
+                color = DarkBlue,
+            )
+            OutlinedTextField(
+                modifier = Modifier.fillMaxWidth(),
+                value = password,
+                onValueChange = vm::onPasswordChange,
+                placeholder = { Text("12345") },
+                shape = RoundedCornerShape(12.dp),
+                colors = OutlinedTextFieldDefaults.colors(
+                    unfocusedBorderColor = Color.Gray,
+                    unfocusedPlaceholderColor = Color.Gray,
+                    focusedBorderColor = DarkBlue,
+                    focusedTextColor = DarkBlue
+                ),
+                trailingIcon = {
+                    IconButton(
+                        onClick = vm::toggleVisibility
                     ) {
-                        Text(
-                            text = "Hisobingiza kiring",
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.W500,
-                            color = SkyBlue
-                        )
+                        Icon(
+                            imageVector = Icons.Default.Lock,
+                            contentDescription = null,)
                     }
-                }
+                },
+                visualTransformation = if(!passwordVisible) PasswordVisualTransformation() else VisualTransformation.None
+            )
+        }
+        Spacer(Modifier.height(64.dp))
+        Button(
+            modifier = Modifier.padding(horizontal = 16.dp).fillMaxWidth(),
+            onClick = {
+                vm.signUp()
+            },
+            shape = RoundedCornerShape(16.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = SkyBlue,
+                contentColor = DarkBlue
+            )
+        ) {
+            Text(
+                text = "Ro'yhatdan o'tish",
+                fontWeight = FontWeight.W500,
+                fontSize = 15.sp,
+                modifier = Modifier.padding(vertical = 8.dp)
+            )
+        }
+        Spacer(Modifier.height(8.dp))
+        Row(
+            modifier = Modifier.wrapContentSize(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "Hisobingiz bormi? ",
+                fontSize = 14.sp,
+                fontWeight = FontWeight.W500,
+                color = DarkBlue
+            )
+            TextButton(
+                onClick = {navController.navigate(Routes.Login.name)},
+                contentPadding = PaddingValues(0.dp)
+            ) {
+                Text(
+                    text = "Hisobingiza kiring",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.W500,
+                    color = SkyBlue
+                )
             }
         }
     }
