@@ -4,14 +4,23 @@ import android.content.SharedPreferences
 import com.example.handybook.data.model.User
 
 class DataManager(private val sharedPreferences: SharedPreferences) {
-    fun saveUser(user: User){
+    fun loginUser(user: User){
         val editor = sharedPreferences.edit()
         editor.putInt("id", user.id)
         editor.putString("username", user.username)
         editor.putString("fullname", user.fullname)
         editor.putString("token", user.access_token)
+        editor.apply()
     }
 
+    fun logoutUser(){
+        val editor = sharedPreferences.edit()
+        editor.putInt("id", -1)
+        editor.putString("username", "")
+        editor.putString("fullname", "")
+        editor.putString("token", "")
+        editor.apply()
+    }
     fun getUser(): User {
         val id = sharedPreferences.getInt("id",0)
         val username = sharedPreferences.getString("username", "abcd@gmail.com") ?: "abcd@gmail.com"

@@ -57,12 +57,13 @@ import com.example.handybook.state.UiState
 import com.example.handybook.ui.theme.DarkBlue
 import com.example.handybook.ui.theme.SkyBlue
 import com.example.handybook.viewmodel.AuthViewModel
+import com.example.handybook.viewmodel.LoginViewModel
 import kotlinx.coroutines.delay
 
 @Composable
 fun LoginScreen(
     navController: NavHostController,
-    vm: AuthViewModel
+    vm: LoginViewModel
 ) {
     //txtField vars
     val username = vm.username
@@ -79,133 +80,9 @@ fun LoginScreen(
             Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
         }
     }
-
     when(uiState){
         is UiState.Idle ->{
-            Column(
-                modifier = Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.systemBars),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Top
-            ) {
-                Spacer(Modifier.height(8.dp))
-                Image(
-                    painter = painterResource(R.drawable.logo_dark),
-                    contentDescription = null,
-                    modifier = Modifier.size(160.dp),
-                    contentScale = ContentScale.Crop
-                )
-                Spacer(Modifier.height(32.dp))
-                Text(
-                    text = "Hisobingizga kiring",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.W700,
-                    color = DarkBlue,
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                    textAlign = TextAlign.Start
-                )
-                Spacer(Modifier.height(20.dp))
-                Column(
-                    modifier = Modifier.padding(horizontal = 16.dp).fillMaxWidth(),
-                    horizontalAlignment = Alignment.Start,
-                    verticalArrangement = Arrangement.spacedBy(4.dp),
-                ) {
-                    Text(
-                        text = "Username",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.W600,
-                        color = DarkBlue,
-                    )
-                    OutlinedTextField(
-                        modifier = Modifier.fillMaxWidth(),
-                        value = username,
-                        onValueChange = vm::onUsernameChange,
-                        placeholder = { Text("admin123") },
-                        shape = RoundedCornerShape(12.dp),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            unfocusedBorderColor = Color.Gray,
-                            unfocusedPlaceholderColor = Color.Gray,
-                            focusedBorderColor = DarkBlue
-                        )
-                    )
-                }
-                Spacer(Modifier.height(12.dp))
-                Column(
-                    modifier = Modifier.padding(horizontal = 16.dp).fillMaxWidth(),
-                    horizontalAlignment = Alignment.Start,
-                    verticalArrangement = Arrangement.spacedBy(4.dp),
-                ) {
-                    Text(
-                        text = "Password",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.W600,
-                        color = DarkBlue,
-                    )
-                    OutlinedTextField(
-                        modifier = Modifier.fillMaxWidth(),
-                        value = password,
-                        onValueChange = vm::onPasswordChange,
-                        placeholder = { Text("12345") },
-                        shape = RoundedCornerShape(12.dp),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            unfocusedBorderColor = Color.Gray,
-                            unfocusedPlaceholderColor = Color.Gray,
-                            focusedBorderColor = DarkBlue
-                        ),
-                        trailingIcon = {
-                            IconButton(
-                                onClick = vm::toggleVisibility
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Lock,
-                                    contentDescription = null,)
-                            }
-                        },
-                        visualTransformation = if(!passwordVisible) PasswordVisualTransformation() else VisualTransformation.None
-                    )
-                }
-                Spacer(Modifier.height(128.dp))
-                Button(
-                    onClick = {
-                        vm.login()
-                    },
-                    modifier = Modifier.padding(horizontal = 16.dp).fillMaxWidth(),
-                    shape = RoundedCornerShape(8.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = SkyBlue,
-                        contentColor = DarkBlue
-                    ),
-                ) {
-                    Text(
-                        text = "Kirish",
-                        fontWeight = FontWeight.W500,
-                        fontSize = 15.sp,
-                        modifier = Modifier.padding(vertical = 8.dp)
-                    )
-                }
-                Spacer(Modifier.height(12.dp))
-                Row(
-                    modifier = Modifier.wrapContentSize(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "Hisobingiz yo'qmi? ",
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.W500,
-                        color = DarkBlue
-                    )
-                    TextButton(
-                        onClick = {navController.navigate(Routes.SignUp.name)},
-                        contentPadding = PaddingValues(0.dp)
-                    ) {
-                        Text(
-                            text = "Ro'yxatdan o'ting",
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.W500,
-                            color = SkyBlue
-                        )
-                    }
-                }
-            }
+
         }
         is UiState.Loading ->{
             LoadingScreen(
@@ -220,6 +97,132 @@ fun LoginScreen(
         }
         else ->{}
     }
+    Column(
+        modifier = Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.systemBars),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Top
+    ) {
+        Spacer(Modifier.height(8.dp))
+        Image(
+            painter = painterResource(R.drawable.logo_dark),
+            contentDescription = null,
+            modifier = Modifier.size(160.dp),
+            contentScale = ContentScale.Crop
+        )
+        Spacer(Modifier.height(32.dp))
+        Text(
+            text = "Hisobingizga kiring",
+            fontSize = 20.sp,
+            fontWeight = FontWeight.W700,
+            color = DarkBlue,
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+            textAlign = TextAlign.Start
+        )
+        Spacer(Modifier.height(20.dp))
+        Column(
+            modifier = Modifier.padding(horizontal = 16.dp).fillMaxWidth(),
+            horizontalAlignment = Alignment.Start,
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
+            Text(
+                text = "Username",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.W600,
+                color = DarkBlue,
+            )
+            OutlinedTextField(
+                modifier = Modifier.fillMaxWidth(),
+                value = username,
+                onValueChange = vm::onUsernameChange,
+                placeholder = { Text("admin123") },
+                shape = RoundedCornerShape(12.dp),
+                colors = OutlinedTextFieldDefaults.colors(
+                    unfocusedBorderColor = Color.Gray,
+                    unfocusedPlaceholderColor = Color.Gray,
+                    focusedBorderColor = DarkBlue
+                )
+            )
+        }
+        Spacer(Modifier.height(12.dp))
+        Column(
+            modifier = Modifier.padding(horizontal = 16.dp).fillMaxWidth(),
+            horizontalAlignment = Alignment.Start,
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
+            Text(
+                text = "Password",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.W600,
+                color = DarkBlue,
+            )
+            OutlinedTextField(
+                modifier = Modifier.fillMaxWidth(),
+                value = password,
+                onValueChange = vm::onPasswordChange,
+                placeholder = { Text("12345") },
+                shape = RoundedCornerShape(12.dp),
+                colors = OutlinedTextFieldDefaults.colors(
+                    unfocusedBorderColor = Color.Gray,
+                    unfocusedPlaceholderColor = Color.Gray,
+                    focusedBorderColor = DarkBlue
+                ),
+                trailingIcon = {
+                    IconButton(
+                        onClick = vm::toggleVisibility
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Lock,
+                            contentDescription = null,)
+                    }
+                },
+                visualTransformation = if(!passwordVisible) PasswordVisualTransformation() else VisualTransformation.None
+            )
+        }
+        Spacer(Modifier.height(128.dp))
+        Button(
+            onClick = {
+                vm.login()
+            },
+            modifier = Modifier.padding(horizontal = 16.dp).fillMaxWidth(),
+            shape = RoundedCornerShape(8.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = SkyBlue,
+                contentColor = DarkBlue
+            ),
+        ) {
+            Text(
+                text = "Kirish",
+                fontWeight = FontWeight.W500,
+                fontSize = 15.sp,
+                modifier = Modifier.padding(vertical = 8.dp)
+            )
+        }
+        Spacer(Modifier.height(12.dp))
+        Row(
+            modifier = Modifier.wrapContentSize(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "Hisobingiz yo'qmi? ",
+                fontSize = 14.sp,
+                fontWeight = FontWeight.W500,
+                color = DarkBlue
+            )
+            TextButton(
+                onClick = {navController.navigate(Routes.SignUp.name)},
+                contentPadding = PaddingValues(0.dp)
+            ) {
+                Text(
+                    text = "Ro'yxatdan o'ting",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.W500,
+                    color = SkyBlue
+                )
+            }
+        }
+    }
+
+
 
 }
 

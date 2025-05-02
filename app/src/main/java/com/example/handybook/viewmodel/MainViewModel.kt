@@ -6,14 +6,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
+import com.example.handybook.data.sharedpref.DataManager
 import com.example.handybook.navigation.Screen
 import com.example.handybook.screens.getCurrentRoute
 
 class MainViewModel(
-    private val authVM: AuthViewModel,
+    private val dataManager: DataManager,
     private val navController: NavHostController
 ): ViewModel() {
-    val currentUser = authVM.currentUser
+    val currentUser = dataManager.getUser()
 
     var selectedIndex by mutableIntStateOf(0)
         private set

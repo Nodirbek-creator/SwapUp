@@ -10,7 +10,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.handybook.data.model.Login
-import com.example.handybook.data.model.SignUp
 import com.example.handybook.data.model.User
 import com.example.handybook.data.network.RetrofitInstance
 import com.example.handybook.data.repository.AuthRepository
@@ -19,7 +18,7 @@ import com.example.handybook.state.UiState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class AuthViewModel(): ViewModel() {
+class LoginViewModel(): ViewModel() {
     private val repository = AuthRepository(RetrofitInstance.api)
 
     private val _currentUser = MutableLiveData<User>()
@@ -34,28 +33,12 @@ class AuthViewModel(): ViewModel() {
     var password by mutableStateOf("")
         private set
 
-    var fullname by mutableStateOf("")
-        private set
-
-    var email by mutableStateOf("")
-        private set
-
     var passwordVisible by mutableStateOf(false)
         private set
 
     fun onUsernameChange(newUsername: String){
         username = newUsername
     }
-
-    fun onFullnameChange(newFullname: String){
-        fullname = newFullname
-    }
-
-    fun onEmailChange(newEmail: String) {
-        email = newEmail
-    }
-
-
     fun onPasswordChange(newPassword: String) {
         password = newPassword
     }
@@ -91,26 +74,4 @@ class AuthViewModel(): ViewModel() {
             }
         }
     }
-
-    fun signUp(){
-        viewModelScope.launch {
-            _uiState.value = UiState.Loading
-            try {
-                val response = repository.signUp(SignUp(username, fullname, email, password))
-                if(response.isSuccessful){
-                    _uiState.value = UiState.Success
-                    _currentUser.value = response.body()
-                    delay(1000)
-                    _uiState.value = UiState.Idle
-                    onUsernameChange("")
-                    onPasswordChange("")
-                    onEmailChange("")
-                    onFullnameChange("")
-                }
-            } catch (e: Exception){
-                _uiState.value = UiState.Error(e.localizedMessage ?: "Unknown error")
-            }
-        }
-    }
-
 }

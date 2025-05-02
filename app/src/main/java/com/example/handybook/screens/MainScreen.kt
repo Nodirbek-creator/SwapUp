@@ -72,7 +72,7 @@ fun MainScreen(
     val drawerState = DrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     val selectedIndex = vm.selectedIndex
-    val currentUser by vm.currentUser.observeAsState()
+    val currentUser = vm.currentUser
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -84,7 +84,7 @@ fun MainScreen(
                     vm.navigateToScreen(route)
                 },
                 onProfileClick = {vm.navigateToScreen(Routes.Profile.name)},
-                user = currentUser!!
+                user = currentUser
             )
         },
         scrimColor = Color.Black.copy(alpha = 0.9f),
@@ -113,7 +113,7 @@ fun MainScreen(
 @Composable
 fun NavigationDrawerSheet(
     selectedIndex:Int,
-    user: User,
+    user: User?,
     onClick:(String,Int) -> Unit,
     onProfileClick: () -> Unit,
 ){
@@ -191,20 +191,22 @@ fun NavigationDrawerSheet(
                         modifier = Modifier.size(64.dp),
                     )
                 }
-                Spacer(Modifier.height(12.dp))
-                Text(
-                    text = user.fullname,
-                    fontWeight = FontWeight.W500,
-                    fontSize = 20.sp,
-                    color = Color.White)
-                Spacer(Modifier.height(4.dp))
-                Text(
-                    text = user.username+"@gmail.com",
-                    fontWeight = FontWeight.W200,
-                    fontSize = 16.sp,
-                    color = Color.White
-                )
-                Spacer(Modifier.height(16.dp))
+                user?.let {
+                    Spacer(Modifier.height(12.dp))
+                    Text(
+                        text = user.fullname,
+                        fontWeight = FontWeight.W500,
+                        fontSize = 20.sp,
+                        color = Color.White)
+                    Spacer(Modifier.height(4.dp))
+                    Text(
+                        text = user.username+"@gmail.com",
+                        fontWeight = FontWeight.W200,
+                        fontSize = 16.sp,
+                        color = Color.White
+                    )
+                    Spacer(Modifier.height(16.dp))
+                }
             }
             HorizontalDivider(modifier = Modifier.fillMaxWidth(), thickness = 2.dp, color = Color.LightGray)
             Spacer(Modifier.height(8.dp))
