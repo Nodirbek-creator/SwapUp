@@ -1,10 +1,13 @@
 package com.example.handybook.data.repository
 
+import android.util.Log
+import com.example.handybook.data.model.Error
 import com.example.handybook.data.model.Login
 import com.example.handybook.data.model.SignUp
 import com.example.handybook.data.network.ApiService
 import com.example.handybook.data.result.AuthResult
 import com.example.handybook.data.sharedpref.DataManager
+import kotlinx.serialization.json.Json
 import okio.IOException
 
 class AuthRepository(
@@ -19,14 +22,23 @@ class AuthRepository(
                 val user = response.body()
                 if(user != null && user.access_token.isNotEmpty()){
                     dataManager.saveUser(user)
+                    Log.d("usernull","${dataManager.getUser()}")
                     AuthResult.Success(user)
                 }
                 else{
-                    AuthResult.Error("Login failed. Invalid credentials.")
+                    Log.d("usernull","${dataManager.getUser()}")
+                    AuthResult.Error("Unknown error")
                 }
             }
             else{
-                AuthResult.Error("Server error: ${response.code()}")
+                when(response.code()){
+                    422-> {
+                        AuthResult.Error("Login failed. Invalid credentials.")
+                    }
+                    else-> {
+                        AuthResult.Error("Unknown error")
+                    }
+                }
             }
         } catch (e: IOException){
             AuthResult.Error("Network error: ${e.localizedMessage}")
@@ -45,16 +57,32 @@ class AuthRepository(
                     AuthResult.Success(user)
                 }
                 else{
-                    AuthResult.Error("Login failed. Invalid credentials.")
+                    AuthResult.Error("Unknown error")
                 }
             }
             else{
-                AuthResult.Error("Server error: ${response.code()}")
+                when(response.code()){
+                    500-> {
+                        AuthResult.Error("User with such email already exists")
+                    }
+                    422-> {
+                        val errorString = response.errorBody()?.string() ?: ""
+                        val error = Json.decodeFromString<Error>(errorString)
+                        val userName = error.errors.username
+                        val password = error.errors.password
+                        val space = if(userName ==null) "" else "\n"
+                        AuthResult.Error("${userName?.get(0) ?: ""}$space${password?.get(0)?: ""}")
+                    }
+                    else-> {
+                        AuthResult.Error("Unknown error")
+                    }
+                }
             }
 
         } catch (e: IOException){
             AuthResult.Error("Network error: ${e.localizedMessage}")
         } catch (e: Exception){
+            Log.d("Json", "${e.message}")
             AuthResult.Error("Unknown error: ${e.localizedMessage}")
         }
     }

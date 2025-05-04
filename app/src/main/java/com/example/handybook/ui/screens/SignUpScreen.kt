@@ -1,8 +1,6 @@
-package com.example.handybook.screens
+package com.example.handybook.ui.screens
 
-import android.util.Log
 import android.widget.Toast
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -19,9 +17,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -32,18 +31,14 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
@@ -51,18 +46,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.handybook.R
-import com.example.handybook.data.model.SignUp
-import com.example.handybook.data.model.User
-import com.example.handybook.data.sharedpref.DataManager
 import com.example.handybook.navigation.Routes
-import com.example.handybook.data.network.ApiService
-import com.example.handybook.state.UiState
+import com.example.handybook.viewmodel.state.UiState
 import com.example.handybook.ui.theme.DarkBlue
 import com.example.handybook.ui.theme.SkyBlue
 import com.example.handybook.viewmodel.SignUpViewModel
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 @Composable
 fun SignUpScreen(
@@ -94,7 +82,7 @@ fun SignUpScreen(
         }
         is UiState.Error-> {
             val errorMessage = (uiState as UiState.Error).msg
-            Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+            ErrorDialog(errorMessage, onResetUiState = {vm.resetUiState()})
         }
     }
     Column(
@@ -142,14 +130,28 @@ fun SignUpScreen(
                 modifier = Modifier.fillMaxWidth(),
                 value = username,
                 onValueChange = vm::onUsernameChange,
-                placeholder = { Text("admin123") },
+                placeholder = { Text("@your_username") },
                 shape = RoundedCornerShape(12.dp),
                 colors = OutlinedTextFieldDefaults.colors(
                     unfocusedBorderColor = Color.Gray,
                     unfocusedPlaceholderColor = Color.Gray,
                     focusedBorderColor = DarkBlue,
                     focusedTextColor = DarkBlue,
-                )
+                ),
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Done
+                ),
+                isError = vm.usernameError,
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        vm.usernameValid(username)
+                    }
+                ),
+                supportingText = {
+                    if(vm.usernameError){
+                        Text("Invalid format${stringResource(R.string.username_format)}")
+                    }
+                }
             )
         }
         Spacer(Modifier.height(12.dp))
@@ -168,14 +170,28 @@ fun SignUpScreen(
                 modifier = Modifier.fillMaxWidth(),
                 value = fullname,
                 onValueChange = vm::onFullnameChange,
-                placeholder = { Text("Ali Valiyev") },
+                placeholder = { Text("Name Surname") },
                 shape = RoundedCornerShape(12.dp),
                 colors = OutlinedTextFieldDefaults.colors(
                     unfocusedBorderColor = Color.Gray,
                     unfocusedPlaceholderColor = Color.Gray,
                     focusedBorderColor = DarkBlue,
                     focusedTextColor = DarkBlue,
-                )
+                ),
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Done
+                ),
+                isError = vm.fullnameError,
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        vm.fullnameValid(fullname)
+                    }
+                ),
+                supportingText = {
+                    if(vm.fullnameError){
+                        Text("Invalid format.\n${stringResource(R.string.fullname_format)}")
+                    }
+                }
             )
         }
         Spacer(Modifier.height(12.dp))
@@ -194,14 +210,28 @@ fun SignUpScreen(
                 modifier = Modifier.fillMaxWidth(),
                 value = email,
                 onValueChange = vm::onEmailChange,
-                placeholder = { Text("ali@gmail.com") },
+                placeholder = { Text("example@email.com") },
                 shape = RoundedCornerShape(12.dp),
                 colors = OutlinedTextFieldDefaults.colors(
                     unfocusedBorderColor = Color.Gray,
                     unfocusedPlaceholderColor = Color.Gray,
                     focusedBorderColor = DarkBlue,
                     focusedTextColor = DarkBlue,
-                )
+                ),
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Done
+                ),
+                isError = vm.emailError,
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        vm.emailValid(email)
+                    }
+                ),
+                supportingText = {
+                    if(vm.emailError){
+                        Text("Invalid format")
+                    }
+                }
             )
         }
         Spacer(Modifier.height(12.dp))
@@ -220,7 +250,7 @@ fun SignUpScreen(
                 modifier = Modifier.fillMaxWidth(),
                 value = password,
                 onValueChange = vm::onPasswordChange,
-                placeholder = { Text("12345") },
+                placeholder = { Text("12345678") },
                 shape = RoundedCornerShape(12.dp),
                 colors = OutlinedTextFieldDefaults.colors(
                     unfocusedBorderColor = Color.Gray,
@@ -235,6 +265,20 @@ fun SignUpScreen(
                         Icon(
                             imageVector = Icons.Default.Lock,
                             contentDescription = null,)
+                    }
+                },
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Done
+                ),
+                isError = vm.passwordError,
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        vm.passwordValid(password)
+                    }
+                ),
+                supportingText = {
+                    if(vm.passwordError){
+                        Text("Invalid format.\n${stringResource(R.string.password_format)}")
                     }
                 },
                 visualTransformation = if(!passwordVisible) PasswordVisualTransformation() else VisualTransformation.None

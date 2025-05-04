@@ -1,4 +1,4 @@
-package com.example.handybook.screens
+package com.example.handybook.ui.screens
 
 import android.content.Context
 import android.widget.Toast
@@ -60,7 +60,7 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.style.TextOverflow
 import com.example.handybook.data.model.Category
 import com.example.handybook.navigation.Routes
-import com.example.handybook.state.UiState
+import com.example.handybook.viewmodel.state.UiState
 
 @Composable
 fun HomeScreen(

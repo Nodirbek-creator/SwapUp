@@ -25,10 +25,14 @@ class DataManager(private val activity: ComponentActivity) {
         editor.apply()
     }
     fun getUser(): User {
-        val id = sharedPreferences.getInt("id",0)
-        val username = sharedPreferences.getString("username", "abcd@gmail.com") ?: "abcd@gmail.com"
-        val fullname = sharedPreferences.getString("fullname", "Azizov Ali") ?: "Azizov Ali"
-        val token = sharedPreferences.getString("token", "34tga5") ?: "234gt112"
+        val id = sharedPreferences.getInt("id",-1)
+        val username = sharedPreferences.getString("username", "abcd@gmail.com") ?: "null"
+        val fullname = sharedPreferences.getString("fullname", "Azizov Ali") ?: "null"
+        val token = sharedPreferences.getString("token", "") ?: ""
         return User(id, username, fullname, token)
+    }
+
+    fun userLogged(): Boolean{
+        return getUser().id != -1 && getUser().access_token.isNotEmpty()
     }
 }

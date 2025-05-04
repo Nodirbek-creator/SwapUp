@@ -1,4 +1,4 @@
-package com.example.handybook.state
+package com.example.handybook.viewmodel.state
 
 sealed class UiState {
     object Idle: UiState()

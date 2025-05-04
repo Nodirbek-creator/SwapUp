@@ -1,6 +1,6 @@
-package com.example.handybook.screens
+package com.example.handybook.ui.screens
 
-import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -21,9 +21,12 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -32,7 +35,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -45,7 +47,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
@@ -54,7 +58,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.handybook.R
 import com.example.handybook.navigation.Routes
-import com.example.handybook.state.UiState
+import com.example.handybook.viewmodel.state.UiState
 import com.example.handybook.ui.theme.DarkBlue
 import com.example.handybook.ui.theme.SkyBlue
 import com.example.handybook.viewmodel.LoginViewModel
@@ -82,35 +86,9 @@ fun LoginScreen(
 //    }
     when(uiState){
         is UiState.Error ->{
-            AlertDialog(
-                title = {
-                    Text(
-                        textAlign = TextAlign.Center,
-                        text = (uiState as UiState.Error).msg,
-                        fontSize = 18.sp
-                    )
-                },
-                onDismissRequest = {
-                    vm.resetUiState()
-                },
-                confirmButton = {
-                    Button(
-                        onClick = {vm.resetUiState()}
-                    ) {
-                        Text(
-                            text = "OK"
-                        )
-                    }
-                },
-                dismissButton = {
-                    Button(
-                        onClick = {vm.resetUiState()}
-                    ) {
-                        Text(
-                            text = "Cancel"
-                        )
-                    }
-                }
+            ErrorDialog(
+                errorMessage = (uiState as UiState.Error).msg,
+                onResetUiState = {vm.resetUiState()}
             )
         }
         is UiState.Loading ->{
@@ -158,12 +136,26 @@ fun LoginScreen(
                 modifier = Modifier.fillMaxWidth(),
                 value = username,
                 onValueChange = vm::onUsernameChange,
-                placeholder = { Text("admin123") },
+                placeholder = { Text("@your_username") },
                 shape = RoundedCornerShape(12.dp),
                 colors = OutlinedTextFieldDefaults.colors(
                     unfocusedBorderColor = Color.Gray,
                     unfocusedPlaceholderColor = Color.Gray,
                     focusedBorderColor = DarkBlue
+                ),
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Done
+                ),
+                supportingText = {
+                    if(vm.usernameError){
+                        Text("Invalid format.\n${stringResource(R.string.username_format)}")
+                    }
+                },
+                isError = vm.usernameError,
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        vm.usernameValid(username)
+                    }
                 )
             )
         }
@@ -183,13 +175,27 @@ fun LoginScreen(
                 modifier = Modifier.fillMaxWidth(),
                 value = password,
                 onValueChange = vm::onPasswordChange,
-                placeholder = { Text("12345") },
+                placeholder = { Text("12345678") },
                 shape = RoundedCornerShape(12.dp),
                 colors = OutlinedTextFieldDefaults.colors(
                     unfocusedBorderColor = Color.Gray,
                     unfocusedPlaceholderColor = Color.Gray,
                     focusedBorderColor = DarkBlue
                 ),
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Done
+                ),
+                isError = vm.passwordError,
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        vm.passwordValid(password)
+                    }
+                ),
+                supportingText = {
+                    if(vm.passwordError){
+                        Text("Invalid format.\n${stringResource(R.string.password_format)}")
+                    }
+                },
                 trailingIcon = {
                     IconButton(
                         onClick = vm::toggleVisibility
@@ -248,6 +254,59 @@ fun LoginScreen(
 
 
 
+}
+
+@Composable
+fun ErrorDialog(errorMessage: String,
+                onResetUiState: () -> Unit){
+    AlertDialog(
+        icon = {
+            Icon(
+                imageVector = Icons.Default.Warning,
+                contentDescription = "",
+                tint = DarkBlue
+            )
+        },
+        title = {
+            Text(
+                textAlign = TextAlign.Center,
+                text = errorMessage,
+                fontSize = 14.sp
+            )
+        },
+        onDismissRequest = {
+            onResetUiState()
+        },
+        confirmButton = {
+            Button(
+                onClick = {onResetUiState()},
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = DarkBlue,
+                    contentColor = Color.White,
+                ),
+                shape = RoundedCornerShape(4.dp),
+            ) {
+                Text(
+                    text = "OK"
+                )
+            }
+        },
+        dismissButton = {
+            Button(
+                onClick = {onResetUiState()},
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.White,
+                    contentColor = DarkBlue,
+                ),
+                shape = RoundedCornerShape(4.dp),
+                border = BorderStroke(1.dp, DarkBlue)
+            ) {
+                Text(
+                    text = "Cancel"
+                )
+            }
+        }
+    )
 }
 
 @Composable

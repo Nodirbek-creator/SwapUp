@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Handybook</string>
+    <string name="username_format">Username must start with @</string>
+    <string name="password_format">Password must be at least 8 characters long</string>
+    <string name="fullname_format">Separate name and surname with space</string>
+    <string name="TG_channel">https://t.me/freestyle_path</string>
+
 </resources>

@@ -1,4 +1,4 @@
-package com.example.handybook.screens
+package com.example.handybook.ui.screens
 
 import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
@@ -51,6 +51,7 @@ import com.example.handybook.ui.theme.DarkBlue
 import com.example.handybook.ui.theme.SkyBlue
 import com.example.handybook.viewmodel.BookViewModel
 import com.example.handybook.viewmodel.ProfileViewModel
+import com.example.handybook.viewmodel.state.UiState
 
 @Composable
 fun ProfileScreen(
@@ -59,8 +60,9 @@ fun ProfileScreen(
     bookVM: BookViewModel
 ) {
     val user = vm.currentUser
+    val uiState by vm.uiState
 
-    val bookList1 by bookVM.bookList.observeAsState(emptyList())
+    val bookList1 by vm.bookList.observeAsState(emptyList())
     val context = LocalContext.current
     Scaffold(
         modifier = Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.systemBars),
@@ -99,6 +101,9 @@ fun ProfileScreen(
             }
         },
     ) {padding->
+        if(uiState is UiState.Loading){
+            LoadingScreen()
+        }
         LazyColumn(
             modifier = Modifier.fillMaxWidth().padding(padding),
             horizontalAlignment = Alignment.CenterHorizontally,

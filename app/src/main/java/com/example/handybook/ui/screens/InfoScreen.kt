@@ -1,4 +1,4 @@
-package com.example.handybook.screens
+package com.example.handybook.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,7 +15,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -193,7 +196,8 @@ fun InfoScreen(
         },
         bottomBar = {
             if(bookInfo == "Iqtibos"){ BottomNavigationBar(navController) }
-        }
+        },
+        modifier = Modifier.windowInsetsPadding(WindowInsets.systemBars)
     ){paddingValues ->
         Box(
             modifier = Modifier.padding(paddingValues),
@@ -232,6 +236,7 @@ fun InfoScreen(
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
                                     Spacer(modifier = Modifier.height(32.dp))
+                                    //Ebook and Audiobook button
                                     Card(
                                         colors = CardDefaults.cardColors(
                                             containerColor = Color(0x4DB8E8F2)
@@ -326,6 +331,7 @@ fun InfoScreen(
                                     }
                                 }
                             }
+                            /*book image part*/
                             if (bookType == "E-Book") {
                                 ImageLoader(
                                     context = LocalContext.current,

@@ -1,5 +1,8 @@
-package com.example.handybook.screens
+package com.example.handybook.ui.screens
 
+import android.content.ActivityNotFoundException
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -35,15 +38,12 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -52,7 +52,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.handybook.R
 import com.example.handybook.data.model.User
-import com.example.handybook.data.sharedpref.DataManager
 import com.example.handybook.navigation.Routes
 import com.example.handybook.navigation.Screen
 import com.example.handybook.ui.theme.DarkBlue
@@ -72,6 +71,7 @@ fun MainScreen(
     val scope = rememberCoroutineScope()
     val selectedIndex = vm.selectedIndex
     val currentUser = vm.currentUser
+    val context = LocalContext.current
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -80,7 +80,39 @@ fun MainScreen(
                 selectedIndex = selectedIndex,
                 onClick = { route, index ->
                     vm.onIndexChange(index)
-                    vm.navigateToScreen(route)
+                    when(route){
+                        "Telegram" -> {
+                            val intent = Intent(Intent.ACTION_VIEW).apply {
+                                data = Uri.parse(context.getString(R.string.TG_channel))
+                                setPackage("org.telegram.messenger") // Forces opening in Telegram app
+                            }
+
+                            // Fallback in case Telegram app is not installed
+                            try {
+                                context.startActivity(intent)
+                            } catch (e: ActivityNotFoundException) {
+                                // Open in browser if Telegram is not installed
+                                val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://t.me/freestyle_path"))
+                                context.startActivity(browserIntent)
+                            }
+                        }
+                        "Share" ->   {
+                            val intent = Intent(Intent.ACTION_SEND).apply {
+                                type = "text/plain"
+                                putExtra(Intent.EXTRA_TEXT, "Check out our app!")
+                            }
+
+                            val chooser = Intent.createChooser(intent, "Share via")
+                            context.startActivity(chooser)
+                        }
+                        Routes.Login.name -> {
+                            navController.navigate(route)
+                            vm.logout()
+                        }
+                        else -> {
+                            navController.navigate(route)
+                        }
+                    }
                 },
                 onProfileClick = {navController.navigate(Routes.Profile.name)},
                 user = currentUser
@@ -113,7 +145,7 @@ fun MainScreen(
 fun NavigationDrawerSheet(
     selectedIndex:Int,
     user: User?,
-    onClick:(String,Int) -> Unit,
+    onClick: (String, Int) -> Unit,
     onProfileClick: () -> Unit,
 ){
     val navigationItems = listOf(
@@ -199,7 +231,7 @@ fun NavigationDrawerSheet(
                         color = Color.White)
                     Spacer(Modifier.height(4.dp))
                     Text(
-                        text = user.username+"@gmail.com",
+                        text = user.username,
                         fontWeight = FontWeight.W200,
                         fontSize = 16.sp,
                         color = Color.White

@@ -1,7 +1,7 @@
 package com.example.handybook
 
-import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -14,43 +14,44 @@ import com.example.handybook.connection.ConnectivityObserver
 import com.example.handybook.connection.NetworkConnectivityObserver
 import com.example.handybook.data.network.RetrofitInstance
 import com.example.handybook.data.repository.AuthRepository
-import com.example.handybook.data.repository.BookRepository
 import com.example.handybook.data.sharedpref.DataManager
 import com.example.handybook.navigation.Routes
-import com.example.handybook.screens.CategoryScreen
-import com.example.handybook.screens.CommentScreen
-import com.example.handybook.screens.ErrorScreen
-import com.example.handybook.screens.HomeScreen
-import com.example.handybook.screens.InfoScreen
-import com.example.handybook.screens.LoginScreen
-import com.example.handybook.screens.MainScreen
-import com.example.handybook.screens.ProfileScreen
-import com.example.handybook.screens.SignUpScreen
+import com.example.handybook.ui.screens.CategoryScreen
+import com.example.handybook.ui.screens.CommentScreen
+import com.example.handybook.ui.screens.ErrorScreen
+import com.example.handybook.ui.screens.HomeScreen
+import com.example.handybook.ui.screens.InfoScreen
+import com.example.handybook.ui.screens.LoginScreen
+import com.example.handybook.ui.screens.MainScreen
+import com.example.handybook.ui.screens.ProfileScreen
+import com.example.handybook.ui.screens.SignUpScreen
 import com.example.handybook.viewmodel.BookViewModel
 import com.example.handybook.viewmodel.LoginViewModel
 import com.example.handybook.viewmodel.MainViewModel
 import com.example.handybook.viewmodel.ProfileViewModel
 import com.example.handybook.viewmodel.SignUpViewModel
-import kotlin.math.sign
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         val connectivityObserver = NetworkConnectivityObserver(this)
-        setContent {
-            val status = connectivityObserver.observe().collectAsState(
-                initial = ConnectivityObserver.Status.Unavailable
-            )
-            val navController = rememberNavController()
+        val dataManager = DataManager(this)
 
+        setContent {
+            val status = connectivityObserver.observe()
+                .collectAsState(initial = ConnectivityObserver.Status.Available)
+            val navController = rememberNavController()
+            val startDestination =
+                if(dataManager.userLogged()){ Routes.Main.name }
+                else {Routes.Login.name}
+            Log.d("currentUser","${dataManager.getUser()}")
             when(status.value) {
                 ConnectivityObserver.Status.Available->{
-                    val dataManager = DataManager(this@MainActivity)
                     val authRepository = AuthRepository(RetrofitInstance.api, dataManager)
                     NavHost(
                         navController = navController,
-                        startDestination = Routes.Login.name
+                        startDestination = startDestination
                     ) {
                         composable(Routes.Login.name) {
                             val loginViewModel = LoginViewModel(authRepository)
@@ -142,7 +143,7 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable(Routes.Profile.name) {
-                            val profileViewModel = ProfileViewModel(dataManager)
+                            val profileViewModel = ProfileViewModel(dataManager,)
                             val bookViewModel = BookViewModel()
                             ProfileScreen(
                                 navController = navController,
@@ -171,7 +172,6 @@ class MainActivity : ComponentActivity() {
                         text = "No network available.\nPlease try again"
                     )
                 }
-
             }
         }
     }

@@ -13,7 +13,7 @@ import com.example.handybook.data.model.Book
 import com.example.handybook.data.model.Category
 import com.example.handybook.data.network.RetrofitInstance
 import com.example.handybook.data.repository.BookRepository
-import com.example.handybook.state.UiState
+import com.example.handybook.viewmodel.state.UiState
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
