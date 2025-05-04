@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Handybook"
+rootProject.name = "SwapUp"
 include(":app")
  

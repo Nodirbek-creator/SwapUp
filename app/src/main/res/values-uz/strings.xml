@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">SwapUp</string>
+    <string name="username_format">Username @ belgisi bilan boshlanishi va kamida 5ta simvoldan iborat bo\'lishi lozim.</string>
+    <string name="password_format">Parol kamida 8ta simvoldan iborat bo\'lishi lozim</string>
+    <string name="fullname_format">Ism va Familiya probel bilan ajratilishi lozim</string>
+    <string name="TG_channel">https://t.me/freestyle_path</string>
+    <string name="password">Parol</string>
+    <string name="fullname">Ism va Familiya</string>
+    <string name="login">Kirish</string>
+    <string name="register">Ro\'yhatdan o\'tish</string>
+</resources>

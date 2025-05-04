@@ -6,11 +6,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.handybook"
+    namespace = "com.example.swapup"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.example.handybook"
+        applicationId = "com.example.swapup"
         minSdk = 28
         targetSdk = 35
         versionCode = 1
