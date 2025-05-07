@@ -55,7 +55,7 @@ class BookViewModel: ViewModel() {
         searchQuery = newQuery
     }
 
-    fun loadInitialData(){
+    private fun loadInitialData(){
         viewModelScope.launch {
             _uiState.value = UiState.Loading
 

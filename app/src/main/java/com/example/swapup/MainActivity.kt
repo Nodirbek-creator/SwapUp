@@ -23,11 +23,14 @@ import com.example.swapup.ui.screens.HomeScreen
 import com.example.swapup.ui.screens.InfoScreen
 import com.example.swapup.ui.screens.LoginScreen
 import com.example.swapup.ui.screens.MainScreen
+import com.example.swapup.ui.screens.PdfViewerScreenUrl
 import com.example.swapup.ui.screens.ProfileScreen
 import com.example.swapup.ui.screens.SignUpScreen
 import com.example.swapup.viewmodel.BookViewModel
+import com.example.swapup.viewmodel.CommentViewModel
 import com.example.swapup.viewmodel.LoginViewModel
 import com.example.swapup.viewmodel.MainViewModel
+import com.example.swapup.viewmodel.PdfViewModel
 import com.example.swapup.viewmodel.ProfileViewModel
 import com.example.swapup.viewmodel.SignUpViewModel
 
@@ -129,15 +132,25 @@ class MainActivity : ComponentActivity() {
                                     bookVM = bookViewModel
                                 )
                             }
+                            val pdfViewModel = PdfViewModel()
+                            val commentViewModel = CommentViewModel()
                             composable(Routes.Info.name) {
                                 InfoScreen(
                                     navController = navController,
-                                    bookVM = bookViewModel
+                                    bookVM = bookViewModel,
+                                    pdfVM = pdfViewModel,
+                                    commentViewModel = commentViewModel
                                 )
                             }
                             composable(Routes.Comment.name) {
                                 CommentScreen(
-                                    navController
+                                    navController = navController
+                                )
+                            }
+                            composable(Routes.Pdf.name){
+                                PdfViewerScreenUrl(
+                                    navController = navController,
+                                    vm = pdfViewModel
                                 )
                             }
                         }

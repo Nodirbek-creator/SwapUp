@@ -12,7 +12,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.swapup.data.repository.PdfRepository
 import com.example.swapup.viewmodel.state.UiState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -20,41 +19,69 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
+import java.net.HttpURLConnection
+import java.net.URL
 
 private val renderLock = Any()
 
-class PdfViewModel(private val pdfRepository: PdfRepository) : ViewModel() {
+class PdfViewModel : ViewModel() {
     private val _uiState = mutableStateOf<UiState>(UiState.Idle)
     val uiState: State<UiState> get() = _uiState
 
-    var pdfUrl = mutableStateOf<String?>(null)
+    private var pdfUrl = mutableStateOf<String?>(null)
 
-    private var file = mutableStateOf<File?>(null)
+    private var pdfFile = mutableStateOf<File?>(null)
 
     private var pdfRenderer = mutableStateOf<PdfRenderer?>(null)
 
     var lastViewedPage by mutableIntStateOf(0)
         private set
 
+    private var isRendererClosed = false
+
     private val cache = LruCache<Int, Bitmap>(10)
     private val renderJobs = mutableMapOf<Int, Job>()
 
+    fun downloadPdf(context: Context) {
+        viewModelScope.launch {
+            try {
+                _uiState.value = UiState.Loading
+                val downloaded = withContext(Dispatchers.IO) {
+                    pdfUrl.value?.let { downloadPdfFile(context, it) }
+                }
+                pdfFile.value = downloaded
+                isRendererClosed = false
+                _uiState.value = UiState.Success
+            } catch (e: Exception) {
+                _uiState.value = UiState.Error(e.message.toString())
+                e.printStackTrace()
+            }
+        }
+    }
+
     fun updateLastViewedPage(index: Int) {
         lastViewedPage = index
+    }
+
+    fun sendUrl(url:String){
+        pdfUrl.value = url
+    }
+
+    fun close(){
+        pdfRenderer.value?.close()
     }
 
     fun getCachedBitmap(index: Int): Bitmap? = cache.get(index)
 
     fun renderPageAsync(
         scope: CoroutineScope,
-        renderer: PdfRenderer,
         index: Int,
         onRendered: (Bitmap) -> Unit
     ) {
-        if (cache.get(index) != null || renderJobs[index]?.isActive == true) return
+        if (cache.get(index) != null || renderJobs[index]?.isActive == true || isRendererClosed) return
 
         val job = scope.launch(Dispatchers.IO) {
-            val rendered = renderPage(renderer, index)
+            val rendered = renderPage(pdfRenderer.value!!, index)
             cache.put(index, rendered)
             withContext(Dispatchers.Main) {
                 onRendered(rendered)
@@ -66,15 +93,16 @@ class PdfViewModel(private val pdfRepository: PdfRepository) : ViewModel() {
     fun clearJobs() {
         renderJobs.values.forEach { it.cancel() }
         renderJobs.clear()
+        isRendererClosed = true
     }
 
 
-    fun openPdfRenderer(context: Context) {
-        val descriptor = ParcelFileDescriptor.open(file.value, ParcelFileDescriptor.MODE_READ_ONLY)
+    fun openPdfRenderer() {
+        val descriptor = ParcelFileDescriptor.open(pdfFile.value, ParcelFileDescriptor.MODE_READ_ONLY)
         pdfRenderer.value = PdfRenderer(descriptor)
     }
 
-    fun renderPage(renderer: PdfRenderer, index: Int): Bitmap {
+    private fun renderPage(renderer: PdfRenderer, index: Int): Bitmap {
         synchronized(renderLock) {
             renderer.openPage(index).use { page ->
                 val bitmap = Bitmap.createBitmap(page.width, page.height, Bitmap.Config.ARGB_8888)
@@ -84,20 +112,24 @@ class PdfViewModel(private val pdfRepository: PdfRepository) : ViewModel() {
         }
     }
 
-    fun downloadFile(context: Context){
-        viewModelScope.launch {
-            try {
-                _uiState.value = UiState.Loading
-                val downloadedFile = withContext(Dispatchers.IO) {
-                    pdfUrl.value?.let { pdfRepository.downloadPdfFile(context, it) }
-                }
-                file.value = downloadedFile
-                _uiState.value = UiState.Success
-            } catch (e: Exception) {
-                _uiState.value = UiState.Error(e.message.toString())
-                e.printStackTrace()
+    private fun downloadPdfFile(context: Context, urlStr: String): File {
+        val url = URL(urlStr)
+        val connection = url.openConnection() as HttpURLConnection
+        connection.connectTimeout = 15000
+        connection.readTimeout = 15000
+        connection.connect()
+
+        if (connection.responseCode != HttpURLConnection.HTTP_OK) {
+            throw Exception("HTTP error code: ${connection.responseCode}")
+        }
+
+        val file = File.createTempFile("temp_pdf", ".pdf", context.cacheDir)
+        file.outputStream().use { output ->
+            connection.inputStream.use { input ->
+                input.copyTo(output)
             }
         }
+        return file
     }
 
     fun pageCount(): Int{

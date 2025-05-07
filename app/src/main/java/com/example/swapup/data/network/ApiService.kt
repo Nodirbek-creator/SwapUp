@@ -2,6 +2,7 @@ package com.example.swapup.data.network
 
 import com.example.swapup.data.model.Book
 import com.example.swapup.data.model.Category
+import com.example.swapup.data.model.Comment
 import com.example.swapup.data.model.Login
 import com.example.swapup.data.model.SignUp
 import com.example.swapup.data.model.User
@@ -43,5 +44,8 @@ interface ApiService {
     //http://handybook.uz/book-api/register
     @POST("/book-api/register")
     suspend fun signUp(@Body signUp: SignUp): Response<User>
+
+    @GET("book-api/comment")
+    suspend fun getCommentsById(@Query("id") id:Int): Response<List<Comment>>
 
 }

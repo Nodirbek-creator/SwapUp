@@ -19,11 +19,12 @@ import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -56,15 +57,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.swapup.R
+import com.example.swapup.data.model.Comment
 import com.example.swapup.navigation.Routes
 import com.example.swapup.ui.theme.DarkBlue
 import com.example.swapup.ui.theme.SkyBlue
 import com.example.swapup.viewmodel.BookViewModel
+import com.example.swapup.viewmodel.CommentViewModel
+import com.example.swapup.viewmodel.PdfViewModel
 
 @Composable
 fun InfoScreen(
     navController: NavHostController,
-    bookVM: BookViewModel
+    bookVM: BookViewModel,
+    pdfVM: PdfViewModel,
+    commentViewModel: CommentViewModel
 ) {
 
     val bookList by bookVM.bookList.observeAsState(emptyList())
@@ -78,6 +84,9 @@ fun InfoScreen(
     var bookInfo by remember {
         mutableStateOf("Tavsif")
     }
+
+    val comments = commentViewModel.comments
+
     Scaffold (
         topBar = {
             Row(
@@ -91,10 +100,11 @@ fun InfoScreen(
             ) {
                 IconButton(
                     onClick = {
+                        navController.navigate(Routes.Home.name)
                     }
                 ) {
                     Icon(
-                        Icons.Default.ArrowBack,
+                        Icons.AutoMirrored.Filled.ArrowBack,
                         "Back",
                         tint = Color.White
                     )
@@ -118,7 +128,8 @@ fun InfoScreen(
                     Card(
                         modifier = Modifier.fillMaxWidth(0.9f),
                         onClick = {
-                            /*TODO: OPEN BOOK PDF*/
+                            pdfVM.sendUrl(book.file)
+                            navController.navigate(Routes.Pdf.name)
                         }
                     ) {
                         Row(
@@ -128,21 +139,23 @@ fun InfoScreen(
                                 modifier = Modifier
                                     .weight(8f)
                                     .background(DarkBlue)
-                                    .height(54.dp),
+                                    .height(48.dp),
                                 horizontalArrangement = Arrangement.Center,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Text("O'qishni davom ettirish", color = SkyBlue, fontSize = 18.sp)
+                                Text(if(pdfVM.lastViewedPage == 0) " O'qishni boshlash " else " O'qishni davom ettirish", color = SkyBlue, fontSize = 18.sp)
                             }
-                            Row(
-                                modifier = Modifier
-                                    .weight(2f)
-                                    .background(SkyBlue)
-                                    .height(54.dp),
-                                horizontalArrangement = Arrangement.Center,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text("87%", color = DarkBlue, fontSize = 18.sp)
+                            if(pdfVM.lastViewedPage != 0 && pdfVM.pageCount() != 0){
+                                Row(
+                                    modifier = Modifier
+                                        .weight(2f)
+                                        .background(SkyBlue)
+                                        .height(48.dp),
+                                    horizontalArrangement = Arrangement.Center,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Text("${((pdfVM.lastViewedPage).toFloat()/(pdfVM.pageCount()).toFloat()*100).toInt()}%", color = DarkBlue, fontSize = 18.sp)
+                                }
                             }
                         }
                     }
@@ -211,7 +224,7 @@ fun InfoScreen(
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(bottom = if(bookInfo != "Iqtibos") 74.dp else 0.dp)
+                        .padding(bottom = if (bookInfo != "Iqtibos") 74.dp else 0.dp)
                 ) {
                     item {
                         Box(
@@ -336,7 +349,8 @@ fun InfoScreen(
                                 ImageLoader(
                                     context = LocalContext.current,
                                     imageUrl = book.image,
-                                    modifier = Modifier.size((LocalConfiguration.current.screenHeightDp / 3.75).dp)
+                                    modifier = Modifier
+                                        .size((LocalConfiguration.current.screenHeightDp / 3.75).dp)
                                         .offset(y = (-24).dp),
                                     contentScale = ContentScale.Fit
                                 )
@@ -426,9 +440,11 @@ fun InfoScreen(
                     }else if(
                         bookInfo == "Sharh"
                     ){
-                        items(7){
-                            Spacer(modifier = Modifier.height(16.dp))
-                            CommentCard()
+                        items(comments){
+                            Spacer(modifier = Modifier.height(24.dp))
+                            CommentCard(
+                                comment = it
+                            )
                         }
                     }else{
                         items(23){
@@ -457,7 +473,9 @@ fun InfoScreen(
 }
 
 @Composable
-fun CommentCard(){
+fun CommentCard(
+    comment: Comment
+){
     Card(
         modifier = Modifier.padding(horizontal = 16.dp),
         colors = CardDefaults.cardColors(
@@ -480,7 +498,7 @@ fun CommentCard(){
                         verticalArrangement = Arrangement.Top
                     ) {
                         Spacer(modifier = Modifier.height(5.dp))
-                        Text("User123", color = DarkBlue, fontSize = 16.sp)
+                        Text(comment.username, color = DarkBlue, fontSize = 16.sp)
                         Spacer(modifier = Modifier.height(5.dp))
                         Row(
                             verticalAlignment = Alignment.CenterVertically
@@ -493,7 +511,7 @@ fun CommentCard(){
                 Text("22-may 2022-yil", color = Color.LightGray)
             }
             Spacer(modifier = Modifier.height(8.dp))
-            Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.", color = DarkBlue)
+            Text(comment.text, color = DarkBlue)
         }
     }
 }
