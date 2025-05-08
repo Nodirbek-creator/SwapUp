@@ -25,13 +25,15 @@ import com.example.swapup.ui.screens.LoginScreen
 import com.example.swapup.ui.screens.MainScreen
 import com.example.swapup.ui.screens.PdfViewerScreenUrl
 import com.example.swapup.ui.screens.ProfileScreen
+import com.example.swapup.ui.screens.SearchScreen
 import com.example.swapup.ui.screens.SignUpScreen
 import com.example.swapup.viewmodel.BookViewModel
-import com.example.swapup.viewmodel.CommentViewModel
+import com.example.swapup.viewmodel.InfoViewModel
 import com.example.swapup.viewmodel.LoginViewModel
 import com.example.swapup.viewmodel.MainViewModel
 import com.example.swapup.viewmodel.PdfViewModel
 import com.example.swapup.viewmodel.ProfileViewModel
+import com.example.swapup.viewmodel.SearchViewModel
 import com.example.swapup.viewmodel.SignUpViewModel
 
 class MainActivity : ComponentActivity() {
@@ -40,7 +42,6 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         val connectivityObserver = NetworkConnectivityObserver(this)
         val dataManager = DataManager(this)
-
         setContent {
             val status = connectivityObserver.observe()
                 .collectAsState(initial = ConnectivityObserver.Status.Available)
@@ -94,16 +95,20 @@ class MainActivity : ComponentActivity() {
                                 )
                             }
                             composable(Routes.Search.name) {
+                                val searchViewModel = SearchViewModel("yulduz")
                                 MainScreen(
                                     navController = navController,
                                     vm = mainViewModel,
                                     content = {
-
+                                        SearchScreen(
+                                            navController = navController,
+                                            vm = searchViewModel
+                                        )
                                     },
                                     bookVM = bookViewModel
                                 )
                             }
-                            composable(Routes.Articles.name) {
+                            composable(Routes.Offer.name) {
                                 MainScreen(
                                     navController = navController,
                                     vm = mainViewModel,
@@ -112,7 +117,7 @@ class MainActivity : ComponentActivity() {
                                     bookVM = bookViewModel
                                 )
                             }
-                            composable(Routes.Saved.name) {
+                            composable(Routes.Demand.name) {
                                 MainScreen(
                                     navController = navController,
                                     vm = mainViewModel,
@@ -132,14 +137,18 @@ class MainActivity : ComponentActivity() {
                                     bookVM = bookViewModel
                                 )
                             }
-                            val pdfViewModel = PdfViewModel()
-                            val commentViewModel = CommentViewModel()
-                            composable(Routes.Info.name) {
+
+                            composable("${Routes.Info.name}/{id}") { backStack->
+                                val bookId = backStack.arguments?.getString("id")!!.toInt()
+                                val pdfViewModel = PdfViewModel()
+                                val infoViewModel = InfoViewModel(
+                                    dataManager = dataManager,
+                                    bookId = bookId
+                                )
                                 InfoScreen(
                                     navController = navController,
-                                    bookVM = bookViewModel,
+                                    vm = infoViewModel,
                                     pdfVM = pdfViewModel,
-                                    commentViewModel = commentViewModel
                                 )
                             }
                             composable(Routes.Comment.name) {
@@ -148,6 +157,7 @@ class MainActivity : ComponentActivity() {
                                 )
                             }
                             composable(Routes.Pdf.name){
+                                val pdfViewModel = PdfViewModel()
                                 PdfViewerScreenUrl(
                                     navController = navController,
                                     vm = pdfViewModel

@@ -160,14 +160,14 @@ fun NavigationDrawerSheet(
             icon = R.drawable.search
         ),
         DrawerItem(
-            title = "Maqolalar",
-            route = Routes.Articles.name,
+            title = "Taklif",
+            route = Routes.Offer.name,
             icon = R.drawable.feather
         ),
         DrawerItem(
-            title = "Saqlangan kitoblar",
-            route = Routes.Saved.name,
-            icon = R.drawable.saved
+            title = "Talab",
+            route = Routes.Demand.name,
+            icon = R.drawable.saved_border
         ),
         DrawerItem(
             title = "Sozlamalar",
@@ -291,8 +291,8 @@ fun TopNavigationBar(
     val title = when(currentRoute){
         Screen.Home.route -> "Bosh Sahifa"
         Screen.Search.route -> "Qidiruv"
-        Screen.Articles.route -> "Maqolalar"
-        Screen.Saved.route -> "Saqlanganlar"
+        Screen.Offer.route -> "Taklif"
+        Screen.Demand.route -> "Talab"
         Screen.Settings.route -> "Sozlamalar"
         Screen.Category.route -> bookVM.selectedCategory.typename ?: ""
         else -> ""
@@ -349,7 +349,7 @@ fun TopNavigationBar(
 
 @Composable
 fun BottomNavigationBar(navController: NavHostController){
-    val screens = listOf(Screen.Home, Screen.Search, Screen.Articles, Screen.Saved, Screen.Settings)
+    val screens = listOf(Screen.Home, Screen.Search, Screen.Offer, Screen.Demand, Screen.Settings)
     val currentRoute = getCurrentRoute(navController)
 
     BottomAppBar(

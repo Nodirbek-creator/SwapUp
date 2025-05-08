@@ -7,6 +7,34 @@
     <string name="password">Password</string>
     <string name="fullname">Full name</string>
     <string name="login">Login</string>
-    <string name="register">Sign up</string>
+    <string name="signup">Sign up</string>
+    <string name="login_title">Login into account</string>
+    <string name="login_subtitle1">Don\'t have account?</string>
+    <string name="login_subtitle2">Sign up</string>
+    <string name="signup_title">Sign Up</string>
+    <string name="email">Email</string>
+    <string name="username_title">Telegram username</string>
+    <string name="main_page">Main page</string>
+    <string name="search">Search</string>
+    <string name="articles">Articles</string>
+    <string name="saved">Saved books</string>
+    <string name="settings">Settings</string>
+    <string name="telegram">Our Telegram channel</string>
+    <string name="share">Share</string>
+    <string name="logout">Log out</string>
+    <string name="profile">Profile</string>
+    <string name="see_all">See all</string>
+    <string name="details">Details</string>
+    <string name="e_book">E-Book</string>
+    <string name="audiobook">Audio Book</string>
+    <string name="description">Description</string>
+    <string name="comments">Comments</string>
+    <string name="quotes">Quotes</string>
+    <string name="continue_reading">Continue reading</string>
+    <string name="leave_feedback">Leave your feedback</string>
+    <string name="rate_book">Rate the book</string>
+    <string name="leave_opinion">Leave your opinion about the book</string>
+    <string name="submit">Submit</string>
+    <string name="cancel">Cancel</string>
 
 </resources>

@@ -38,11 +38,14 @@ class BookViewModel: ViewModel() {
     private val _bookList = MutableLiveData<List<Book>>()
     val bookList: LiveData<List<Book>> get() = _bookList
 
-    var selectedBook by mutableIntStateOf(0)
-        private set
+
 
     init {
         loadInitialData()
+    }
+
+    fun getBookById(id: Int){
+        viewModelScope
     }
 
     fun onCategoryChange(newCategory: Category){
@@ -103,7 +106,5 @@ class BookViewModel: ViewModel() {
     }
 
 
-    fun selectBook(id: Int){
-        selectedBook = id
-    }
+
 }

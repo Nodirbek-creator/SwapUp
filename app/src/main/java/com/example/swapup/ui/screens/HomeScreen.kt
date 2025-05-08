@@ -1,6 +1,7 @@
 package com.example.swapup.ui.screens
 
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -150,7 +151,10 @@ fun HomeScreen(
                     item{
                         MainBook(
                             book = mainBook!!,
-                            context = context
+                            context = context,
+                            onClick = {bookId->
+                                navController.navigate("${Routes.Info.name}/$bookId")
+                            }
                         )
                         Spacer(Modifier.height(12.dp))
                     }
@@ -170,8 +174,8 @@ fun HomeScreen(
                             bookList = bookList,
                             context = context,
                             onBookClick = { id->
-                                bookVM.selectBook(id)
-                                navController.navigate(Routes.Info.name)
+                                Log.d("bookIdHome","$id")
+                                navController.navigate("${Routes.Info.name}/$id")
                             }
                         )
                     }
@@ -230,7 +234,8 @@ fun Categories(
 @Composable
 fun MainBook(
     book: Book,
-    context: Context
+    context: Context,
+    onClick: (Int) -> Unit,
 ){
     Box(
         modifier = Modifier.fillMaxWidth().height(200.dp),
@@ -249,7 +254,9 @@ fun MainBook(
             )
             Spacer(Modifier.height(8.dp))
             Button(
-                onClick = {},
+                onClick = {
+                    onClick(book.id)
+                },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = SkyBlue,
                     contentColor = DarkBlue

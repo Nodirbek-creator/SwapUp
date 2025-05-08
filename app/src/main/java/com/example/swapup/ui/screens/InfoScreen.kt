@@ -1,5 +1,7 @@
 package com.example.swapup.ui.screens
 
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -38,9 +40,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -57,35 +56,44 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.swapup.R
+import com.example.swapup.data.model.Book
 import com.example.swapup.data.model.Comment
 import com.example.swapup.navigation.Routes
 import com.example.swapup.ui.theme.DarkBlue
 import com.example.swapup.ui.theme.SkyBlue
-import com.example.swapup.viewmodel.BookViewModel
-import com.example.swapup.viewmodel.CommentViewModel
+import com.example.swapup.viewmodel.InfoViewModel
 import com.example.swapup.viewmodel.PdfViewModel
+import com.example.swapup.viewmodel.state.UiState
 
 @Composable
 fun InfoScreen(
     navController: NavHostController,
-    bookVM: BookViewModel,
+    vm: InfoViewModel,
     pdfVM: PdfViewModel,
-    commentViewModel: CommentViewModel
 ) {
 
-    val bookList by bookVM.bookList.observeAsState(emptyList())
-    val selectedBook = bookVM.selectedBook
+    val book by vm.selectedBook.observeAsState(Book())
+    val isBookSaved by vm.isBookSaved.observeAsState(false)
 
-    val book = bookList.find { it.id == selectedBook }!!
+    val uiState by vm.uiState
+    val context = LocalContext.current
+    when(uiState){
+        is UiState.Loading->{
+            LoadingScreen()
+        }
+        is UiState.Error ->{
+            val errorMsg = (uiState as UiState.Error).msg
+            Toast.makeText(context,errorMsg, Toast.LENGTH_SHORT).show()
+        }
+        else -> {
 
-    var bookType by remember {
-        mutableStateOf("E-Book")
+        }
     }
-    var bookInfo by remember {
-        mutableStateOf("Tavsif")
-    }
 
-    val comments = commentViewModel.comments
+    val bookType = vm.bookType
+    val bookInfo = vm.bookInfo
+
+    val comments by vm.commentList.observeAsState(emptyList())
 
     Scaffold (
         topBar = {
@@ -111,14 +119,31 @@ fun InfoScreen(
                 }
                 Text("Batafsil", fontSize = 22.sp, color = Color.White)
                 IconButton(
-                    onClick = {}
+                    onClick = {
+                        if(isBookSaved){
+                            vm.unsaveBook()
+                        }
+                        else{
+                            vm.saveBook()
+                        }
+                    }
                 ) {
-                    Icon(
-                        painterResource(R.drawable.saved),
-                        "Favourite",
-                        tint = Color.White,
-                        modifier = Modifier.size(20.dp)
-                    )
+                    if(isBookSaved){
+                        Icon(
+                            painterResource(R.drawable.saved_filled),
+                            "Favourite",
+                            tint = Color.White,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                    else{
+                        Icon(
+                            painterResource(R.drawable.saved_border),
+                            "Favourite",
+                            tint = Color.White,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
                 }
             }
         },
@@ -265,7 +290,7 @@ fun InfoScreen(
                                         ) {
                                             Button(
                                                 onClick = {
-                                                    bookType = "E-Book"
+                                                    vm.changeBookType("E-Book")
                                                 },
                                                 colors = ButtonDefaults.buttonColors(
                                                     containerColor = if (bookType == "E-Book") DarkBlue else Color.Transparent
@@ -277,7 +302,7 @@ fun InfoScreen(
                                             }
                                             Button(
                                                 onClick = {
-                                                    bookType = "AudioBook"
+                                                    vm.changeBookType("AudioBook")
                                                 },
                                                 colors = ButtonDefaults.buttonColors(
                                                     containerColor = if (bookType == "AudioBook") DarkBlue else Color.Transparent
@@ -311,7 +336,7 @@ fun InfoScreen(
                                 ) {
                                     TextButton(
                                         onClick = {
-                                            bookInfo = "Tavsif"
+                                            vm.changeBookInfo("Tavsif")
                                         },
                                         colors = ButtonDefaults.buttonColors(
                                             contentColor = if (bookInfo == "Tavsif") SkyBlue else DarkBlue,
@@ -322,7 +347,7 @@ fun InfoScreen(
                                     }
                                     TextButton(
                                         onClick = {
-                                            bookInfo = "Sharh"
+                                            vm.changeBookInfo("Sharh")
                                         },
                                         colors = ButtonDefaults.buttonColors(
                                             contentColor = if (bookInfo == "Sharh") SkyBlue else DarkBlue,
@@ -333,7 +358,8 @@ fun InfoScreen(
                                     }
                                     TextButton(
                                         onClick = {
-                                            bookInfo = "Iqtibos"
+                                            vm.changeBookInfo("Iqtibos")
+
                                         },
                                         colors = ButtonDefaults.buttonColors(
                                             contentColor = if (bookInfo == "Iqtibos") SkyBlue else DarkBlue,

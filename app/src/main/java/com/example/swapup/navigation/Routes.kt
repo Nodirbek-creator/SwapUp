@@ -8,8 +8,8 @@ enum class Routes {
     Main,
     Home,
     Search,
-    Articles,
-    Saved,
+    Offer,
+    Demand,
     Settings,
     Profile,
     Category,
@@ -20,8 +20,8 @@ enum class Routes {
 sealed class Screen(val route: String, val icon: Int){
     object Home: Screen(Routes.Home.name, R.drawable.book)
     object Search: Screen(Routes.Search.name, R.drawable.search)
-    object Articles: Screen(Routes.Articles.name, R.drawable.feather)
-    object Saved: Screen(Routes.Saved.name, R.drawable.saved)
+    object Offer: Screen(Routes.Offer.name, R.drawable.offer)
+    object Demand: Screen(Routes.Demand.name, R.drawable.demand)
     object Settings: Screen(Routes.Settings.name, R.drawable.setting)
     object Category: Screen(Routes.Category.name, R.drawable.book)
 }

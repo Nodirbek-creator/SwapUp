@@ -4,6 +4,8 @@ import com.example.swapup.data.model.Book
 import com.example.swapup.data.model.Category
 import com.example.swapup.data.model.Comment
 import com.example.swapup.data.network.ApiService
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import retrofit2.Response
 
 class BookRepository(private val apiService: ApiService){
@@ -24,8 +26,15 @@ class BookRepository(private val apiService: ApiService){
         return apiService.getMainBook()
     }
 
-    suspend fun searchBook(query: String): Response<Book>{
-        return apiService.searchBook(query)
+    suspend fun getBookById(id: Int): Response<Book>{
+        return apiService.getBookById(id)
+    }
+
+    fun searchBook(query: String): Flow<List<Book>> = flow {
+        val response = apiService.searchBook(query)
+        if (response.isSuccessful){
+            emit(response.body() ?: emptyList())
+        }
     }
 
     suspend fun getCommentById(id: Int): Response<List<Comment>> {

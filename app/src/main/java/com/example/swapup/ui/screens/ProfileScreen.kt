@@ -63,6 +63,7 @@ fun ProfileScreen(
     val uiState by vm.uiState
 
     val bookList1 by vm.bookList.observeAsState(emptyList())
+    val savedBooks by vm.savedBooks.observeAsState(emptyList())
     val context = LocalContext.current
     Scaffold(
         modifier = Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.systemBars),
@@ -112,7 +113,7 @@ fun ProfileScreen(
             item{
                 ProfileBox(user)
                 Spacer(Modifier.height(8.dp))
-                BookStats()
+                BookStats(savedBooks.size)
             }
             item {
                 Spacer(Modifier.height(20.dp))
@@ -178,7 +179,7 @@ fun ProfileScreen(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    items(bookList1){book->
+                    items(savedBooks){book->
                         BookCardHorizontal(
                             book = book,
                             context = context,
@@ -234,7 +235,9 @@ fun ProfileBox(
 }
 
 @Composable
-fun BookStats(){
+fun BookStats(
+    savedBooks: Int,
+){
     Card(
         colors = CardDefaults.cardColors(
             containerColor = Color(0xFFD9D9D9)
@@ -290,7 +293,7 @@ fun BookStats(){
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "7",
+                    text = "$savedBooks",
                     color = DarkBlue,
                     fontWeight = FontWeight.W600,
                     fontSize = 20.sp

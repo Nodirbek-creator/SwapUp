@@ -35,7 +35,7 @@ interface ApiService {
 
     //http://handybook.uz/book-api/search-name?name=yulduz
     @GET("/book-api/search-name")
-    suspend fun searchBook(@Query("name") name: String): Response<Book>
+    suspend fun searchBook(@Query("name") name: String): Response<List<Book>>
 
     //http://handybook.uz/book-api/login
     @POST("/book-api/login")

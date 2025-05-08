@@ -6,12 +6,15 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -75,7 +78,7 @@ fun CommentScreen(
             ) {
                 IconButton(
                     onClick = {
-                        navController.navigate(Routes.Info.name)
+                        navController.navigate(Routes.Main.name) /*todo: hozir bu koding InfoScreenda error beradi, chunki Info screenga bookIdni berish kere*/
                     }
                 ) {
                     Icon(
@@ -86,16 +89,7 @@ fun CommentScreen(
                 }
                 Text("O’z sharhingizni \n" +
                         "yozib qoldiring", fontSize = 22.sp, color = Color.White, textAlign = TextAlign.Center)
-                IconButton(
-                    onClick = {}
-                ) {
-                    Icon(
-                        painterResource(R.drawable.saved),
-                        "Favourite",
-                        tint = Color.White,
-                        modifier = Modifier.size(20.dp)
-                    )
-                }
+                Spacer(Modifier.size(20.dp))
             }
         },
         floatingActionButton = {
@@ -118,7 +112,8 @@ fun CommentScreen(
                 }
             }
         },
-        floatingActionButtonPosition = FabPosition.Center
+        floatingActionButtonPosition = FabPosition.Center,
+        modifier = Modifier.windowInsetsPadding(WindowInsets.systemBars)
     ){paddingValues ->
         Box(
             modifier = Modifier.padding(paddingValues),
