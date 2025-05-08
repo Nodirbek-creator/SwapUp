@@ -47,5 +47,4 @@ interface ApiService {
 
     @GET("book-api/comment")
     suspend fun getCommentsById(@Query("id") id:Int): Response<List<Comment>>
-
 }

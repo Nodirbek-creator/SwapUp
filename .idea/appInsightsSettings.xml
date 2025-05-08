@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.example.swapup" />
+                  <option name="mobileSdkAppId" value="1:544192672758:android:78c9bda6e9e61c64094dd7" />
+                  <option name="projectId" value="swapup-b55b8" />
+                  <option name="projectNumber" value="544192672758" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

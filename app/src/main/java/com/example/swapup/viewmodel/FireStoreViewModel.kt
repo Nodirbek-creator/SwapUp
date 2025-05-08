@@ -1,6 +1,5 @@
 package com.example.swapup.viewmodel
 
-import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -21,9 +20,9 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class InfoViewModel(
+class FireStoreViewModel(
     private val dataManager: DataManager,
-    private val bookId: Int,
+    bookViewModel: BookViewModel
 ): ViewModel() {
     val bookRepository = BookRepository(RetrofitInstance.api)
     val firebaseRepository = FirestoreRepo(FirebaseFirestore.getInstance())
@@ -32,8 +31,9 @@ class InfoViewModel(
     private val _uiState = mutableStateOf<UiState>(UiState.Idle)
     val uiState: State<UiState> get() = _uiState
 
+    private val bookId = bookViewModel.selectedBook
+
     private val _selectedBook = MutableLiveData(Book())
-    val selectedBook get() = _selectedBook
 
     private val _commentList = MutableLiveData<List<Comment>>()
     val commentList: LiveData<List<Comment>> get() = _commentList

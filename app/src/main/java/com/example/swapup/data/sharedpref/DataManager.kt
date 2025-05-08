@@ -35,4 +35,34 @@ class DataManager(private val activity: ComponentActivity) {
     fun userLogged(): Boolean{
         return getUser().id != -1 && getUser().access_token.isNotEmpty()
     }
+
+   fun getSearchHistory(): String{
+       return sharedPreferences.getString("bookId", "") ?: ""
+   }
+
+    fun saveSearchHistory(bookId:Int){
+        val editor = sharedPreferences.edit()
+        if(getSearchHistory().split(":").size<9){
+            editor.putString("bookId", "${getSearchHistory()}$bookId:")
+        }else{
+            editor.putString("bookId", "${getSearchHistory().substring(1)}$bookId:")
+        }
+        editor.apply()
+    }
+
+    fun removedFromHistory(bookId: Int){
+        val editor = sharedPreferences.edit()
+        var newString = ""
+        getSearchHistory().split(":").forEach {
+            if(
+                it != ""
+            ){
+                if (it.toInt() != bookId) {
+                    newString = "${newString}$it:"
+                }
+            }
+        }
+        editor.putString("bookId", newString)
+        editor.apply()
+    }
 }

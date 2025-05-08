@@ -1,7 +1,6 @@
 package com.example.swapup.ui.screens
 
 import android.content.Context
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -66,7 +65,7 @@ import com.example.swapup.viewmodel.state.UiState
 @Composable
 fun HomeScreen(
     navController: NavHostController,
-    bookVM: BookViewModel,
+    bookVM: BookViewModel
 ) {
     val context = LocalContext.current
     val uiState by bookVM.uiState
@@ -153,7 +152,8 @@ fun HomeScreen(
                             book = mainBook!!,
                             context = context,
                             onClick = {bookId->
-                                navController.navigate("${Routes.Info.name}/$bookId")
+                                bookVM.selectBook(bookId)
+                                navController.navigate(Routes.Info.name)
                             }
                         )
                         Spacer(Modifier.height(12.dp))
@@ -174,8 +174,8 @@ fun HomeScreen(
                             bookList = bookList,
                             context = context,
                             onBookClick = { id->
-                                Log.d("bookIdHome","$id")
-                                navController.navigate("${Routes.Info.name}/$id")
+                                bookVM.selectBook(id)
+                                navController.navigate(Routes.Info.name)
                             }
                         )
                     }

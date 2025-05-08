@@ -70,7 +70,7 @@ fun PdfViewerScreenUrl(
         }
         else -> {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text("Failed to download PDF.")
+                Text("Failed to download PDF...")
             }
         }
     }
@@ -156,7 +156,7 @@ fun PdfViewerScreen(vm: PdfViewModel, navController: NavController) {
 
                 Button(onClick = {
                     vm.updateLastViewedPage(listState.firstVisibleItemIndex)
-                    navController.navigate(Routes.Info.name)
+                    navController.popBackStack()
                 }, modifier = Modifier.padding(8.dp)) {
                     Text("Close PDF")
                 }

@@ -1,9 +1,11 @@
 package com.example.swapup.viewmodel
 
+import android.content.ContentValues.TAG
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.pdf.PdfRenderer
 import android.os.ParcelFileDescriptor
+import android.util.Log
 import androidx.collection.LruCache
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
@@ -28,7 +30,7 @@ class PdfViewModel : ViewModel() {
     private val _uiState = mutableStateOf<UiState>(UiState.Idle)
     val uiState: State<UiState> get() = _uiState
 
-    private var pdfUrl = mutableStateOf<String?>(null)
+    private var pdfUrl = mutableStateOf<String?>("http://handybook.uz/frontend/web/file/701697625957.pdf")
 
     private var pdfFile = mutableStateOf<File?>(null)
 
@@ -44,17 +46,20 @@ class PdfViewModel : ViewModel() {
 
     fun downloadPdf(context: Context) {
         viewModelScope.launch {
-            try {
-                _uiState.value = UiState.Loading
-                val downloaded = withContext(Dispatchers.IO) {
-                    pdfUrl.value?.let { downloadPdfFile(context, it) }
+            _uiState.value = UiState.Loading
+            val result = runCatching {
+                withContext(Dispatchers.IO) {
+                    downloadPdfFile(context, pdfUrl.value!!)
                 }
-                pdfFile.value = downloaded
-                isRendererClosed = false
+            }
+
+            result.onSuccess { file ->
+                pdfFile.value = file
                 _uiState.value = UiState.Success
-            } catch (e: Exception) {
-                _uiState.value = UiState.Error(e.message.toString())
-                e.printStackTrace()
+                isRendererClosed = false
+            }.onFailure { error ->
+                error.printStackTrace()
+                _uiState.value = UiState.Error(error.message.toString())
             }
         }
     }
@@ -113,23 +118,28 @@ class PdfViewModel : ViewModel() {
     }
 
     private fun downloadPdfFile(context: Context, urlStr: String): File {
-        val url = URL(urlStr)
-        val connection = url.openConnection() as HttpURLConnection
-        connection.connectTimeout = 15000
-        connection.readTimeout = 15000
-        connection.connect()
+        try {
+            val url = URL(urlStr)
+            val connection = url.openConnection() as HttpURLConnection
+            connection.connectTimeout = 15000
+            connection.readTimeout = 15000
+            connection.connect()
 
-        if (connection.responseCode != HttpURLConnection.HTTP_OK) {
-            throw Exception("HTTP error code: ${connection.responseCode}")
-        }
-
-        val file = File.createTempFile("temp_pdf", ".pdf", context.cacheDir)
-        file.outputStream().use { output ->
-            connection.inputStream.use { input ->
-                input.copyTo(output)
+            if (connection.responseCode != HttpURLConnection.HTTP_OK) {
+                throw Exception("HTTP error code: ${connection.responseCode}")
             }
+
+            val file = File.createTempFile("temp_pdf", ".pdf", context.cacheDir)
+            file.outputStream().use { output ->
+                connection.inputStream.use { input ->
+                    input.copyTo(output)
+                }
+            }
+            return file
+        }catch (e: Exception){
+            println("❌ downloadPdfFile() failed: ${e.message}")
+            throw e
         }
-        return file
     }
 
     fun pageCount(): Int{

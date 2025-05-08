@@ -1,5 +1,6 @@
 package com.example.swapup.ui.screens
 
+import android.content.ContentValues.TAG
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
@@ -61,18 +62,22 @@ import com.example.swapup.data.model.Comment
 import com.example.swapup.navigation.Routes
 import com.example.swapup.ui.theme.DarkBlue
 import com.example.swapup.ui.theme.SkyBlue
-import com.example.swapup.viewmodel.InfoViewModel
+import com.example.swapup.viewmodel.BookViewModel
+import com.example.swapup.viewmodel.FireStoreViewModel
 import com.example.swapup.viewmodel.PdfViewModel
 import com.example.swapup.viewmodel.state.UiState
 
 @Composable
 fun InfoScreen(
     navController: NavHostController,
-    vm: InfoViewModel,
+    vm: FireStoreViewModel,
+    bookVM: BookViewModel,
     pdfVM: PdfViewModel,
 ) {
 
-    val book by vm.selectedBook.observeAsState(Book())
+    val bookList by bookVM.bookList.observeAsState(emptyList())
+    val selectedBook = bookVM.selectedBook
+    val book = bookList.find { it.id == selectedBook }!!
     val isBookSaved by vm.isBookSaved.observeAsState(false)
 
     val uiState by vm.uiState
