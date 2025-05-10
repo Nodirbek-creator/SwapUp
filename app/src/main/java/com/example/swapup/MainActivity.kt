@@ -5,7 +5,13 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -27,7 +33,9 @@ import com.example.swapup.ui.screens.MainScreen
 import com.example.swapup.ui.screens.PdfViewerScreenUrl
 import com.example.swapup.ui.screens.ProfileScreen
 import com.example.swapup.ui.screens.SearchScreen
+import com.example.swapup.ui.screens.SettingsScreen
 import com.example.swapup.ui.screens.SignUpScreen
+import com.example.swapup.ui.theme.DarkBlue
 import com.example.swapup.viewmodel.BookViewModel
 import com.example.swapup.viewmodel.FireStoreViewModel
 import com.example.swapup.viewmodel.LoginViewModel
@@ -37,6 +45,9 @@ import com.example.swapup.viewmodel.PdfViewModel
 import com.example.swapup.viewmodel.ProfileViewModel
 import com.example.swapup.viewmodel.SearchViewModel
 import com.example.swapup.viewmodel.SignUpViewModel
+import com.yariksoffice.lingver.Lingver
+import org.intellij.lang.annotations.Language
+import java.util.Locale
 
 class MainActivity : ComponentActivity() {
     override fun onStart() {
@@ -45,6 +56,8 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        val localLanguage = Locale.getDefault().language
+        Lingver.getInstance().setLocale(this, localLanguage)
         val connectivityObserver = NetworkConnectivityObserver(this)
         val networkViewModel = NetworkViewModel(connectivityObserver)
         val dataManager = DataManager(this)
@@ -52,16 +65,23 @@ class MainActivity : ComponentActivity() {
             val status = networkViewModel.networkStatus.collectAsState()
             val navController = rememberNavController()
 //            Log.d("user","${dataManager.getUser()}")
-            val startDestination =
-                if(dataManager.userLogged()){ Routes.Main.name }
-                else {Routes.Login.name}
+//            val startDestination =
+//                if(dataManager.userLogged()){ Routes.Main.name }
+//                else {Routes.Login.name}
 //            Log.d("currentUser","${dataManager.getUser()}")
             when(status.value) {
+                null ->{
+                    Box(modifier = Modifier.fillMaxSize()){
+                        CircularProgressIndicator(
+                            color = DarkBlue,
+                            modifier = Modifier.align(Alignment.Center))
+                    }
+                }
                 ConnectivityObserver.Status.Available->{
                     val authRepository = AuthRepository(RetrofitInstance.api, dataManager)
                     NavHost(
                         navController = navController,
-                        startDestination = startDestination
+                        startDestination = Routes.Main.name
                     ) {
                         composable(Routes.Login.name) {
                             val loginViewModel = LoginViewModel(authRepository)
@@ -145,7 +165,18 @@ class MainActivity : ComponentActivity() {
                                     navController = navController,
                                     vm = mainViewModel,
                                     content = {
-
+                                        SettingsScreen(
+                                            localLanguage = localLanguage,
+                                            onEnglishClick = {
+                                                changeLanguage("en")
+                                            },
+                                            onUzbekClick = {
+                                                changeLanguage("uz")
+                                            },
+                                            onRussianClick = {
+                                                changeLanguage("ru")
+                                            }
+                                        )
                                     },
                                     bookVM = bookViewModel
                                 )
@@ -190,22 +221,28 @@ class MainActivity : ComponentActivity() {
                 ConnectivityObserver.Status.Losing->{
                     ErrorScreen(
                         R.drawable.wifi_warning,
-                        text = "Warning! Your connection is unstable"
+                        text = stringResource(R.string.network_losing)
                     )
                 }
                 ConnectivityObserver.Status.Lost->{
                     ErrorScreen(
                         R.drawable.wifi_lost,
-                        text = "Internet connection is lost"
+                        text = stringResource(R.string.network_lost)
                     )
                 }
                 ConnectivityObserver.Status.Unavailable->{
                     ErrorScreen(
                         R.drawable.no_connection,
-                        text = "No network available.\nPlease try again"
+                        text = stringResource(R.string.network_unavailable)
                     )
                 }
             }
         }
     }
+    private fun changeLanguage(language: String){
+        Lingver.getInstance().setLocale(this, language)
+        recreate()
+    }
 }
+
+

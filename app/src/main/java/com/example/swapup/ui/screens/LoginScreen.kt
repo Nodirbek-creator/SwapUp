@@ -124,7 +124,7 @@ fun LoginScreen(
         )
         Spacer(Modifier.height(32.dp))
         Text(
-            text = "Hisobingizga kiring",
+            text = stringResource(R.string.login_title),
             fontSize = 20.sp,
             fontWeight = FontWeight.W700,
             color = DarkBlue,
@@ -178,7 +178,7 @@ fun LoginScreen(
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             Text(
-                text = "Password",
+                text = stringResource(R.string.password),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.W600,
                 color = DarkBlue,
@@ -234,7 +234,7 @@ fun LoginScreen(
             ),
         ) {
             Text(
-                text = "Kirish",
+                text = stringResource(R.string.login),
                 fontWeight = FontWeight.W500,
                 fontSize = 15.sp,
                 modifier = Modifier.padding(vertical = 8.dp)
@@ -246,7 +246,7 @@ fun LoginScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Hisobingiz yo'qmi? ",
+                text = "${stringResource(R.string.login_subtitle1)} ",
                 fontSize = 14.sp,
                 fontWeight = FontWeight.W500,
                 color = DarkBlue
@@ -256,7 +256,7 @@ fun LoginScreen(
                 contentPadding = PaddingValues(0.dp)
             ) {
                 Text(
-                    text = "Ro'yxatdan o'ting",
+                    text = stringResource(R.string.login_subtitle2),
                     fontSize = 14.sp,
                     fontWeight = FontWeight.W500,
                     color = SkyBlue
@@ -315,7 +315,7 @@ fun ErrorDialog(errorMessage: String,
                 border = BorderStroke(1.dp, DarkBlue)
             ) {
                 Text(
-                    text = "Cancel"
+                    text = stringResource(R.string.cancel)
                 )
             }
         }

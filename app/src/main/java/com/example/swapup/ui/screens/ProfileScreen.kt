@@ -135,7 +135,8 @@ fun ProfileScreen(
                             context = context,
                             modifier = Modifier.size(width = 250.dp, height = 120.dp),
                             onClick = {bookId ->
-                                navController.navigate("${Routes.Info.name}/${bookId}")
+                                bookVM.selectBook(bookId)
+                                navController.navigate(Routes.Info.name)
                             }
                         )
                     }
@@ -160,7 +161,8 @@ fun ProfileScreen(
                             context = context,
                             modifier = Modifier.size(width = 250.dp, height = 120.dp),
                             onClick = {bookId ->
-                                navController.navigate("${Routes.Info.name}/${bookId}")
+                                bookVM.selectBook(bookId)
+                                navController.navigate(Routes.Info.name)
                             }
                         )
                     }
@@ -185,7 +187,8 @@ fun ProfileScreen(
                             context = context,
                             modifier = Modifier.size(width = 250.dp, height = 120.dp),
                             onClick = {bookId ->
-                                navController.navigate("${Routes.Info.name}/${bookId}")
+                                bookVM.selectBook(bookId)
+                                navController.navigate(Routes.Info.name)
                             }
                         )
                     }
@@ -225,7 +228,7 @@ fun ProfileBox(
                 fontSize = 24.sp,
                 color = DarkBlue)
             Text(
-                text = user.username+"@gmail.com",
+                text = user.email,
                 fontWeight = FontWeight.W200,
                 fontSize = 18.sp,
                 color = Color.LightGray

@@ -4,7 +4,7 @@
     <string name="username_format">Username @ belgisi bilan boshlanishi va kamida 5ta simvoldan iborat bo\'lishi lozim.</string>
     <string name="password_format">Parol kamida 8ta simvoldan iborat bo\'lishi lozim</string>
     <string name="fullname_format">Ism va Familiya probel bilan ajratilishi lozim</string>
-    <string name="TG_channel">https://t.me/freestyle_path</string>
+    <string name="TG_channel">" "</string>
     <string name="password">Parol</string>
     <string name="fullname">Ism, Familiya</string>
     <string name="login">Kirish</string>
@@ -18,8 +18,8 @@
     <string name="username_title">Telegram username</string>
     <string name="main_page">Bosh sahifa</string>
     <string name="search">Qidiruv</string>
-    <string name="articles">Maqolalar</string>
-    <string name="saved">Saqlangan kitoblar</string>
+    <string name="offer">Taklif</string>
+    <string name="demand">Talab</string>
     <string name="settings">Sozlamalar</string>
     <string name="telegram">Telegram kanalimiz</string>
     <string name="share">Ulashish</string>
@@ -38,4 +38,15 @@
     <string name="leave_opinion">Kitob haqida o\'z fikringizni yozib qoldiring</string>
     <string name="submit">Jo\'natish</string>
     <string name="cancel">Bekor qilish</string>
+    <string name="english">Ingliz tili</string>
+    <string name="uzbek">O\'zbek tili</string>
+    <string name="russian">Rus tili</string>
+    <string name="signUp_subtitle1">Hisobingiz bormi?</string>
+    <string name="signUp_subtitle2">Hisobingizga kiring</string>
+    <string name="search_placeholder">Kitobni qidiring...</string>
+    <string name="read_now">Hoziroq o\'qish</string>
+    <string name="search_history">Yaqinda izlangan Kitoblar</string>
+    <string name="network_unavailable">Tarmoq mavjud emas. Iltimos, qaytadan urinib ko‘ring.</string>
+    <string name="network_losing">Ogohlantirish! Aloqangiz beqaror.</string>
+    <string name="network_lost">Internet aloqasi uzildi.</string>
 </resources>

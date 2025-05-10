@@ -14,6 +14,6 @@ class NetworkViewModel(
         .stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(5000),
-            ConnectivityObserver.Status.Lost
+            initialValue = null
         )
 }

@@ -37,12 +37,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.swapup.R
 import com.example.swapup.navigation.Routes
 import com.example.swapup.ui.theme.DarkBlue
 import com.example.swapup.viewmodel.SearchViewModel
@@ -85,7 +87,7 @@ fun SearchScreen(
                     )
                 }
             },
-            placeholder = { Text("Kitob yoki muallifni qidiring...", fontWeight = FontWeight.W500, fontSize = 12.sp) },
+            placeholder = { Text(stringResource(R.string.search_placeholder), fontWeight = FontWeight.W500, fontSize = 12.sp) },
             colors = OutlinedTextFieldDefaults.colors(
                 unfocusedLeadingIconColor = Color.LightGray,
                 unfocusedPlaceholderColor = Color.LightGray,
@@ -112,7 +114,7 @@ fun SearchScreen(
                 ){
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
-                        "Yaqinda Izlangan Kitoblar",
+                        stringResource(R.string.search_history),
                         fontSize = 24.sp,
                         modifier = Modifier.fillMaxWidth(0.85f),
                         textAlign = TextAlign.Start

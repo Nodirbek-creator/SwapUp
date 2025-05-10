@@ -57,6 +57,7 @@ import com.example.swapup.viewmodel.BookViewModel
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import com.example.swapup.data.model.Category
 import com.example.swapup.navigation.Routes
@@ -135,7 +136,7 @@ fun HomeScreen(
                                     )
                                 }
                             },
-                            placeholder = {Text("Kitob yoki muallifni qidiring...", fontWeight = FontWeight.W500, fontSize = 12.sp)},
+                            placeholder = {Text(stringResource(R.string.search_placeholder), fontWeight = FontWeight.W500, fontSize = 12.sp)},
                             colors = OutlinedTextFieldDefaults.colors(
                                 unfocusedLeadingIconColor = Color.LightGray,
                                 unfocusedPlaceholderColor = Color.LightGray,
@@ -263,7 +264,7 @@ fun MainBook(
                 ),
                 shape = RoundedCornerShape(8.dp)
             ) {
-                Text("Hoziroq o'qish", fontWeight = FontWeight.W500, fontSize = 10.sp)
+                Text(stringResource(R.string.read_now), fontWeight = FontWeight.W500, fontSize = 10.sp)
             }
         }
         ImageLoader(
@@ -299,7 +300,7 @@ fun TitleText(
             contentPadding = PaddingValues(0.dp)
         ) {
             Text(
-                text = "Barchasini ko'rish",
+                text = stringResource(R.string.see_all),
                 fontSize = 14.sp,
                 fontWeight = FontWeight.W500,
                 color = SkyBlue

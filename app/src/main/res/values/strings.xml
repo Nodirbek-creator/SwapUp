@@ -16,8 +16,8 @@
     <string name="username_title">Telegram username</string>
     <string name="main_page">Main page</string>
     <string name="search">Search</string>
-    <string name="articles">Articles</string>
-    <string name="saved">Saved books</string>
+    <string name="offer">Offer</string>
+    <string name="demand">Demand</string>
     <string name="settings">Settings</string>
     <string name="telegram">Our Telegram channel</string>
     <string name="share">Share</string>
@@ -36,5 +36,16 @@
     <string name="leave_opinion">Leave your opinion about the book</string>
     <string name="submit">Submit</string>
     <string name="cancel">Cancel</string>
+    <string name="english">English</string>
+    <string name="uzbek">Uzbek</string>
+    <string name="russian">Russian</string>
+    <string name="signUp_subtitle1">Have an account?</string>
+    <string name="signUp_subtitle2">Login</string>
+    <string name="search_placeholder">Search a book...</string>
+    <string name="read_now">Read now</string>
+    <string name="search_history">Recently searched books</string>
+    <string name="network_unavailable">No network available. Please try again</string>
+    <string name="network_losing">Warning! Your connection is unstable</string>
+    <string name="network_lost">Internet connection is lost</string>
 
 </resources>

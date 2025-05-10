@@ -45,6 +45,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -150,44 +151,44 @@ fun NavigationDrawerSheet(
 ){
     val navigationItems = listOf(
         DrawerItem(
-            title = "Bosh Sahifa",
+            title = stringResource(R.string.main_page),
             route = Routes.Home.name,
             icon = R.drawable.book
         ),
         DrawerItem(
-            title = "Qidiruv",
+            title = stringResource(R.string.search),
             route = Routes.Search.name,
             icon = R.drawable.search
         ),
         DrawerItem(
-            title = "Taklif",
+            title = stringResource(R.string.offer),
             route = Routes.Offer.name,
             icon = R.drawable.offer
         ),
         DrawerItem(
-            title = "Talab",
+            title = stringResource(R.string.demand),
             route = Routes.Demand.name,
             icon = R.drawable.demand
         ),
         DrawerItem(
-            title = "Sozlamalar",
+            title = stringResource(R.string.settings),
             route = Routes.Settings.name,
             icon = R.drawable.setting
         ),
         //divider
         DrawerItem(
-            title = "Telegram kanalimiz",
+            title = stringResource(R.string.telegram),
             route = "Telegram",
             icon = R.drawable.telegram
         ),
         DrawerItem(
-            title = "Ulashish",
+            title = stringResource(R.string.share),
             route = "Share",
             icon = R.drawable.share
         ),
         //divider
         DrawerItem(
-            title = "Hisobdan chiqish",
+            title = stringResource(R.string.logout),
             route = Routes.Login.name,
             icon = R.drawable.exit
         )
@@ -289,11 +290,11 @@ fun TopNavigationBar(
     onProfileClick:() -> Unit){
     val currentRoute = getCurrentRoute(navController) ?: ""
     val title = when(currentRoute){
-        Screen.Home.route -> "Bosh Sahifa"
-        Screen.Search.route -> "Qidiruv"
-        Screen.Offer.route -> "Taklif"
-        Screen.Demand.route -> "Talab"
-        Screen.Settings.route -> "Sozlamalar"
+        Screen.Home.route -> stringResource(R.string.main_page)
+        Screen.Search.route -> stringResource(R.string.search)
+        Screen.Offer.route -> stringResource(R.string.offer)
+        Screen.Demand.route -> stringResource(R.string.demand)
+        Screen.Settings.route -> stringResource(R.string.settings)
         Screen.Category.route -> bookVM.selectedCategory.typename ?: ""
         else -> ""
     }

@@ -113,7 +113,7 @@ fun InfoScreen(
             ) {
                 IconButton(
                     onClick = {
-                        navController.navigate(Routes.Home.name)
+                        navController.popBackStack()
                     }
                 ) {
                     Icon(

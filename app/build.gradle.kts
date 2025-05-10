@@ -42,7 +42,7 @@ android {
 }
 
 dependencies {
-
+    implementation (libs.lingver)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.retrofit)
     implementation(libs.converter.gson)

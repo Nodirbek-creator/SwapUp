@@ -115,7 +115,7 @@ fun SignUpScreen(
                 )
             }
             Text(
-                text = "Ro'yhatdan o'tish",
+                text = stringResource(R.string.signup_title),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.W700,
                 color = DarkBlue,
@@ -172,7 +172,7 @@ fun SignUpScreen(
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             Text(
-                text = "Familiya va Ism",
+                text = stringResource(R.string.fullname),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.W600,
                 color = DarkBlue,
@@ -213,7 +213,7 @@ fun SignUpScreen(
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             Text(
-                text = "Email",
+                text = stringResource(R.string.email),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.W600,
                 color = DarkBlue,
@@ -254,7 +254,7 @@ fun SignUpScreen(
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             Text(
-                text = "Parol",
+                text = stringResource(R.string.password),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.W600,
                 color = DarkBlue,
@@ -311,7 +311,7 @@ fun SignUpScreen(
             )
         ) {
             Text(
-                text = "Ro'yhatdan o'tish",
+                text = stringResource(R.string.signup),
                 fontWeight = FontWeight.W500,
                 fontSize = 15.sp,
                 modifier = Modifier.padding(vertical = 8.dp)
@@ -323,7 +323,7 @@ fun SignUpScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Hisobingiz bormi? ",
+                text = stringResource(R.string.signUp_subtitle1)+" ",
                 fontSize = 14.sp,
                 fontWeight = FontWeight.W500,
                 color = DarkBlue
@@ -333,7 +333,7 @@ fun SignUpScreen(
                 contentPadding = PaddingValues(0.dp)
             ) {
                 Text(
-                    text = "Hisobingiza kiring",
+                    text = stringResource(R.string.signUp_subtitle2),
                     fontSize = 14.sp,
                     fontWeight = FontWeight.W500,
                     color = SkyBlue
