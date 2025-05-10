@@ -52,7 +52,7 @@ import com.example.swapup.viewmodel.SearchViewModel
 @Composable
 fun SearchScreen(
     navController: NavHostController,
-    vm: SearchViewModel
+    vm: SearchViewModel,
 ){
     vm.getHistory()
     val searchQuery by vm.searchQuery.collectAsState()
