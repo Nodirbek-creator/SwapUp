@@ -32,7 +32,6 @@ class FirestoreRepo(private val firestore: FirebaseFirestore ) {
                 .collection("savedBooks")
                 .get()
                 .await()
-            Log.d("book","result: ${book}")
             val book = snapshot.documents.mapNotNull { it.toObject<Book>() }.find{ it.equals(book)}
             if(book == null){
                 false

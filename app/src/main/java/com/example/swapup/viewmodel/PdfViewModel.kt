@@ -30,7 +30,7 @@ class PdfViewModel : ViewModel() {
     private val _uiState = mutableStateOf<UiState>(UiState.Idle)
     val uiState: State<UiState> get() = _uiState
 
-    private var pdfUrl = mutableStateOf<String?>("http://handybook.uz/frontend/web/file/701697625957.pdf")
+    private var pdfUrl = mutableStateOf<String?>("http://handybook.uz/frontend/web/file/911697626217.pdf")
 
     private var pdfFile = mutableStateOf<File?>(null)
 
@@ -46,6 +46,7 @@ class PdfViewModel : ViewModel() {
 
     fun downloadPdf(context: Context) {
         viewModelScope.launch {
+            Log.d("pdfUrl","${pdfUrl.value}")
             _uiState.value = UiState.Loading
             val result = runCatching {
                 withContext(Dispatchers.IO) {
@@ -56,11 +57,16 @@ class PdfViewModel : ViewModel() {
             result.onSuccess { file ->
                 pdfFile.value = file
                 _uiState.value = UiState.Success
+                Log.d("uiState","${_uiState.value}")
+                Log.d("pdfFile","${pdfFile.value}")
+                Log.d("pdfRenderer","${pdfRenderer.value}")
                 isRendererClosed = false
             }.onFailure { error ->
+                Log.d("pdfDownloadFailed?","${result.isFailure}")
                 error.printStackTrace()
                 _uiState.value = UiState.Error(error.message.toString())
             }
+            Log.d("pdfDownloadResult","${result}")
         }
     }
 
@@ -103,8 +109,10 @@ class PdfViewModel : ViewModel() {
 
 
     fun openPdfRenderer() {
+        Log.d("pdfFile2","${pdfFile.value}")
         val descriptor = ParcelFileDescriptor.open(pdfFile.value, ParcelFileDescriptor.MODE_READ_ONLY)
         pdfRenderer.value = PdfRenderer(descriptor)
+        Log.d("pdfRenderer2","${pdfRenderer.value}")
     }
 
     private fun renderPage(renderer: PdfRenderer, index: Int): Bitmap {

@@ -6,6 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
@@ -31,25 +32,30 @@ import com.example.swapup.viewmodel.BookViewModel
 import com.example.swapup.viewmodel.FireStoreViewModel
 import com.example.swapup.viewmodel.LoginViewModel
 import com.example.swapup.viewmodel.MainViewModel
+import com.example.swapup.viewmodel.NetworkViewModel
 import com.example.swapup.viewmodel.PdfViewModel
 import com.example.swapup.viewmodel.ProfileViewModel
 import com.example.swapup.viewmodel.SearchViewModel
 import com.example.swapup.viewmodel.SignUpViewModel
 
 class MainActivity : ComponentActivity() {
+    override fun onStart() {
+        super.onStart()
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         val connectivityObserver = NetworkConnectivityObserver(this)
+        val networkViewModel = NetworkViewModel(connectivityObserver)
         val dataManager = DataManager(this)
         setContent {
-            val status = connectivityObserver.observe()
-                .collectAsState(initial = ConnectivityObserver.Status.Available)
+            val status = networkViewModel.networkStatus.collectAsState()
             val navController = rememberNavController()
+//            Log.d("user","${dataManager.getUser()}")
             val startDestination =
                 if(dataManager.userLogged()){ Routes.Main.name }
                 else {Routes.Login.name}
-            Log.d("currentUser","${dataManager.getUser()}")
+//            Log.d("currentUser","${dataManager.getUser()}")
             when(status.value) {
                 ConnectivityObserver.Status.Available->{
                     val authRepository = AuthRepository(RetrofitInstance.api, dataManager)
@@ -161,7 +167,7 @@ class MainActivity : ComponentActivity() {
                                 )
                             }
                             composable(Routes.Pdf.name){
-                                val pdfViewModel = PdfViewModel()
+                                val pdfViewModel: PdfViewModel = viewModel()
                                 PdfViewerScreenUrl(
                                     navController = navController,
                                     vm = pdfViewModel

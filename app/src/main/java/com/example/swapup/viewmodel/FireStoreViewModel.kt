@@ -71,9 +71,11 @@ class FireStoreViewModel(
                 val result = response.await()
                 if(result){
                     _isBookSaved.value = true
+                    idle()
                 }
                 else{
                     _isBookSaved.value = false
+                    idle()
                 }
             } catch (e: Exception){
                 error("${e.localizedMessage}")
@@ -91,7 +93,6 @@ class FireStoreViewModel(
                 if(bookResponse.isSuccessful && commentResponse.isSuccessful){
                     _commentList.value = commentResponse.body()
                     _selectedBook.value = bookResponse.body()
-                    idle()
                 }
                 else{
                     error("Failed to load data")

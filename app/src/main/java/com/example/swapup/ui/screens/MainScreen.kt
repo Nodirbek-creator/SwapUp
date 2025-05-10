@@ -162,12 +162,12 @@ fun NavigationDrawerSheet(
         DrawerItem(
             title = "Taklif",
             route = Routes.Offer.name,
-            icon = R.drawable.feather
+            icon = R.drawable.offer
         ),
         DrawerItem(
             title = "Talab",
             route = Routes.Demand.name,
-            icon = R.drawable.saved_border
+            icon = R.drawable.demand
         ),
         DrawerItem(
             title = "Sozlamalar",

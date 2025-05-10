@@ -68,11 +68,15 @@ fun PdfViewerScreenUrl(
          is UiState.Success-> {
             PdfViewerScreen(vm = vm, navController = navController)
         }
-        else -> {
+        is UiState.Error -> {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Text("Failed to download PDF...")
             }
         }
+        is UiState.Idle->{
+//            PdfViewerScreen(vm = vm, navController = navController)
+        }
+
     }
 
 }

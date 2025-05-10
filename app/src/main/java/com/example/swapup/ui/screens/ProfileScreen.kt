@@ -135,7 +135,7 @@ fun ProfileScreen(
                             context = context,
                             modifier = Modifier.size(width = 250.dp, height = 120.dp),
                             onClick = {bookId ->
-
+                                navController.navigate("${Routes.Info.name}/${bookId}")
                             }
                         )
                     }
@@ -160,7 +160,7 @@ fun ProfileScreen(
                             context = context,
                             modifier = Modifier.size(width = 250.dp, height = 120.dp),
                             onClick = {bookId ->
-
+                                navController.navigate("${Routes.Info.name}/${bookId}")
                             }
                         )
                     }
@@ -185,7 +185,7 @@ fun ProfileScreen(
                             context = context,
                             modifier = Modifier.size(width = 250.dp, height = 120.dp),
                             onClick = {bookId ->
-
+                                navController.navigate("${Routes.Info.name}/${bookId}")
                             }
                         )
                     }
