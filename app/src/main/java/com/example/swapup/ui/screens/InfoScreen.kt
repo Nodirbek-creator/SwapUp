@@ -56,30 +56,35 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.swapup.R
+import com.example.swapup.data.model.Book
 import com.example.swapup.data.model.Comment
 import com.example.swapup.navigation.Routes
 import com.example.swapup.ui.theme.DarkBlue
 import com.example.swapup.ui.theme.SkyBlue
-import com.example.swapup.viewmodel.BookViewModel
-import com.example.swapup.viewmodel.FireStoreViewModel
-import com.example.swapup.viewmodel.PdfViewModel
+import com.example.swapup.viewmodel.InfoViewModel
 import com.example.swapup.viewmodel.state.UiState
+import java.net.URLEncoder
 
 @Composable
 fun InfoScreen(
     navController: NavHostController,
-    vm: FireStoreViewModel,
-    bookVM: BookViewModel,
-    pdfVM: PdfViewModel,
+    vm: InfoViewModel,
+    bookId: Int
 ) {
-
-    val bookList by bookVM.bookList.observeAsState(emptyList())
-    val selectedBook = bookVM.selectedBook
-    val book = bookList.find { it.id == selectedBook }!!
-    val isBookSaved by vm.isBookSaved.observeAsState(false)
-
     val uiState by vm.uiState
     val context = LocalContext.current
+
+    if(vm.selectedBook == null){
+        vm.fetchBookInfo(bookId)
+    }
+
+    val book = vm.selectedBook?: Book()
+    val isBookSaved by vm.isBookSaved.observeAsState(false)
+
+    val bookType = vm.bookType
+    val bookInfo = vm.bookInfo
+
+    val comments by vm.commentList.observeAsState(emptyList())
     when(uiState){
         is UiState.Loading->{
             LoadingScreen()
@@ -92,11 +97,6 @@ fun InfoScreen(
 
         }
     }
-
-    val bookType = vm.bookType
-    val bookInfo = vm.bookInfo
-
-    val comments by vm.commentList.observeAsState(emptyList())
 
     Scaffold (
         topBar = {
@@ -156,8 +156,8 @@ fun InfoScreen(
                     Card(
                         modifier = Modifier.fillMaxWidth(0.9f),
                         onClick = {
-                            pdfVM.sendUrl(book.file)
-                            navController.navigate(Routes.Pdf.name)
+                            val encodedUrl = URLEncoder.encode(book.file, "UTF-8")
+                            navController.navigate("${Routes.Pdf.name}/$bookId/$encodedUrl")
                         }
                     ) {
                         Row(
@@ -171,9 +171,9 @@ fun InfoScreen(
                                 horizontalArrangement = Arrangement.Center,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Text(if(pdfVM.lastViewedPage == 0) " O'qishni boshlash " else " O'qishni davom ettirish", color = SkyBlue, fontSize = 18.sp)
+                                Text(if(vm.getBookInfo(bookId) == 0) " O'qishni boshlash " else " O'qishni davom ettirish", color = SkyBlue, fontSize = 18.sp)
                             }
-                            if(pdfVM.lastViewedPage != 0 && pdfVM.pageCount() != 0){
+                            if(vm.getBookInfo(bookId) != 0 && book.count_page != 0){
                                 Row(
                                     modifier = Modifier
                                         .weight(2f)
@@ -182,7 +182,7 @@ fun InfoScreen(
                                     horizontalArrangement = Arrangement.Center,
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    Text("${((pdfVM.lastViewedPage).toFloat()/(pdfVM.pageCount()).toFloat()*100).toInt()}%", color = DarkBlue, fontSize = 18.sp)
+                                    Text("${((vm.getBookInfo(bookId)).toFloat()/(book.count_page).toFloat()*100).toInt()}%", color = DarkBlue, fontSize = 18.sp)
                                 }
                             }
                         }

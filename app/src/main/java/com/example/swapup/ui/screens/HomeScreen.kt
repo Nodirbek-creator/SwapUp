@@ -1,9 +1,6 @@
 package com.example.swapup.ui.screens
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.util.Base64
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -22,8 +19,6 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
@@ -39,7 +34,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -64,12 +58,10 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import com.example.swapup.data.model.Category
 import com.example.swapup.navigation.Routes
 import com.example.swapup.viewmodel.state.UiState
-import kotlin.io.encoding.ExperimentalEncodingApi
 
 @Composable
 fun HomeScreen(
@@ -130,12 +122,14 @@ fun HomeScreen(
                 ) {
                     item {
                         OutlinedTextField(
-                            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp),
                             value = searchQuery,
                             onValueChange = bookVM::onQueryChange,
                             leadingIcon = {
                                 IconButton(
-                                    onClick = {navController.navigate("${Routes.Search.name}/${searchQuery}")}
+                                    onClick = {navController.navigate(Routes.Search.name)}
                                 ) {
                                     Icon(
                                         imageVector = Icons.Default.Search,
@@ -152,10 +146,6 @@ fun HomeScreen(
                                 focusedBorderColor = DarkBlue,
                                 focusedTextColor = DarkBlue,
                                 cursorColor = DarkBlue,
-                            ),
-                            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-                            keyboardActions = KeyboardActions(
-                                onSearch = {navController.navigate("${Routes.Search.name}/${searchQuery}")}
                             )
                         )
                         Spacer(Modifier.height(16.dp))
@@ -165,8 +155,7 @@ fun HomeScreen(
                             book = mainBook!!,
                             context = context,
                             onClick = {bookId->
-                                bookVM.selectBook(bookId)
-                                navController.navigate(Routes.Info.name)
+                                navController.navigate("${Routes.Info.name}/$bookId")
                             }
                         )
                         Spacer(Modifier.height(12.dp))
@@ -186,9 +175,8 @@ fun HomeScreen(
                         BooksCollection(
                             bookList = bookList,
                             context = context,
-                            onBookClick = { id->
-                                bookVM.selectBook(id)
-                                navController.navigate(Routes.Info.name)
+                            onBookClick = { bookId->
+                                navController.navigate("${Routes.Info.name}/$bookId")
                             }
                         )
                     }
@@ -218,7 +206,9 @@ fun Categories(
         }
         LazyRow(
             state = listState,
-            modifier = Modifier.padding(start = 16.dp, top = 8.dp, bottom = 8.dp).fillMaxWidth(),
+            modifier = Modifier
+                .padding(start = 16.dp, top = 8.dp, bottom = 8.dp)
+                .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
@@ -251,10 +241,17 @@ fun MainBook(
     onClick: (Int) -> Unit,
 ){
     Box(
-        modifier = Modifier.fillMaxWidth().height(200.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(200.dp),
     ){
         Column(
-            modifier = Modifier.fillMaxWidth().height(140.dp).background(DarkBlue).padding(horizontal = 20.dp).align(Alignment.BottomStart),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(140.dp)
+                .background(DarkBlue)
+                .padding(horizontal = 20.dp)
+                .align(Alignment.BottomStart),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.Start
         ){
@@ -297,7 +294,9 @@ fun TitleText(
     title: String
 ){
     Row(
-        modifier = Modifier.padding(horizontal = 16.dp).fillMaxWidth(),
+        modifier = Modifier
+            .padding(horizontal = 16.dp)
+            .fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -335,11 +334,15 @@ fun BooksCollection(
         if(bookList.isNotEmpty()){
             val rows = bookList.chunked(2)
             Column(
-                modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 16.dp),
             ) {
                 rows.forEachIndexed { index, rowItems ->
                     Row(
-                        modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 6.dp),
                         horizontalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
                         rowItems.forEach { book->
@@ -417,8 +420,6 @@ fun buildImageRequest(
         .build()
 }
 
-
-@OptIn(ExperimentalEncodingApi::class)
 @Composable
 fun ImageLoader(
     context: Context,
@@ -426,9 +427,7 @@ fun ImageLoader(
     modifier: Modifier,
     contentScale: ContentScale = ContentScale.Crop
 ){
-
     imageUrl?.let {
-
         AsyncImage(
             model = buildImageRequest(
                 context = context,

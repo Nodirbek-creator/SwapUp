@@ -13,6 +13,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.swapup.data.sharedpref.DataManager
 import com.example.swapup.viewmodel.state.UiState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -25,31 +26,34 @@ import java.net.URL
 
 private val renderLock = Any()
 
-class PdfViewModel : ViewModel() {
+class PdfViewModel(
+    private val dataManager: DataManager
+) : ViewModel() {
     private val _uiState = mutableStateOf<UiState>(UiState.Idle)
     val uiState: State<UiState> get() = _uiState
-
-    private var pdfUrl = mutableStateOf<String?>("http://handybook.uz/frontend/web/file/911697626217.pdf")
 
     private var pdfFile = mutableStateOf<File?>(null)
 
     private var pdfRenderer = mutableStateOf<PdfRenderer?>(null)
-
-    var lastViewedPage by mutableIntStateOf(0)
-        private set
 
     private var isRendererClosed = false
 
     private val cache = LruCache<Int, Bitmap>(10)
     private val renderJobs = mutableMapOf<Int, Job>()
 
-    fun downloadPdf(context: Context) {
+    private fun reset() {
+        clearJobs()
+        cache.evictAll()
+    }
+
+    fun downloadPdf(pdfUrl: String, context: Context) {
         viewModelScope.launch {
-            Log.d("pdfUrl","${pdfUrl.value}")
+            reset()
+            Log.d("pdfUrl", pdfUrl)
             _uiState.value = UiState.Loading
             val result = runCatching {
                 withContext(Dispatchers.IO) {
-                    downloadPdfFile(context, pdfUrl.value!!)
+                    downloadPdfFile(context, pdfUrl)
                 }
             }
 
@@ -67,14 +71,6 @@ class PdfViewModel : ViewModel() {
             }
             Log.d("pdfDownloadResult","${result}")
         }
-    }
-
-    fun updateLastViewedPage(index: Int) {
-        lastViewedPage = index
-    }
-
-    fun sendUrl(url:String){
-        pdfUrl.value = url
     }
 
     fun close(){
@@ -152,4 +148,13 @@ class PdfViewModel : ViewModel() {
     fun pageCount(): Int{
         return pdfRenderer.value?.pageCount?:0
     }
+
+    fun getBookInfo(bookId: Int): Int{
+        return dataManager.getBookInfo(bookId)
+    }
+
+    fun saveBookInfo(bookId: Int, page: Int){
+        dataManager.saveBookInfo(bookId, page)
+    }
+
 }

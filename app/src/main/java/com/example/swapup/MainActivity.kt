@@ -24,13 +24,11 @@ import com.example.swapup.data.sharedpref.DataManager
 import com.example.swapup.navigation.Routes
 import com.example.swapup.ui.screens.CategoryScreen
 import com.example.swapup.ui.screens.CommentScreen
-import com.example.swapup.ui.screens.CreateOffer
 import com.example.swapup.ui.screens.ErrorScreen
 import com.example.swapup.ui.screens.HomeScreen
 import com.example.swapup.ui.screens.InfoScreen
 import com.example.swapup.ui.screens.LoginScreen
 import com.example.swapup.ui.screens.MainScreen
-import com.example.swapup.ui.screens.OfferScreen
 import com.example.swapup.ui.screens.PdfViewerScreenUrl
 import com.example.swapup.ui.screens.ProfileScreen
 import com.example.swapup.ui.screens.SearchScreen
@@ -38,23 +36,19 @@ import com.example.swapup.ui.screens.SettingsScreen
 import com.example.swapup.ui.screens.SignUpScreen
 import com.example.swapup.ui.theme.DarkBlue
 import com.example.swapup.viewmodel.BookViewModel
-import com.example.swapup.viewmodel.FireStoreViewModel
+import com.example.swapup.viewmodel.InfoViewModel
 import com.example.swapup.viewmodel.LoginViewModel
 import com.example.swapup.viewmodel.MainViewModel
 import com.example.swapup.viewmodel.NetworkViewModel
-import com.example.swapup.viewmodel.CreateOfferViewModel
-import com.example.swapup.viewmodel.OfferViewModel
 import com.example.swapup.viewmodel.PdfViewModel
 import com.example.swapup.viewmodel.ProfileViewModel
 import com.example.swapup.viewmodel.SearchViewModel
 import com.example.swapup.viewmodel.SignUpViewModel
 import com.yariksoffice.lingver.Lingver
+import java.net.URLDecoder
 import java.util.Locale
 
 class MainActivity : ComponentActivity() {
-    override fun onStart() {
-        super.onStart()
-    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -66,7 +60,6 @@ class MainActivity : ComponentActivity() {
         setContent {
             val status = networkViewModel.networkStatus.collectAsState()
             val navController = rememberNavController()
-            val bookViewModel: BookViewModel = viewModel()
 //            Log.d("user","${dataManager.getUser()}")
 //            val startDestination =
 //                if(dataManager.userLogged()){ Routes.Main.name }
@@ -95,7 +88,8 @@ class MainActivity : ComponentActivity() {
                             SignUpScreen(navController, signUpViewModel)
                         }
                         navigation(startDestination = Routes.Home.name, route = Routes.Main.name) {
-                            val mainViewModel = MainViewModel(dataManager,navController = navController, bookViewModel = bookViewModel)
+                            val bookViewModel = BookViewModel()
+                            val mainViewModel = MainViewModel(dataManager, bookViewModel, navController)
                             composable(Routes.Home.name) {
                                 MainScreen(
                                     navController = navController,
@@ -105,7 +99,7 @@ class MainActivity : ComponentActivity() {
                                             navController = navController,
                                             bookVM = bookViewModel
                                         )
-                                    },
+                                    }
                                 )
                             }
                             composable(Routes.Category.name) {
@@ -117,24 +111,7 @@ class MainActivity : ComponentActivity() {
                                             navController,
                                             bookVM = bookViewModel
                                         )
-                                    },
-                                )
-                            }
-                            composable("${Routes.Search.name}/{query}") { backStack ->
-                                val query = backStack.arguments?.getString("query")
-                                val searchViewModel = SearchViewModel(
-                                    query?:"",
-                                    dataManager
-                                )
-                                MainScreen(
-                                    navController = navController,
-                                    vm = mainViewModel,
-                                    content = {
-                                        SearchScreen(
-                                            navController = navController,
-                                            vm = searchViewModel
-                                        )
-                                    },
+                                    }
                                 )
                             }
                             composable(Routes.Search.name) {
@@ -150,20 +127,15 @@ class MainActivity : ComponentActivity() {
                                             navController = navController,
                                             vm = searchViewModel
                                         )
-                                    },
+                                    }
                                 )
                             }
                             composable(Routes.Offer.name) {
-                                val offerViewModel: OfferViewModel = viewModel()
                                 MainScreen(
                                     navController = navController,
                                     vm = mainViewModel,
                                     content = {
-                                        OfferScreen(
-                                            navController,
-                                            offerViewModel
-                                        )
-                                    },
+                                    }
                                 )
                             }
                             composable(Routes.Demand.name) {
@@ -172,7 +144,7 @@ class MainActivity : ComponentActivity() {
                                     vm = mainViewModel,
                                     content = {
 
-                                    },
+                                    }
                                 )
                             }
                             composable(Routes.Settings.name) {
@@ -192,39 +164,37 @@ class MainActivity : ComponentActivity() {
                                                 changeLanguage("ru")
                                             }
                                         )
-                                    },
+                                    }
                                 )
                             }
 
-                            composable(Routes.Info.name) {
-                                val pdfViewModel: PdfViewModel = viewModel()
-                                val fireStoreViewModel = FireStoreViewModel(dataManager = dataManager, bookViewModel = bookViewModel)
+                            val pdfViewModel = PdfViewModel(dataManager)
+                            composable("${Routes.Info.name}/{bookId}") {backStack ->
+                                val infoViewModel = InfoViewModel(dataManager)
+                                val bookId = backStack.arguments?.getString("bookId")?.toInt()
                                 InfoScreen(
                                     navController = navController,
-                                    vm = fireStoreViewModel,
-                                    pdfVM = pdfViewModel,
-                                    bookVM = bookViewModel
+                                    vm = infoViewModel,
+                                    bookId = bookId!!
                                 )
                             }
+
                             composable(Routes.Comment.name) {
                                 CommentScreen(
                                     navController = navController
                                 )
                             }
-                            composable(Routes.Pdf.name){
-                                val pdfViewModel: PdfViewModel = viewModel()
+
+                            composable("${Routes.Pdf.name}/{bookId}/{pdfUrl}") { navBackStackEntry ->
+                                val bookId = navBackStackEntry.arguments?.getString("bookId")?.toInt()?:1
+                                val pdfUrl = URLDecoder.decode(navBackStackEntry.arguments?.getString("pdfUrl") ?: "", "UTF-8")
                                 PdfViewerScreenUrl(
                                     navController = navController,
-                                    vm = pdfViewModel
+                                    vm = pdfViewModel,
+                                    bookId = bookId,
+                                    pdfUrl = pdfUrl
                                 )
                             }
-                        }
-                        composable(Routes.CreateOffer.name){
-                            val offerViewModel = CreateOfferViewModel(dataManager, this@MainActivity)
-                            CreateOffer(
-                                navController,
-                                offerViewModel
-                            )
                         }
 
                         composable(Routes.Profile.name) {

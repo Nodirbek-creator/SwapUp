@@ -17,12 +17,10 @@ import com.example.swapup.data.sharedpref.DataManager
 import com.example.swapup.viewmodel.state.UiState
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class FireStoreViewModel(
-    private val dataManager: DataManager,
-    bookViewModel: BookViewModel
+class InfoViewModel(
+    private val dataManager: DataManager
 ): ViewModel() {
     val bookRepository = BookRepository(RetrofitInstance.api)
     val firebaseRepository = FirestoreRepo(FirebaseFirestore.getInstance())
@@ -31,9 +29,8 @@ class FireStoreViewModel(
     private val _uiState = mutableStateOf<UiState>(UiState.Idle)
     val uiState: State<UiState> get() = _uiState
 
-    private val bookId = bookViewModel.selectedBook
-
-    private val _selectedBook = MutableLiveData(Book())
+    var selectedBook by mutableStateOf<Book?>(null)
+        private set
 
     private val _commentList = MutableLiveData<List<Comment>>()
     val commentList: LiveData<List<Comment>> get() = _commentList
@@ -51,55 +48,44 @@ class FireStoreViewModel(
     fun changeBookInfo(newInfo: String){
         bookInfo = newInfo
     }
+
     private val _isBookSaved = MutableLiveData<Boolean>()
     val isBookSaved get() = _isBookSaved
 
-    init {
+    fun fetchBookInfo(bookId:Int){
         viewModelScope.launch {
-            val stage1 = async { loadInitialData() }
-            stage1.await()
-            delay(200)
-            isSaved()
+            loading()
+            val response = bookRepository.getBookById(bookId)
+            val response2 = bookRepository.getCommentById(bookId)
+            if(response.isSuccessful && response2.isSuccessful){
+                selectedBook = response.body()
+                _commentList.value = response2.body()
+                try {
+                    val response3 = async { firebaseRepository.isBookSaved(currentUser, selectedBook?: Book()) }
+                    val result = response3.await()
+                    if(result){
+                        _isBookSaved.value = true
+                    }
+                    else{
+                        _isBookSaved.value = false
+                    }
+                } catch (e: Exception){
+                    error("THIS IS THE MESSAGE${e.localizedMessage}")
+                }
+                success()
+            }else{
+                _uiState.value = UiState.Error(response.message()+"\n\b"+response2.message())
+            }
         }
+    }
 
+    fun getBookInfo(bookId: Int): Int {
+        return dataManager.getBookInfo(bookId)
     }
 
     fun isSaved(){
         viewModelScope.launch {
-            try {
-                val response = async { firebaseRepository.isBookSaved(currentUser, _selectedBook.value?: Book()) }
-                val result = response.await()
-                if(result){
-                    _isBookSaved.value = true
-                    idle()
-                }
-                else{
-                    _isBookSaved.value = false
-                    idle()
-                }
-            } catch (e: Exception){
-                error("${e.localizedMessage}")
-            }
-        }
-    }
-    fun loadInitialData(){
-        viewModelScope.launch {
-            try {
-                loading()
-                val book = async { bookRepository.getBookById(bookId) }
-                val comment = async { bookRepository.getCommentById(bookId) }
-                val bookResponse = book.await()
-                val commentResponse = comment.await()
-                if(bookResponse.isSuccessful && commentResponse.isSuccessful){
-                    _commentList.value = commentResponse.body()
-                    _selectedBook.value = bookResponse.body()
-                }
-                else{
-                    error("Failed to load data")
-                }
-            } catch (e: Exception){
-                error("${e.localizedMessage}")
-            }
+
         }
     }
 
@@ -107,10 +93,10 @@ class FireStoreViewModel(
         viewModelScope.launch {
             try {
                 loading()
-                val result = firebaseRepository.saveBook(_selectedBook.value!!, currentUser)
+                val result = firebaseRepository.saveBook(selectedBook!!, currentUser)
                 if(result){
                     _isBookSaved.value = true
-                    idle()
+                    success()
                 }
                 else{
                     error("Couldn't save the book")
@@ -123,10 +109,10 @@ class FireStoreViewModel(
     fun unsaveBook(){
         viewModelScope.launch {
             try {
-                val result = firebaseRepository.unsaveBook(_selectedBook.value!!, currentUser)
+                val result = firebaseRepository.unsaveBook(selectedBook!!, currentUser)
                 if(result){
                     isBookSaved.value = false
-                    idle()
+                    success()
                 }
                 else{
                     error("Couldn't unsave the book")
@@ -150,5 +136,4 @@ class FireStoreViewModel(
     fun error(msg: String){
         _uiState.value = UiState.Error(msg)
     }
-
 }

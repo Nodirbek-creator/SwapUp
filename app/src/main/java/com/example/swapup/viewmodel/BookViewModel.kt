@@ -38,9 +38,6 @@ class BookViewModel: ViewModel() {
     private val _bookList = MutableLiveData<List<Book>>()
     val bookList: LiveData<List<Book>> get() = _bookList
 
-    var selectedBook by mutableIntStateOf(1)
-        private set
-
     init {
         loadInitialData()
     }
@@ -100,10 +97,6 @@ class BookViewModel: ViewModel() {
                 }
             }
         }
-    }
-
-    fun selectBook(id: Int){
-        selectedBook = id
     }
 
 }
