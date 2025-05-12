@@ -2,7 +2,6 @@ package com.example.swapup.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.swapup.connection.ConnectivityObserver
 import com.example.swapup.connection.NetworkConnectivityObserver
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn

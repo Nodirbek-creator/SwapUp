@@ -48,4 +48,14 @@
     <string name="network_unavailable">Сеть недоступна. Пожалуйста, попробуйте ещё раз.</string>
     <string name="network_losing">Внимание! Ваше соединение нестабильно.</string>
     <string name="network_lost">Соединение с интернетом потеряно.</string>
+    <string name="book_title_placeholder">Война и мир</string>
+    <string name="book_title">Название книги</string>
+    <string name="book_author">Автор книги</string>
+    <string name="book_description">Описание книги</string>
+    <string name="book_author_placeholder">Л. Н. Толстой</string>
+    <string name="upload_image">Загрузите фото книги</string>
+    <string name="image_saved">Фото сохранено</string>
+    <string name="language">Язык книги</string>
+    <string name="choose_language">Выберите язык приложения</string>
+    <string name="create_offer">Создать предложение</string>
 </resources>

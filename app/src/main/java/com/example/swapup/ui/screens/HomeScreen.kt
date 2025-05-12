@@ -1,6 +1,9 @@
 package com.example.swapup.ui.screens
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.util.Base64
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -19,6 +22,8 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
@@ -34,6 +39,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -58,10 +64,12 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import com.example.swapup.data.model.Category
 import com.example.swapup.navigation.Routes
 import com.example.swapup.viewmodel.state.UiState
+import kotlin.io.encoding.ExperimentalEncodingApi
 
 @Composable
 fun HomeScreen(
@@ -127,7 +135,7 @@ fun HomeScreen(
                             onValueChange = bookVM::onQueryChange,
                             leadingIcon = {
                                 IconButton(
-                                    onClick = {navController.navigate(Routes.Search.name)}
+                                    onClick = {navController.navigate("${Routes.Search.name}/${searchQuery}")}
                                 ) {
                                     Icon(
                                         imageVector = Icons.Default.Search,
@@ -144,6 +152,10 @@ fun HomeScreen(
                                 focusedBorderColor = DarkBlue,
                                 focusedTextColor = DarkBlue,
                                 cursorColor = DarkBlue,
+                            ),
+                            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                            keyboardActions = KeyboardActions(
+                                onSearch = {navController.navigate("${Routes.Search.name}/${searchQuery}")}
                             )
                         )
                         Spacer(Modifier.height(16.dp))
@@ -405,6 +417,8 @@ fun buildImageRequest(
         .build()
 }
 
+
+@OptIn(ExperimentalEncodingApi::class)
 @Composable
 fun ImageLoader(
     context: Context,
@@ -412,7 +426,9 @@ fun ImageLoader(
     modifier: Modifier,
     contentScale: ContentScale = ContentScale.Crop
 ){
+
     imageUrl?.let {
+
         AsyncImage(
             model = buildImageRequest(
                 context = context,

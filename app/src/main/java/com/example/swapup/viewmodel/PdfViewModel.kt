@@ -1,6 +1,5 @@
 package com.example.swapup.viewmodel
 
-import android.content.ContentValues.TAG
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.pdf.PdfRenderer

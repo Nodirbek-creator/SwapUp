@@ -1,7 +1,6 @@
 package com.example.swapup
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -25,11 +24,13 @@ import com.example.swapup.data.sharedpref.DataManager
 import com.example.swapup.navigation.Routes
 import com.example.swapup.ui.screens.CategoryScreen
 import com.example.swapup.ui.screens.CommentScreen
+import com.example.swapup.ui.screens.CreateOffer
 import com.example.swapup.ui.screens.ErrorScreen
 import com.example.swapup.ui.screens.HomeScreen
 import com.example.swapup.ui.screens.InfoScreen
 import com.example.swapup.ui.screens.LoginScreen
 import com.example.swapup.ui.screens.MainScreen
+import com.example.swapup.ui.screens.OfferScreen
 import com.example.swapup.ui.screens.PdfViewerScreenUrl
 import com.example.swapup.ui.screens.ProfileScreen
 import com.example.swapup.ui.screens.SearchScreen
@@ -41,12 +42,13 @@ import com.example.swapup.viewmodel.FireStoreViewModel
 import com.example.swapup.viewmodel.LoginViewModel
 import com.example.swapup.viewmodel.MainViewModel
 import com.example.swapup.viewmodel.NetworkViewModel
+import com.example.swapup.viewmodel.CreateOfferViewModel
+import com.example.swapup.viewmodel.OfferViewModel
 import com.example.swapup.viewmodel.PdfViewModel
 import com.example.swapup.viewmodel.ProfileViewModel
 import com.example.swapup.viewmodel.SearchViewModel
 import com.example.swapup.viewmodel.SignUpViewModel
 import com.yariksoffice.lingver.Lingver
-import org.intellij.lang.annotations.Language
 import java.util.Locale
 
 class MainActivity : ComponentActivity() {
@@ -64,6 +66,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             val status = networkViewModel.networkStatus.collectAsState()
             val navController = rememberNavController()
+            val bookViewModel: BookViewModel = viewModel()
 //            Log.d("user","${dataManager.getUser()}")
 //            val startDestination =
 //                if(dataManager.userLogged()){ Routes.Main.name }
@@ -92,12 +95,7 @@ class MainActivity : ComponentActivity() {
                             SignUpScreen(navController, signUpViewModel)
                         }
                         navigation(startDestination = Routes.Home.name, route = Routes.Main.name) {
-                            val bookViewModel = BookViewModel()
-                            val mainViewModel = MainViewModel(dataManager, navController)
-                            val fireStoreViewModel = FireStoreViewModel(
-                                dataManager = dataManager,
-                                bookViewModel = bookViewModel
-                            )
+                            val mainViewModel = MainViewModel(dataManager,navController = navController, bookViewModel = bookViewModel)
                             composable(Routes.Home.name) {
                                 MainScreen(
                                     navController = navController,
@@ -108,7 +106,6 @@ class MainActivity : ComponentActivity() {
                                             bookVM = bookViewModel
                                         )
                                     },
-                                    bookVM = bookViewModel
                                 )
                             }
                             composable(Routes.Category.name) {
@@ -121,7 +118,23 @@ class MainActivity : ComponentActivity() {
                                             bookVM = bookViewModel
                                         )
                                     },
-                                    bookVM = bookViewModel
+                                )
+                            }
+                            composable("${Routes.Search.name}/{query}") { backStack ->
+                                val query = backStack.arguments?.getString("query")
+                                val searchViewModel = SearchViewModel(
+                                    query?:"",
+                                    dataManager
+                                )
+                                MainScreen(
+                                    navController = navController,
+                                    vm = mainViewModel,
+                                    content = {
+                                        SearchScreen(
+                                            navController = navController,
+                                            vm = searchViewModel
+                                        )
+                                    },
                                 )
                             }
                             composable(Routes.Search.name) {
@@ -138,16 +151,19 @@ class MainActivity : ComponentActivity() {
                                             vm = searchViewModel
                                         )
                                     },
-                                    bookVM = bookViewModel
                                 )
                             }
                             composable(Routes.Offer.name) {
+                                val offerViewModel: OfferViewModel = viewModel()
                                 MainScreen(
                                     navController = navController,
                                     vm = mainViewModel,
                                     content = {
+                                        OfferScreen(
+                                            navController,
+                                            offerViewModel
+                                        )
                                     },
-                                    bookVM = bookViewModel
                                 )
                             }
                             composable(Routes.Demand.name) {
@@ -157,7 +173,6 @@ class MainActivity : ComponentActivity() {
                                     content = {
 
                                     },
-                                    bookVM = bookViewModel
                                 )
                             }
                             composable(Routes.Settings.name) {
@@ -178,12 +193,11 @@ class MainActivity : ComponentActivity() {
                                             }
                                         )
                                     },
-                                    bookVM = bookViewModel
                                 )
                             }
 
                             composable(Routes.Info.name) {
-                                val pdfViewModel = PdfViewModel()
+                                val pdfViewModel: PdfViewModel = viewModel()
                                 val fireStoreViewModel = FireStoreViewModel(dataManager = dataManager, bookViewModel = bookViewModel)
                                 InfoScreen(
                                     navController = navController,
@@ -204,6 +218,13 @@ class MainActivity : ComponentActivity() {
                                     vm = pdfViewModel
                                 )
                             }
+                        }
+                        composable(Routes.CreateOffer.name){
+                            val offerViewModel = CreateOfferViewModel(dataManager, this@MainActivity)
+                            CreateOffer(
+                                navController,
+                                offerViewModel
+                            )
                         }
 
                         composable(Routes.Profile.name) {

@@ -19,11 +19,13 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -66,12 +68,12 @@ fun MainScreen(
     content: @Composable ()-> Unit,
     navController: NavHostController,
     vm: MainViewModel,
-    bookVM: BookViewModel,
 ) {
     val drawerState = DrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     val selectedIndex = vm.selectedIndex
     val currentUser = vm.currentUser
+    val currentRoute = getCurrentRoute(navController) ?: ""
     val context = LocalContext.current
 
     ModalNavigationDrawer(
@@ -126,12 +128,42 @@ fun MainScreen(
             topBar = {
                 TopNavigationBar(
                     navController,
-                    bookVM = bookVM,
+                    vm = vm,
                     onMenuClick = { scope.launch { drawerState.open()}},
                     onProfileClick = { navController.navigate(Routes.Profile.name) }
                 )
             },
             bottomBar = { BottomNavigationBar(navController) },
+            floatingActionButton = {
+                if(currentRoute == Routes.Demand.name){
+                    FloatingActionButton(
+                        onClick = {},
+                        containerColor = SkyBlue,
+                        contentColor = Color.White
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = "add",
+                            modifier = Modifier.size(32.dp),
+                        )
+                    }
+                }
+                if(currentRoute == Routes.Offer.name){
+                    FloatingActionButton(
+                        onClick = {
+                            navController.navigate(Routes.CreateOffer.name)
+                        },
+                        containerColor = SkyBlue,
+                        contentColor = Color.White
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = "add",
+                            modifier = Modifier.size(32.dp),
+                        )
+                    }
+                }
+            },
         ) { padding->
             Column(
                 modifier = Modifier.fillMaxSize().padding(padding)
@@ -285,7 +317,7 @@ data class DrawerItem(
 @Composable
 fun TopNavigationBar(
     navController: NavHostController,
-    bookVM: BookViewModel,
+    vm: MainViewModel,
     onMenuClick:() -> Unit,
     onProfileClick:() -> Unit){
     val currentRoute = getCurrentRoute(navController) ?: ""
@@ -295,7 +327,7 @@ fun TopNavigationBar(
         Screen.Offer.route -> stringResource(R.string.offer)
         Screen.Demand.route -> stringResource(R.string.demand)
         Screen.Settings.route -> stringResource(R.string.settings)
-        Screen.Category.route -> bookVM.selectedCategory.typename ?: ""
+        Screen.Category.route -> vm.selectedCategory.typename ?: ""
         else -> ""
     }
     Row(
@@ -364,7 +396,7 @@ fun BottomNavigationBar(navController: NavHostController){
                         painter = painterResource(screen.icon),
                         contentDescription = null,
                         modifier = Modifier.size(24.dp)) },
-                onClick = {navController.navigate(screen.route)},
+                onClick = { navController.navigate(screen.route)},
                 colors = NavigationBarItemDefaults.colors(
                     selectedIconColor = DarkBlue,
                     unselectedIconColor = Color.LightGray,

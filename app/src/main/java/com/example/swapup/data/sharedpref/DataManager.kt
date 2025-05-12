@@ -3,7 +3,6 @@ package com.example.swapup.data.sharedpref
 import android.content.Context
 import androidx.activity.ComponentActivity
 import com.example.swapup.data.model.User
-import com.google.firebase.ktx.Firebase
 
 class DataManager(private val activity: ComponentActivity) {
     private val sharedPreferences = activity.getPreferences(Context.MODE_PRIVATE)

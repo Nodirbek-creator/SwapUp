@@ -13,9 +13,11 @@ import kotlinx.coroutines.launch
 
 class MainViewModel(
     private val dataManager: DataManager,
+    bookViewModel: BookViewModel,
     private val navController: NavHostController
 ): ViewModel() {
     val currentUser = dataManager.getUser()
+    val selectedCategory = bookViewModel.selectedCategory
     val authRepository = AuthRepository(RetrofitInstance.api, dataManager)
 
     var selectedIndex by mutableIntStateOf(0)

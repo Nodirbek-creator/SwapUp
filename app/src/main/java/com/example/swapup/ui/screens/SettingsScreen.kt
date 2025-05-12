@@ -45,6 +45,12 @@ fun SettingsScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(Modifier.height(20.dp))
+        Text(
+            text = stringResource(R.string.choose_language),
+            fontSize = 20.sp,
+            fontWeight = FontWeight.W600,
+            color = DarkBlue,
+        )
         Button(
             onClick = {onEnglishClick()},
             shape = RoundedCornerShape(8.dp),

@@ -15,7 +15,8 @@ enum class Routes {
     Category,
     Info,
     Comment,
-    Pdf
+    Pdf,
+    CreateOffer
 }
 sealed class Screen(val route: String, val icon: Int){
     object Home: Screen(Routes.Home.name, R.drawable.book)

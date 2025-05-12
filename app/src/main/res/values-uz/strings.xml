@@ -49,4 +49,14 @@
     <string name="network_unavailable">Tarmoq mavjud emas. Iltimos, qaytadan urinib ko‘ring.</string>
     <string name="network_losing">Ogohlantirish! Aloqangiz beqaror.</string>
     <string name="network_lost">Internet aloqasi uzildi.</string>
+    <string name="book_title_placeholder">O\'tkan kunlar</string>
+    <string name="book_title">Kitob nomi</string>
+    <string name="book_author">Kitob muallifi</string>
+    <string name="book_description">Kitob tavsifi</string>
+    <string name="book_author_placeholder">Abdulla Qodiriy</string>
+    <string name="upload_image">Kitobning rasmini yuklang</string>
+    <string name="image_saved">Rasm saqlandi</string>
+    <string name="language">Kitob tili</string>
+    <string name="choose_language">Ilova tilini tanlang</string>
+    <string name="create_offer">Taklif yaratish</string>
 </resources>

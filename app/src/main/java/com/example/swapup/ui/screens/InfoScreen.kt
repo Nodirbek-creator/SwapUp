@@ -1,7 +1,6 @@
 package com.example.swapup.ui.screens
 
-import android.content.ContentValues.TAG
-import android.util.Log
+
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -57,7 +56,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.swapup.R
-import com.example.swapup.data.model.Book
 import com.example.swapup.data.model.Comment
 import com.example.swapup.navigation.Routes
 import com.example.swapup.ui.theme.DarkBlue

@@ -47,5 +47,16 @@
     <string name="network_unavailable">No network available. Please try again</string>
     <string name="network_losing">Warning! Your connection is unstable</string>
     <string name="network_lost">Internet connection is lost</string>
+    <string name="tg_username" translatable="false">NodirbekBakhromov</string>
+    <string name="book_title_placeholder">Harry Potter</string>
+    <string name="book_title">Book title</string>
+    <string name="book_author">Book author</string>
+    <string name="book_description">Book description</string>
+    <string name="book_author_placeholder">J.K.Rowling</string>
+    <string name="upload_image">Upload image of the book</string>
+    <string name="image_saved">Image saved</string>
+    <string name="language">Book language</string>
+    <string name="choose_language">Choose app\'s language</string>
+    <string name="create_offer">Create Offer</string>
 
 </resources>
