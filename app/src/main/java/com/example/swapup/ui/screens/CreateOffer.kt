@@ -1,5 +1,6 @@
 package com.example.swapup.ui.screens
 
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
@@ -23,12 +24,15 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Send
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -41,17 +45,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.swapup.R
 import com.example.swapup.data.model.Language
+import com.example.swapup.navigation.Routes
 import com.example.swapup.ui.theme.DarkBlue
 import com.example.swapup.ui.theme.SkyBlue
 import com.example.swapup.viewmodel.CreateOfferViewModel
@@ -62,23 +69,48 @@ fun CreateOffer(
     vm: CreateOfferViewModel
 ) {
 
+    val context = LocalContext.current
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()) { uri->
         if(uri == null) return@rememberLauncherForActivityResult
         vm.updatePhoto(uri)
     }
-
+    LaunchedEffect(vm.photoError) {
+        if(vm.photoError != null){
+            Toast.makeText(context, vm.photoError, Toast.LENGTH_SHORT).show()
+        }
+    }
     Column(
         modifier = Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.systemBars),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(Modifier.height(8.dp))
-        Text(
-            text = stringResource(R.string.create_offer),
-            fontSize = 20.sp,
-            fontWeight = FontWeight.W600,
-            color = DarkBlue)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
+            IconButton(
+                onClick = {
+                    vm.clearAllFields()
+                    navController.popBackStack()
+                }
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = "",
+                    tint = DarkBlue,
+                    modifier = Modifier.size(24.dp)
+                )
+            }
+            Text(
+                text = stringResource(R.string.create_offer),
+                fontSize = 20.sp,
+                fontWeight = FontWeight.W600,
+                color = DarkBlue)
+            Spacer(Modifier.width(32.dp))
+        }
         Spacer(Modifier.height(24.dp))
         Column(
             modifier = Modifier.padding(horizontal = 16.dp).fillMaxWidth(),
@@ -166,7 +198,9 @@ fun CreateOffer(
                             Spacer(Modifier.width(12.dp))
                             Text(
                                 text = stringResource(R.string.uzbek).take(3),
-                                fontSize = 12.sp,
+                                maxLines = 1,
+                                overflow = TextOverflow.Clip,
+                                fontSize = 10.sp,
                                 fontWeight = FontWeight.W500,
                             )
                         }
@@ -201,7 +235,9 @@ fun CreateOffer(
                             Spacer(Modifier.width(12.dp))
                             Text(
                                 text = stringResource(R.string.english).take(3),
-                                fontSize = 14.sp,
+                                fontSize = 10.sp,
+                                maxLines = 1,
+                                overflow = TextOverflow.Clip,
                                 fontWeight = FontWeight.W500,
                             )
                         }
@@ -236,7 +272,9 @@ fun CreateOffer(
                             Spacer(Modifier.width(12.dp))
                             Text(
                                 text = stringResource(R.string.russian).take(3),
-                                fontSize = 14.sp,
+                                fontSize = 10.sp,
+                                maxLines = 1,
+                                overflow = TextOverflow.Clip,
                                 fontWeight = FontWeight.W500,
                             )
                         }
@@ -310,8 +348,11 @@ fun CreateOffer(
                 vm.validateTitle()
                 vm.validateAuthor()
                 vm.validateDescription()
+                vm.validatePhoto()
                 if(vm.isEverythingOk()){
                     vm.createOffer()
+                    vm.clearAllFields()
+                    navController.navigate(Routes.Offer.name)
                 }
             },
             modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),

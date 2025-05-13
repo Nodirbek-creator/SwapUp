@@ -3,6 +3,8 @@ package com.example.swapup.viewmodel
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Matrix
+import android.media.ExifInterface
 import android.net.Uri
 import android.util.Base64
 import android.util.Log
@@ -17,6 +19,7 @@ import com.example.swapup.data.repository.FirestoreRepo
 import com.example.swapup.data.sharedpref.DataManager
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
+import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 
 class CreateOfferViewModel(
@@ -42,6 +45,8 @@ class CreateOfferViewModel(
         private set
     var descriptionError by mutableStateOf<String?>(null)
         private set
+    var photoError by mutableStateOf<String?>(null)
+        private set
 
     val publisher = dataManager.getUser().username
 
@@ -61,9 +66,7 @@ class CreateOfferViewModel(
     }
     fun updatePhoto(newUri: Uri){
         photoUri = newUri
-    }
-    fun updateActive(newVal: Boolean){
-        isActive = newVal
+        photoError = null
     }
     fun updateLanguage(newLang: Language){
         language = newLang
@@ -80,12 +83,15 @@ class CreateOfferViewModel(
     fun validateDescription(){
         descriptionError = if(!hasFiveWords(description)) "Description should consist minimum of 5 words" else null
     }
+    fun validatePhoto(){
+        photoError = if(photoUri==null) "Please upload the image of the book" else null
+    }
     fun hasFiveWords(input: String): Boolean {
         val words = input.trim().split("\\s+".toRegex()).filter { it.isNotEmpty() }
         return words.size >= 5
     }
     fun isEverythingOk():Boolean{
-        return titleError==null && authorError==null&& descriptionError==null
+        return titleError==null && authorError==null&& descriptionError==null && photoError==null
     }
     fun createOffer(){
         viewModelScope.launch {
@@ -96,30 +102,55 @@ class CreateOfferViewModel(
                     photo = bitmapToBase64(photoUri!!, context),
                     description = description,
                     active = true,
-                    language = Language.Russian,
-                    publisher = publisher
+                    language = language.name,
+                    owner = publisher
                 )
-                val response = repo.createOffer(offer)
-                Log.d("OfferVM","${offer.copy(photo = "")}")
+                repo.createOffer(offer)
             } catch (e: Exception){
                 Log.d("OfferVM","${e.localizedMessage}")
             }
         }
     }
+    fun clearAllFields(){
+        updateTitle("")
+        updateAuthor("")
+        photoUri = null
+        updateDescription("")
+        updateLanguage(Language.Unspecified)
+    }
 }
-fun bitmapToBase64(uri: Uri, context: Context): String{
-    val inputStream = context.contentResolver.openInputStream(uri)
-    val bitmap = BitmapFactory.decodeStream(inputStream)
-    val origHeight = bitmap.height
-    val origWidth = bitmap.width
-    val ratio = origWidth.toFloat()/ origHeight.toFloat()
-    val newWidth = 800
-    val newHeight = (newWidth/ratio).toInt()
-    val resizedBitmap = Bitmap.createScaledBitmap(bitmap, newWidth, newHeight, false)
-    val byteArrayOutputStream = ByteArrayOutputStream()
-    resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 80, byteArrayOutputStream) // 80 is the quality
-    val byteArray = byteArrayOutputStream.toByteArray()
-    val base64String = Base64.encodeToString(byteArray, Base64.DEFAULT)
-    return base64String
+fun bitmapToBase64(uri: Uri, context: Context): String {
+    val inputStream = context.contentResolver.openInputStream(uri) ?: return ""
 
+    val bytes = inputStream.readBytes()
+    inputStream.close()
+
+    val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size) ?: return ""
+
+    val orientation = try {
+        val exif = ExifInterface(ByteArrayInputStream(bytes))
+        exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
+    } catch (e: Exception) {
+        ExifInterface.ORIENTATION_NORMAL
+    }
+
+    val rotatedBitmap = when (orientation) {
+        ExifInterface.ORIENTATION_ROTATE_90 -> rotateBitmap(bitmap, 90f)
+        ExifInterface.ORIENTATION_ROTATE_180 -> rotateBitmap(bitmap, 180f)
+        ExifInterface.ORIENTATION_ROTATE_270 -> rotateBitmap(bitmap, 270f)
+        else -> bitmap
+    }
+
+    val ratio = rotatedBitmap.width.toFloat() / rotatedBitmap.height
+    val resizedBitmap = Bitmap.createScaledBitmap(rotatedBitmap, 800, (800 / ratio).toInt(), false)
+
+    return ByteArrayOutputStream().use { stream ->
+        resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 80, stream)
+        Base64.encodeToString(stream.toByteArray(), Base64.DEFAULT)
+    }
+}
+
+fun rotateBitmap(source: Bitmap, angle: Float): Bitmap {
+    val matrix = Matrix().apply { postRotate(angle) }
+    return Bitmap.createBitmap(source, 0, 0, source.width, source.height, matrix, true)
 }

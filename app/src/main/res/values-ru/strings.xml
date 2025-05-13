@@ -58,4 +58,12 @@
     <string name="language">Язык книги</string>
     <string name="choose_language">Выберите язык приложения</string>
     <string name="create_offer">Создать предложение</string>
+    <string name="unspecified">Не указано</string>
+    <string name="owner">Владелец</string>
+    <string name="status">Статус предложения</string>
+    <string name="code">Код</string>
+    <string name="active">Доступно</string>
+    <string name="inactive">Недоступно</string>
+    <string name="contact_owner">Свяжитесь с владельцем</string>
+    <string name="secret_code">Вставьте секретный код</string>
 </resources>

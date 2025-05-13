@@ -1,6 +1,7 @@
 package com.example.swapup
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -8,9 +9,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -20,6 +24,7 @@ import com.example.swapup.connection.ConnectivityObserver
 import com.example.swapup.connection.NetworkConnectivityObserver
 import com.example.swapup.data.network.RetrofitInstance
 import com.example.swapup.data.repository.AuthRepository
+import com.example.swapup.data.repository.FirestoreRepo
 import com.example.swapup.data.sharedpref.DataManager
 import com.example.swapup.navigation.Routes
 import com.example.swapup.ui.screens.CategoryScreen
@@ -30,6 +35,7 @@ import com.example.swapup.ui.screens.HomeScreen
 import com.example.swapup.ui.screens.InfoScreen
 import com.example.swapup.ui.screens.LoginScreen
 import com.example.swapup.ui.screens.MainScreen
+import com.example.swapup.ui.screens.OfferInfoScreen
 import com.example.swapup.ui.screens.OfferScreen
 import com.example.swapup.ui.screens.PdfViewerScreenUrl
 import com.example.swapup.ui.screens.ProfileScreen
@@ -43,11 +49,15 @@ import com.example.swapup.viewmodel.LoginViewModel
 import com.example.swapup.viewmodel.MainViewModel
 import com.example.swapup.viewmodel.NetworkViewModel
 import com.example.swapup.viewmodel.CreateOfferViewModel
+import com.example.swapup.viewmodel.OfferInfoViewModel
 import com.example.swapup.viewmodel.OfferViewModel
 import com.example.swapup.viewmodel.PdfViewModel
 import com.example.swapup.viewmodel.ProfileViewModel
 import com.example.swapup.viewmodel.SearchViewModel
 import com.example.swapup.viewmodel.SignUpViewModel
+import com.example.swapup.viewmodel.viewmodelFactory.CreateOfferViewModelFactory
+import com.example.swapup.viewmodel.viewmodelFactory.OfferInfoVMFactory
+import com.google.firebase.firestore.FirebaseFirestore
 import com.yariksoffice.lingver.Lingver
 import java.util.Locale
 
@@ -82,6 +92,7 @@ class MainActivity : ComponentActivity() {
                 }
                 ConnectivityObserver.Status.Available->{
                     val authRepository = AuthRepository(RetrofitInstance.api, dataManager)
+                    val fireStoreRepo = FirestoreRepo(FirebaseFirestore.getInstance())
                     NavHost(
                         navController = navController,
                         startDestination = Routes.Main.name
@@ -220,10 +231,19 @@ class MainActivity : ComponentActivity() {
                             }
                         }
                         composable(Routes.CreateOffer.name){
-                            val offerViewModel = CreateOfferViewModel(dataManager, this@MainActivity)
+                            val offerViewModel =
+                                ViewModelProvider(this@MainActivity, CreateOfferViewModelFactory(dataManager, this@MainActivity))[CreateOfferViewModel::class.java]
                             CreateOffer(
                                 navController,
                                 offerViewModel
+                            )
+                        }
+                        composable("${Routes.OfferInfo.name}/{uid}"){ stackEntry->
+                            val uid = stackEntry.arguments?.getString("uid")
+                            val offerInfoVM = OfferInfoViewModel(dataManager, fireStoreRepo, uid!!)
+                            OfferInfoScreen(
+                                navController,
+                                offerInfoVM
                             )
                         }
 

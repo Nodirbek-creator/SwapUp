@@ -90,7 +90,7 @@ fun ProfileScreen(
                     fontSize = 24.sp
                 )
                 IconButton(
-                    onClick = {/*todo: navigate settings screen*/}
+                    onClick = {navController.navigate(Routes.Settings.name)}
                 ) {
                     Icon(
                         imageVector = Icons.Default.Settings,
@@ -228,7 +228,7 @@ fun ProfileBox(
                 fontSize = 24.sp,
                 color = DarkBlue)
             Text(
-                text = user.email,
+                text = user.username,
                 fontWeight = FontWeight.W200,
                 fontSize = 18.sp,
                 color = Color.LightGray

@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Base64
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -30,14 +30,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import coil3.compose.AsyncImage
 import coil3.request.CachePolicy
 import coil3.request.ImageRequest
 import coil3.request.crossfade
@@ -45,6 +44,7 @@ import coil3.request.error
 import coil3.request.placeholder
 import com.example.swapup.R
 import com.example.swapup.data.model.Offer
+import com.example.swapup.navigation.Routes
 import com.example.swapup.ui.theme.DarkBlue
 import com.example.swapup.ui.theme.SkyBlue
 import com.example.swapup.viewmodel.OfferViewModel
@@ -68,15 +68,21 @@ fun OfferScreen(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             items(list){offer->
-                OfferCard(offer)
-                Log.d("isOfferActive?","${offer.active}")
+                OfferCard(
+                    offer,
+                    onClick = {
+                        navController.navigate("${Routes.OfferInfo.name}/${offer.uid}")
+                    })
+//                Log.d("isOfferActive?","${offer.active}")
             }
         }
     }
 }
 
 @Composable
-fun OfferCard(offer: Offer){
+fun OfferCard(
+    offer: Offer,
+    onClick:()-> Unit){
     val context = LocalContext.current
     var bitmap: Bitmap? = null
     try {
@@ -87,7 +93,7 @@ fun OfferCard(offer: Offer){
         )
     } catch (e: Exception){ }
     Card(
-        onClick = {},
+        onClick = {onClick()},
         modifier = Modifier.width(160.dp),
         shape = RoundedCornerShape(8.dp),
         colors = CardDefaults.cardColors(
@@ -103,28 +109,22 @@ fun OfferCard(offer: Offer){
                 .fillMaxWidth()
                 .height(200.dp)
                 .clip(RoundedCornerShape(8.dp)),){
-                AsyncImage(
-                    model = imageRequest(
-                        context,
-                        bitmap,
-                        R.drawable.placeholder
-                    ),
-                    contentDescription = "null",
-                    modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(8.dp)).align(Alignment.Center),
-                    contentScale = ContentScale.Crop,
+                BitmapImageLoader(
+                    photoUri = offer.photo,
+                    modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(8.dp)).align(Alignment.Center)
                 )
                 Card(
-                    modifier = Modifier.padding(4.dp).size(64.dp, 32.dp).align(Alignment.TopStart),
+                    modifier = Modifier.padding(4.dp).align(Alignment.TopStart),
                     shape = RoundedCornerShape(8.dp),
                     colors = CardDefaults.cardColors(containerColor = Color.White),
                 ) {
                     Row(
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier.padding(6.dp),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center
                     ) {
                         Text(
-                            text = if(offer.active) "Available" else "Reserved",
+                            text = if(offer.active) stringResource(R.string.active) else stringResource(R.string.inactive),
                             fontWeight = FontWeight.W500,
                             fontSize = 14.sp,
                             color = DarkBlue)
@@ -160,7 +160,7 @@ fun OfferCard(offer: Offer){
                     color = DarkBlue
                 )
                 Text(
-                    text = offer.publisher,
+                    text = offer.owner,
                     fontWeight = FontWeight.W600,
                     fontSize = 14.sp,
                     maxLines = 1,

@@ -106,16 +106,27 @@ class FirestoreRepo(private val firestore: FirebaseFirestore ) {
             Log.w(TAG, "Error getting offers", e)
         }
     }
-    suspend fun disactivateOffer(offer: Offer): Boolean{
+    suspend fun getOfferById(uid: String): Offer?{
+        return try{
+            val docReference = offerRef.document(uid).get().await()
+            val offer = docReference.toObject<Offer>()
+//            Log.d("read-language","${offer?.language}")
+            offer
+
+        } catch (e: Exception){
+            null
+        }
+    }
+    suspend fun disactivateOffer(offer: Offer): String?{
         return try {
             val reference = offerRef.document(offer.uid)
             val disactivatedOffer = offer.copy(active = false)
             reference.set(disactivatedOffer).await()
             Log.d(TAG,"Offer is deactivated!")
-            true
+            null
         } catch (e: Exception){
             Log.d(TAG,"${e.localizedMessage}")
-            false
+            "${e.localizedMessage}"
         }
     }
     suspend fun activateOffer(offer: Offer): Boolean{

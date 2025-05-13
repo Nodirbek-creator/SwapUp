@@ -59,4 +59,12 @@
     <string name="language">Kitob tili</string>
     <string name="choose_language">Ilova tilini tanlang</string>
     <string name="create_offer">Taklif yaratish</string>
+    <string name="unspecified">Tanlanmagan</string>
+    <string name="owner">Egasi</string>
+    <string name="status">Taklif holati</string>
+    <string name="code">Kod</string>
+    <string name="active">Faol</string>
+    <string name="inactive">Nofaol</string>
+    <string name="contact_owner">Egasi bilan bog\'laning</string>
+    <string name="secret_code">Maxfiy kodni kiriting</string>
 </resources>

@@ -58,5 +58,13 @@
     <string name="language">Book language</string>
     <string name="choose_language">Choose app\'s language</string>
     <string name="create_offer">Create Offer</string>
+    <string name="unspecified">Not selected</string>
+    <string name="owner">Owner</string>
+    <string name="status">Offer status</string>
+    <string name="code">Code</string>
+    <string name="active">Active</string>
+    <string name="inactive">Inactive</string>
+    <string name="contact_owner">Contact with owner</string>
+    <string name="secret_code">Paste secret code</string>
 
 </resources>
