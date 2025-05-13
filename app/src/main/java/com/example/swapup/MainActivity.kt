@@ -1,7 +1,6 @@
 package com.example.swapup
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -9,10 +8,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -44,7 +41,7 @@ import com.example.swapup.ui.screens.SettingsScreen
 import com.example.swapup.ui.screens.SignUpScreen
 import com.example.swapup.ui.theme.DarkBlue
 import com.example.swapup.viewmodel.BookViewModel
-import com.example.swapup.viewmodel.FireStoreViewModel
+import com.example.swapup.viewmodel.InfoViewModel
 import com.example.swapup.viewmodel.LoginViewModel
 import com.example.swapup.viewmodel.MainViewModel
 import com.example.swapup.viewmodel.NetworkViewModel
@@ -59,12 +56,10 @@ import com.example.swapup.viewmodel.viewmodelFactory.CreateOfferViewModelFactory
 import com.example.swapup.viewmodel.viewmodelFactory.OfferInfoVMFactory
 import com.google.firebase.firestore.FirebaseFirestore
 import com.yariksoffice.lingver.Lingver
+import java.net.URLDecoder
 import java.util.Locale
 
 class MainActivity : ComponentActivity() {
-    override fun onStart() {
-        super.onStart()
-    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -106,7 +101,8 @@ class MainActivity : ComponentActivity() {
                             SignUpScreen(navController, signUpViewModel)
                         }
                         navigation(startDestination = Routes.Home.name, route = Routes.Main.name) {
-                            val mainViewModel = MainViewModel(dataManager,navController = navController, bookViewModel = bookViewModel)
+                            val bookViewModel = BookViewModel()
+                            val mainViewModel = MainViewModel(dataManager, bookViewModel, navController)
                             composable(Routes.Home.name) {
                                 MainScreen(
                                     navController = navController,
@@ -116,7 +112,7 @@ class MainActivity : ComponentActivity() {
                                             navController = navController,
                                             bookVM = bookViewModel
                                         )
-                                    },
+                                    }
                                 )
                             }
                             composable(Routes.Category.name) {
@@ -161,7 +157,7 @@ class MainActivity : ComponentActivity() {
                                             navController = navController,
                                             vm = searchViewModel
                                         )
-                                    },
+                                    }
                                 )
                             }
                             composable(Routes.Offer.name) {
@@ -183,7 +179,7 @@ class MainActivity : ComponentActivity() {
                                     vm = mainViewModel,
                                     content = {
 
-                                    },
+                                    }
                                 )
                             }
                             composable(Routes.Settings.name) {
@@ -203,18 +199,18 @@ class MainActivity : ComponentActivity() {
                                                 changeLanguage("ru")
                                             }
                                         )
-                                    },
+                                    }
                                 )
                             }
 
-                            composable(Routes.Info.name) {
-                                val pdfViewModel: PdfViewModel = viewModel()
-                                val fireStoreViewModel = FireStoreViewModel(dataManager = dataManager, bookViewModel = bookViewModel)
+                            val pdfViewModel = PdfViewModel(dataManager)
+                            composable("${Routes.Info.name}/{bookId}") {backStack ->
+                                val infoViewModel = InfoViewModel(dataManager)
+                                val bookId = backStack.arguments?.getString("bookId")?.toInt()
                                 InfoScreen(
                                     navController = navController,
-                                    vm = fireStoreViewModel,
-                                    pdfVM = pdfViewModel,
-                                    bookVM = bookViewModel
+                                    vm = infoViewModel,
+                                    bookId = bookId!!
                                 )
                             }
                             composable(Routes.Comment.name) {
@@ -222,11 +218,15 @@ class MainActivity : ComponentActivity() {
                                     navController = navController
                                 )
                             }
-                            composable(Routes.Pdf.name){
-                                val pdfViewModel: PdfViewModel = viewModel()
+
+                            composable("${Routes.Pdf.name}/{bookId}/{pdfUrl}") { navBackStackEntry ->
+                                val bookId = navBackStackEntry.arguments?.getString("bookId")?.toInt()?:1
+                                val pdfUrl = URLDecoder.decode(navBackStackEntry.arguments?.getString("pdfUrl") ?: "", "UTF-8")
                                 PdfViewerScreenUrl(
                                     navController = navController,
-                                    vm = pdfViewModel
+                                    vm = pdfViewModel,
+                                    bookId = bookId,
+                                    pdfUrl = pdfUrl
                                 )
                             }
                         }
