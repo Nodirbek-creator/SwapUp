@@ -31,7 +31,6 @@ import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Send
-import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -347,7 +346,7 @@ fun OfferInfoScreen(
                                     ),
                                     keyboardActions = KeyboardActions(
                                         onDone = {
-                                            /*todo: send code to check*/
+
                                             focusManager.clearFocus()
                                             vm.checkSecretCode()
                                         }
@@ -355,7 +354,6 @@ fun OfferInfoScreen(
                                 )
                                 Button(
                                     onClick = {
-                                        /*todo: send code to check*/
                                         focusManager.clearFocus()
                                         vm.checkSecretCode()
                                     },
@@ -376,7 +374,6 @@ fun OfferInfoScreen(
                             //contact with owner btn
                             Button(
                                 onClick = {
-                                    /*todo: contact with owner*/
                                     vm.launchTelegram(context)
                                 },
                                 shape = RoundedCornerShape(8.dp),

@@ -110,7 +110,6 @@ class FirestoreRepo(private val firestore: FirebaseFirestore ) {
         return try{
             val docReference = offerRef.document(uid).get().await()
             val offer = docReference.toObject<Offer>()
-//            Log.d("read-language","${offer?.language}")
             offer
 
         } catch (e: Exception){
