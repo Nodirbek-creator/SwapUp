@@ -203,9 +203,9 @@ class MainActivity : ComponentActivity() {
                                 )
                             }
 
+                            val infoViewModel = InfoViewModel(dataManager)
                             val pdfViewModel = PdfViewModel(dataManager)
                             composable("${Routes.Info.name}/{bookId}") {backStack ->
-                                val infoViewModel = InfoViewModel(dataManager)
                                 val bookId = backStack.arguments?.getString("bookId")?.toInt()
                                 InfoScreen(
                                     navController = navController,
@@ -248,12 +248,10 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable(Routes.Profile.name) {
-                            val profileViewModel = ProfileViewModel(dataManager,)
-                            val bookViewModel = BookViewModel()
+                            val profileViewModel = ProfileViewModel(dataManager)
                             ProfileScreen(
                                 navController = navController,
-                                vm = profileViewModel,
-                                bookVM = bookViewModel
+                                vm = profileViewModel
                             )
                         }
 

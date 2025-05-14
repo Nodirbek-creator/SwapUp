@@ -56,20 +56,25 @@ import com.example.swapup.viewmodel.state.UiState
 @Composable
 fun ProfileScreen(
     navController: NavHostController,
-    vm: ProfileViewModel,
-    bookVM: BookViewModel
+    vm: ProfileViewModel
 ) {
     val user = vm.currentUser
     val uiState by vm.uiState
 
     val bookList1 by vm.bookList.observeAsState(emptyList())
     val savedBooks by vm.savedBooks.observeAsState(emptyList())
+    val readingBooks = vm.readingBooks
+    val finishedBooks = vm.finishedBooks
     val context = LocalContext.current
     Scaffold(
-        modifier = Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.systemBars),
+        modifier = Modifier
+            .fillMaxSize()
+            .windowInsetsPadding(WindowInsets.systemBars),
         topBar = {
             Row(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
@@ -106,7 +111,9 @@ fun ProfileScreen(
             LoadingScreen()
         }
         LazyColumn(
-            modifier = Modifier.fillMaxWidth().padding(padding),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(padding),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
@@ -129,14 +136,15 @@ fun ProfileScreen(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    items(bookList1){book->
+                    items(readingBooks){book->
                         BookCardHorizontal(
                             book = book,
                             context = context,
                             modifier = Modifier.size(width = 250.dp, height = 120.dp),
                             onClick = {bookId ->
                                 navController.navigate("${Routes.Info.name}/$bookId")
-                            }
+                            },
+                            readPage = vm.getBookInfo(book?.id?:0)
                         )
                     }
                 }
@@ -154,7 +162,7 @@ fun ProfileScreen(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    items(bookList1){book->
+                    items(finishedBooks){book->
                         BookCardHorizontal(
                             book = book,
                             context = context,
@@ -242,7 +250,9 @@ fun BookStats(
         colors = CardDefaults.cardColors(
             containerColor = Color(0xFFD9D9D9)
         ),
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -315,6 +325,7 @@ fun BookCardHorizontal(
     book: Book?,
     context: Context,
     modifier: Modifier,
+    readPage: Int = 0,
     onClick:(Int) -> Unit
 ) {
     book?.let {
@@ -361,7 +372,10 @@ fun BookCardHorizontal(
                         fontWeight = FontWeight.W400,
                         color = Color.Gray
                     )
-                    Spacer(modifier = Modifier.height(8.dp))
+                    if(readPage == 0 || book.count_page == 0){ Spacer(modifier = Modifier.height(8.dp)) }
+                    else {
+                        Text("${((readPage.toFloat()/book.count_page.toFloat())*100).toInt()}%")
+                    }
                     RatingSection(rating = book.reyting)
                 }
             }

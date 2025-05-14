@@ -17,7 +17,8 @@ import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.launch
 
 class ProfileViewModel(
-    private val dataManager: DataManager): ViewModel() {
+    private val dataManager: DataManager
+): ViewModel() {
 
 
     private val bookRepository = BookRepository(RetrofitInstance.api)
@@ -33,6 +34,9 @@ class ProfileViewModel(
     private val _savedBooks = MutableLiveData<List<Book>>(emptyList())
     val savedBooks: LiveData<List<Book>> get() = _savedBooks
 
+    val readingBooks = mutableListOf<Book?>(null)
+
+    val finishedBooks = mutableListOf<Book?>(null)
 
     init {
         loadInitialData()
@@ -58,11 +62,25 @@ class ProfileViewModel(
             if(bookResponse.isSuccessful){
                 _bookList.value = bookResponse.body()
                 _savedBooks.value = savedResponse
+                _bookList.value!!.forEach {
+                    if(dataManager.getBookInfo(it.id) != 0){
+                        readingBooks.add(it)
+                    }
+                }
+                _bookList.value!!.forEach {
+                    if (dataManager.getBookInfo(it.id) >= it.count_page-5){
+                        finishedBooks.add(it)
+                    }
+                }
                 idle()
             }
             else{
                 error(bookResponse.message())
             }
         }
+    }
+
+    fun getBookInfo(bookId:Int):Int{
+        return dataManager.getBookInfo(bookId)
     }
 }

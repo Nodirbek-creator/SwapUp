@@ -73,10 +73,7 @@ fun InfoScreen(
 ) {
     val uiState by vm.uiState
     val context = LocalContext.current
-
-    if(vm.selectedBook == null){
-        vm.fetchBookInfo(bookId)
-    }
+    vm.fetchBookInfo(bookId)
 
     val book = vm.selectedBook?: Book()
     val isBookSaved by vm.isBookSaved.observeAsState(false)
