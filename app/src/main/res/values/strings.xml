@@ -66,5 +66,6 @@
     <string name="inactive">Inactive</string>
     <string name="contact_owner">Contact with owner</string>
     <string name="secret_code">Paste secret code</string>
+    <string name="create_demand">Create demand</string>
 
 </resources>

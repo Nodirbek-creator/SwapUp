@@ -67,4 +67,5 @@
     <string name="inactive">Nofaol</string>
     <string name="contact_owner">Egasi bilan bog\'laning</string>
     <string name="secret_code">Maxfiy kodni kiriting</string>
+    <string name="create_demand">Talab yaratish</string>
 </resources>

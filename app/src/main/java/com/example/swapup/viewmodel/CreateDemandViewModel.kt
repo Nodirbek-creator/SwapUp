@@ -1,31 +1,24 @@
 package com.example.swapup.viewmodel
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.Matrix
-import android.media.ExifInterface
 import android.net.Uri
-import android.util.Base64
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.swapup.data.model.Demand
 import com.example.swapup.data.model.Language
-import com.example.swapup.data.model.Offer
 import com.example.swapup.data.repository.FirestoreRepo
 import com.example.swapup.data.sharedpref.DataManager
+import com.example.swapup.viewmodel.state.UiState
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
-import java.io.ByteArrayInputStream
-import java.io.ByteArrayOutputStream
 
-class CreateOfferViewModel(
+class CreateDemandViewModel(
     private val dataManager: DataManager,
-    private val context: Context): ViewModel() {
-
+    private val context: Context, ): ViewModel() {
     var title by mutableStateOf("")
         private set
     var author by mutableStateOf("")
@@ -45,12 +38,12 @@ class CreateOfferViewModel(
         private set
     var descriptionError by mutableStateOf<String?>(null)
         private set
-    var photoError by mutableStateOf<String?>(null)
-        private set
-
-    val owner = dataManager.getUser().username
 
     private val repo = FirestoreRepo(FirebaseFirestore.getInstance())
+    val owner = dataManager.getUser().username
+
+    private val _uiState = mutableStateOf<UiState>(UiState.Idle)
+    val uiState = _uiState.value
 
     fun updateTitle(newTitle: String){
         title = newTitle
@@ -66,7 +59,6 @@ class CreateOfferViewModel(
     }
     fun updatePhoto(newUri: Uri){
         photoUri = newUri
-        photoError = null
     }
     fun updateLanguage(newLang: Language){
         language = newLang
@@ -83,34 +75,42 @@ class CreateOfferViewModel(
     fun validateDescription(){
         descriptionError = if(!hasFiveWords(description)) "Description should consist minimum of 5 words" else null
     }
-    fun validatePhoto(){
-        photoError = if(photoUri==null) "Please upload the image of the book" else null
-    }
     fun hasFiveWords(input: String): Boolean {
         val words = input.trim().split("\\s+".toRegex()).filter { it.isNotEmpty() }
         return words.size >= 5
     }
     fun isEverythingOk():Boolean{
-        return titleError==null && authorError==null&& descriptionError==null && photoError==null
+        return titleError==null && authorError==null&& descriptionError==null
     }
-    fun createOffer(){
+
+    fun createDemand(){
         viewModelScope.launch {
+            _uiState.value = UiState.Loading
             try {
-                val offer = Offer(
+                val demand = Demand(
                     title = title,
                     author = author,
-                    photo = bitmapToBase64(photoUri!!, context),
+                    language = language.name,
+                    photo = bitmapToBase64(photoUri, context) ,
                     description = description,
                     active = true,
-                    language = language.name,
                     owner = owner
                 )
-                repo.createOffer(offer)
+                val error = repo.createDemand(demand)
+                Log.d("CreateDemandVM","${error}")
+                if(error == null){
+                    _uiState.value = UiState.Success
+                }
+                else{
+                    _uiState.value = UiState.Error(error)
+                }
             } catch (e: Exception){
-                Log.d("CreateOfferVM","${e.localizedMessage}")
+                _uiState.value = UiState.Error("${e.localizedMessage}")
+                Log.d("CreateDemandVM","${e.localizedMessage}")
             }
         }
     }
+
     fun clearAllFields(){
         updateTitle("")
         updateAuthor("")
@@ -118,42 +118,4 @@ class CreateOfferViewModel(
         updateDescription("")
         updateLanguage(Language.Unspecified)
     }
-}
-fun bitmapToBase64(uri: Uri?, context: Context): String {
-    uri?.let {
-        val inputStream = context.contentResolver.openInputStream(uri) ?: return ""
-
-        val bytes = inputStream.readBytes()
-        inputStream.close()
-
-        val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size) ?: return ""
-
-        val orientation = try {
-            val exif = ExifInterface(ByteArrayInputStream(bytes))
-            exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
-        } catch (e: Exception) {
-            ExifInterface.ORIENTATION_NORMAL
-        }
-
-        val rotatedBitmap = when (orientation) {
-            ExifInterface.ORIENTATION_ROTATE_90 -> rotateBitmap(bitmap, 90f)
-            ExifInterface.ORIENTATION_ROTATE_180 -> rotateBitmap(bitmap, 180f)
-            ExifInterface.ORIENTATION_ROTATE_270 -> rotateBitmap(bitmap, 270f)
-            else -> bitmap
-        }
-
-        val ratio = rotatedBitmap.width.toFloat() / rotatedBitmap.height
-        val resizedBitmap = Bitmap.createScaledBitmap(rotatedBitmap, 800, (800 / ratio).toInt(), false)
-
-        return ByteArrayOutputStream().use { stream ->
-            resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 80, stream)
-            Base64.encodeToString(stream.toByteArray(), Base64.DEFAULT)
-        }
-    }
-    return ""
-}
-
-fun rotateBitmap(source: Bitmap, angle: Float): Bitmap {
-    val matrix = Matrix().apply { postRotate(angle) }
-    return Bitmap.createBitmap(source, 0, 0, source.width, source.height, matrix, true)
 }

@@ -2,11 +2,8 @@ package com.example.swapup.ui.screens
 
 import android.content.ClipData
 import android.content.ClipDescription
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.PersistableBundle
-import android.util.Base64
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -63,23 +60,21 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import coil3.compose.AsyncImage
 import com.example.swapup.R
-import com.example.swapup.data.model.Offer
+import com.example.swapup.data.model.Demand
 import com.example.swapup.navigation.Routes
 import com.example.swapup.ui.theme.DarkBlue
 import com.example.swapup.ui.theme.SkyBlue
-import com.example.swapup.viewmodel.OfferInfoViewModel
+import com.example.swapup.viewmodel.DemandInfoViewModel
 import com.example.swapup.viewmodel.state.UiState
 
-
 @Composable
-fun OfferInfoScreen(
+fun DemandInfo(
     navController: NavHostController,
-    vm: OfferInfoViewModel
+    vm: DemandInfoViewModel
 ) {
     val uiState = vm.uiState
-    val offer = vm.offer.observeAsState(Offer()).value
+    val demand = vm.demand.observeAsState(Demand()).value
     val message = vm.message
     val languageBox = vm.languageBox
     val context = LocalContext.current
@@ -91,6 +86,7 @@ fun OfferInfoScreen(
             Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
         }
     }
+
     LaunchedEffect(uiState) {
         if(uiState is UiState.Error){
             val message = (uiState as UiState.Error).msg
@@ -107,7 +103,7 @@ fun OfferInfoScreen(
                     .padding(horizontal = 16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
 
-            ) {
+                ) {
                 item {
                     Row(
                         modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp),
@@ -131,7 +127,7 @@ fun OfferInfoScreen(
                 }
                 item {
                     BitmapImageLoader(
-                        photoUri = offer.photo,
+                        photoUri = demand.photo,
                         modifier = Modifier
                             .size(180.dp, height = 240.dp)
                             .clip(RoundedCornerShape(8.dp)),
@@ -142,7 +138,7 @@ fun OfferInfoScreen(
 
                 item {
                     Text(
-                        text = offer.title,
+                        text = demand.title,
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis,
                         fontSize = 28.sp,
@@ -151,7 +147,7 @@ fun OfferInfoScreen(
                     )
 
                     Text(
-                        text = offer.author,
+                        text = demand.author,
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Medium,
                         color = SkyBlue
@@ -236,7 +232,8 @@ fun OfferInfoScreen(
                                     horizontalArrangement = Arrangement.Start
                                 ) {
                                     Text(
-                                        text = if(offer.active) stringResource(R.string.active) else stringResource(R.string.inactive),
+                                        text = if(demand.active) stringResource(R.string.active) else stringResource(
+                                            R.string.inactive),
                                         fontSize = 16.sp,
                                         fontWeight = FontWeight.W500,
                                     )
@@ -270,7 +267,7 @@ fun OfferInfoScreen(
                                         horizontalArrangement = Arrangement.Start
                                     ) {
                                         Text(
-                                            text = offer.owner,
+                                            text = demand.owner,
                                             fontSize = 16.sp,
                                             fontWeight = FontWeight.W500,
                                         )
@@ -302,7 +299,7 @@ fun OfferInfoScreen(
                             textAlign = TextAlign.Justify,
                             maxLines = 5,
                             overflow = TextOverflow.Ellipsis,
-                            text = offer.description,
+                            text = demand.description,
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Normal,
                             color = Color.Black
@@ -312,7 +309,7 @@ fun OfferInfoScreen(
                 }
 
                 item {
-                    if(vm.isNotOwner() && (vm.offer.value?.active == true) ){
+                    if(vm.isNotOwner() && (vm.demand.value?.active == true) ){
                         Column(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalAlignment = Alignment.CenterHorizontally,
@@ -416,7 +413,7 @@ fun OfferInfoScreen(
                                 fontSize = 18.sp,
                                 color = DarkBlue,
                             )
-                            OfferCodeRow(offer = offer, vm = vm, clipboardManager = clipboardManager)
+                            DemandCodeRow(demand = demand, vm = vm, clipboardManager = clipboardManager)
                         }
                     }
                 }
@@ -428,16 +425,15 @@ fun OfferInfoScreen(
             LoadingScreen()
         }
         is UiState.Success->{
-            navController.navigate(Routes.Offer.name)
+            navController.navigate(Routes.Demand.name)
         }
         else->{}
     }
 }
-
 @Composable
-fun OfferCodeRow(
-    offer: Offer,
-    vm: OfferInfoViewModel,
+fun DemandCodeRow(
+    demand: Demand,
+    vm: DemandInfoViewModel,
     clipboardManager: ClipboardManager
 ) {
     Row(
@@ -447,7 +443,7 @@ fun OfferCodeRow(
     ) {
         SelectionContainer {
             Text(
-                text = offer.uid,
+                text = demand.uid,
                 fontWeight = FontWeight.W400,
                 color = Color.Gray,
                 fontSize = 16.sp,
@@ -457,7 +453,7 @@ fun OfferCodeRow(
         Spacer(Modifier.width(16.dp))
         Button(
             onClick = {
-                val clipData = ClipData.newPlainText("offer id", offer.uid).apply {
+                val clipData = ClipData.newPlainText("offer id", demand.uid).apply {
                     description.extras = PersistableBundle().apply {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                             putBoolean(ClipDescription.EXTRA_IS_SENSITIVE, true)
@@ -496,30 +492,4 @@ fun OfferCodeRow(
             }
         }
     }
-}
-
-@Composable
-fun BitmapImageLoader(
-    photoUri: String,
-    modifier: Modifier,
-    contentScale: ContentScale = ContentScale.Crop){
-    val context = LocalContext.current
-    var bitmap: Bitmap? = null
-    try {
-        val base64Image = Base64.decode(photoUri, Base64.DEFAULT)
-        bitmap = BitmapFactory.decodeByteArray(
-            base64Image, 0 ,
-            base64Image.size
-        )
-    } catch (e: Exception){ }
-    AsyncImage(
-        model = imageRequest(
-            context,
-            bitmap,
-            R.drawable.no_photo
-        ),
-        contentDescription = "null",
-        modifier = modifier,
-        contentScale = contentScale,
-    )
 }

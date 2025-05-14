@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.swapup.data.repository.FirestoreRepo
 import com.example.swapup.data.sharedpref.DataManager
 import com.example.swapup.viewmodel.CreateOfferViewModel
+import com.example.swapup.viewmodel.DemandInfoViewModel
 import com.example.swapup.viewmodel.OfferInfoViewModel
 
 class OfferInfoVMFactory(
@@ -16,6 +17,10 @@ class OfferInfoVMFactory(
         if(modelClass.isAssignableFrom(OfferInfoViewModel::class.java)){
             @Suppress("UNCHECKED_CAST")
             return OfferInfoViewModel(dataManager, repo, uid) as T
+        }
+        if(modelClass.isAssignableFrom(DemandInfoViewModel::class.java)){
+            @Suppress("UNCHECKED_CAST")
+            return DemandInfoViewModel(dataManager, repo, uid) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

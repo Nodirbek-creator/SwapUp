@@ -12,20 +12,20 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.swapup.R
+import com.example.swapup.data.model.Demand
 import com.example.swapup.data.model.Language
 import com.example.swapup.data.model.LanguageBox
-import com.example.swapup.data.model.Offer
 import com.example.swapup.data.repository.FirestoreRepo
 import com.example.swapup.data.sharedpref.DataManager
 import com.example.swapup.viewmodel.state.UiState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class OfferInfoViewModel(
+class DemandInfoViewModel(
     private val dataManager: DataManager,
     private val repo: FirestoreRepo,
     private val uid: String,
-):ViewModel() {
+): ViewModel() {
     private val currentUser = dataManager.getUser()
 
     private val _uiState = mutableStateOf<UiState>(UiState.Idle)
@@ -41,11 +41,11 @@ class OfferInfoViewModel(
         private set
 
     init {
-        getOfferById()
+        getDemandById()
     }
-    private val _offer = MutableLiveData<Offer>()
-    val offer: LiveData<Offer> get() = _offer
 
+    private val _demand = MutableLiveData<Demand>()
+    val demand: LiveData<Demand> get() = _demand
 
     fun updateMessage(newMsg: String){
         viewModelScope.launch {
@@ -60,19 +60,21 @@ class OfferInfoViewModel(
         message = null
         secretCodeError = null
     }
+
     fun checkSecretCode(){
-        if(secretCode!=offer.value!!.uid){
+        if(secretCode!=demand.value!!.uid){
             message = "Secret code didn't match!"
             secretCodeError = "Wrong secret code"
         }
         else{
-            disactiveOffer()
+            disactiveDemand()
         }
     }
-    fun disactiveOffer(){
+
+    fun disactiveDemand(){
         viewModelScope.launch {
             _uiState.value = UiState.Loading
-            val result = repo.disactivateOffer(offer.value!!)
+            val result = repo.disactivateDemand(demand.value!!)
             if(result == null){
                 _uiState.value = UiState.Success
                 secretCodeError = null
@@ -84,24 +86,23 @@ class OfferInfoViewModel(
         }
     }
 
-
-
-
     fun isOwner(): Boolean{
-        return currentUser.username == offer.value?.owner
+        return currentUser.username == demand.value?.owner
     }
+
     fun isNotOwner(): Boolean{
-        return currentUser.username != offer.value?.owner
+        return currentUser.username != demand.value?.owner
     }
-    fun getOfferById(){
+
+    fun getDemandById(){
         viewModelScope.launch {
             _uiState.value = UiState.Loading
-            val result = repo.getOfferById(uid)
+            val result = repo.getDemandById(uid)
             if(result == null){
                 _uiState.value = UiState.Error("Couldn't find the offer")
             }
             else{
-                _offer.value = result!!
+                _demand.value = result!!
                 languageBox = when(result.language){
                     Language.Uzbek.name ->{
                         LanguageBox(R.drawable.uzb, R.string.uzbek,)
@@ -122,7 +123,7 @@ class OfferInfoViewModel(
     }
 
     fun launchTelegram(context: Context){
-        val username = offer.value?.owner ?: ""
+        val username = demand.value?.owner ?: ""
         val intent = Intent(Intent.ACTION_VIEW).apply {
             data = Uri.parse("https://t.me/${username.removePrefix("@")}")
             setPackage("org.telegram.messenger") // Forces opening in Telegram app

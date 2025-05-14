@@ -2,6 +2,7 @@ package com.example.swapup.data.repository
 
 import android.util.Log
 import com.example.swapup.data.model.Book
+import com.example.swapup.data.model.Demand
 import com.example.swapup.data.model.Offer
 import com.example.swapup.data.model.User
 import com.google.firebase.firestore.FirebaseFirestore
@@ -151,6 +152,63 @@ class FirestoreRepo(private val firestore: FirebaseFirestore ) {
         }
     }
 
+    suspend fun createDemand(demand: Demand): String?{
+        return try {
+            val newDoc = demandRef.document()
+            val demandWithId = demand.copy(uid = newDoc.id)
+            newDoc.set(demandWithId).await()
+            Log.d(TAG,"Demand is saved!")
+            null
+        } catch (e: Exception){
+            Log.d(TAG,"${e.localizedMessage}")
+            "${e.localizedMessage}"
+        }
+    }
+
+    fun getDemands(): Flow<List<Demand>> = flow {
+        try {
+            val snapshot = demandRef
+                .get()
+                .await()
+            val list = snapshot.documents.mapNotNull { it.toObject<Demand>() }
+            emit(list)
+        } catch (e: Exception){
+            Log.w(TAG, "Error getting demands", e)
+        }
+    }
+
+    suspend fun getDemandById(uid: String): Demand?{
+        return try{
+            val docReference = demandRef.document(uid).get().await()
+            val demand = docReference.toObject<Demand>()
+            demand
+        } catch (e: Exception){
+            null
+        }
+    }
+    suspend fun disactivateDemand(demand: Demand): String?{
+        return try {
+            val reference = demandRef.document(demand.uid)
+            val disactivatedDemand = demand.copy(active = false)
+            reference.set(disactivatedDemand).await()
+            Log.d(TAG,"Demand is deactivated!")
+            null
+        } catch (e: Exception){
+            Log.d(TAG,"${e.localizedMessage}")
+            "${e.localizedMessage}"
+        }
+    }
+
+    suspend fun deleteDemand(demand: Demand): String?{
+        return try{
+            val result = demandRef.document(demand.uid).delete().await()
+            Log.d(TAG,"Offer is deleted!")
+            null
+        } catch (e: Exception){
+            Log.d(TAG,"${e.localizedMessage}")
+            e.localizedMessage
+        }
+    }
     companion object {
         private const val TAG = "FireStoreRepository"
     }

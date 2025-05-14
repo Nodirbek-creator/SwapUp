@@ -137,7 +137,9 @@ fun MainScreen(
             floatingActionButton = {
                 if(currentRoute == Routes.Demand.name){
                     FloatingActionButton(
-                        onClick = {},
+                        onClick = {
+                            navController.navigate(Routes.CreateDemand.name)
+                        },
                         containerColor = SkyBlue,
                         contentColor = Color.White
                     ) {

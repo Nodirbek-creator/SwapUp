@@ -5,8 +5,6 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.interaction.FocusInteraction
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,39 +19,28 @@ import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Send
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.swapup.R
@@ -61,25 +48,25 @@ import com.example.swapup.data.model.Language
 import com.example.swapup.navigation.Routes
 import com.example.swapup.ui.theme.DarkBlue
 import com.example.swapup.ui.theme.SkyBlue
-import com.example.swapup.viewmodel.CreateOfferViewModel
+import com.example.swapup.viewmodel.CreateDemandViewModel
+import com.example.swapup.viewmodel.state.UiState
 
 @Composable
-fun CreateOffer(
+fun CreateDemand(
     navController: NavHostController,
-    vm: CreateOfferViewModel
+    vm: CreateDemandViewModel
 ) {
-
-
-
     val context = LocalContext.current
+    val uiState = vm.uiState
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()) { uri->
         if(uri == null) return@rememberLauncherForActivityResult
         vm.updatePhoto(uri)
     }
-    LaunchedEffect(vm.photoError) {
-        if(vm.photoError != null){
-            Toast.makeText(context, vm.photoError, Toast.LENGTH_SHORT).show()
+    LaunchedEffect(uiState) {
+        if(uiState is UiState.Error){
+            val msg = uiState.msg
+            Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
         }
     }
     Column(
@@ -107,10 +94,11 @@ fun CreateOffer(
                 )
             }
             Text(
-                text = stringResource(R.string.create_offer),
+                text = stringResource(R.string.create_demand),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.W600,
-                color = DarkBlue)
+                color = DarkBlue
+            )
             Spacer(Modifier.width(32.dp))
         }
         Spacer(Modifier.height(24.dp))
@@ -176,8 +164,8 @@ fun CreateOffer(
                     onClick = {vm.updateLanguage(Language.Uzbek)},
                     shape = RoundedCornerShape(8.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = if(vm.language==Language.Uzbek) DarkBlue else Color.White,
-                        contentColor = if(vm.language==Language.Uzbek) Color.White else DarkBlue,
+                        containerColor = if(vm.language== Language.Uzbek) DarkBlue else Color.White,
+                        contentColor = if(vm.language== Language.Uzbek) Color.White else DarkBlue,
                     ),
                     modifier = Modifier.weight(1f),
                     border = BorderStroke(1.dp, DarkBlue)
@@ -213,8 +201,8 @@ fun CreateOffer(
                     onClick = {vm.updateLanguage(Language.English)},
                     shape = RoundedCornerShape(8.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = if(vm.language==Language.English) DarkBlue else Color.White,
-                        contentColor = if(vm.language==Language.English) Color.White else DarkBlue,
+                        containerColor = if(vm.language== Language.English) DarkBlue else Color.White,
+                        contentColor = if(vm.language== Language.English) Color.White else DarkBlue,
                     ),
                     modifier = Modifier.weight(1f),
                     border = BorderStroke(1.dp, DarkBlue)
@@ -250,8 +238,8 @@ fun CreateOffer(
                     onClick = {vm.updateLanguage(Language.Russian)},
                     shape = RoundedCornerShape(8.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = if(vm.language==Language.Russian) DarkBlue else Color.White,
-                        contentColor = if(vm.language==Language.Russian) Color.White else DarkBlue,
+                        containerColor = if(vm.language== Language.Russian) DarkBlue else Color.White,
+                        contentColor = if(vm.language== Language.Russian) Color.White else DarkBlue,
                     ),
                     modifier = Modifier.weight(1f),
                     border = BorderStroke(1.dp, DarkBlue)
@@ -350,11 +338,10 @@ fun CreateOffer(
                 vm.validateTitle()
                 vm.validateAuthor()
                 vm.validateDescription()
-                vm.validatePhoto()
                 if(vm.isEverythingOk()){
-                    vm.createOffer()
+                    vm.createDemand()
                     vm.clearAllFields()
-                    navController.navigate(Routes.Offer.name)
+                    navController.navigate(Routes.Demand.name)
                 }
             },
             modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
@@ -371,63 +358,5 @@ fun CreateOffer(
                 fontSize = 15.sp,)
         }
     }
+
 }
-
-@Composable
-fun ValidatedTextField(
-    value: String,
-    onValueChange: (String) -> Unit,
-    error: String?,
-    placeholder: String,
-    onValidate: () -> Unit,
-    modifier: Modifier,
-    singleLine: Boolean = true,
-    maxLines: Int = 1,
-    imeAction: ImeAction = ImeAction.Done,
-    onImeAction: () -> Unit = {}
-) {
-    val interactionSource = remember { MutableInteractionSource() }
-    val focusManager = LocalFocusManager.current
-
-    // Focus tracking
-    LaunchedEffect(interactionSource) {
-        interactionSource.interactions.collect { interaction ->
-            if (interaction is FocusInteraction.Unfocus) {
-                onValidate()
-            }
-        }
-    }
-
-    TextField(
-        modifier = modifier,
-        value = value,
-        onValueChange = onValueChange,
-        placeholder = { Text(placeholder) },
-        isError = error != null,
-        supportingText = {
-            if (error != null) {
-                Text(text = error, color = MaterialTheme.colorScheme.error)
-            }
-        },
-        interactionSource = interactionSource,
-        keyboardOptions = KeyboardOptions(imeAction = imeAction),
-        keyboardActions = KeyboardActions(
-            onAny = {
-                onValidate()
-                onImeAction()
-                if (imeAction == ImeAction.Done) {
-                    focusManager.clearFocus()
-                }
-            }
-        ),
-        shape = RoundedCornerShape(12.dp),
-        colors = OutlinedTextFieldDefaults.colors(
-            unfocusedBorderColor = Color.Gray,
-            unfocusedPlaceholderColor = Color.Gray,
-            focusedBorderColor = DarkBlue
-        ),
-        singleLine = singleLine,
-        maxLines = maxLines,
-    )
-}
-

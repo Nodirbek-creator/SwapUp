@@ -26,7 +26,10 @@ import com.example.swapup.data.sharedpref.DataManager
 import com.example.swapup.navigation.Routes
 import com.example.swapup.ui.screens.CategoryScreen
 import com.example.swapup.ui.screens.CommentScreen
+import com.example.swapup.ui.screens.CreateDemand
 import com.example.swapup.ui.screens.CreateOffer
+import com.example.swapup.ui.screens.DemandInfo
+import com.example.swapup.ui.screens.DemandScreen
 import com.example.swapup.ui.screens.ErrorScreen
 import com.example.swapup.ui.screens.HomeScreen
 import com.example.swapup.ui.screens.InfoScreen
@@ -41,19 +44,21 @@ import com.example.swapup.ui.screens.SettingsScreen
 import com.example.swapup.ui.screens.SignUpScreen
 import com.example.swapup.ui.theme.DarkBlue
 import com.example.swapup.viewmodel.BookViewModel
+import com.example.swapup.viewmodel.CreateDemandViewModel
 import com.example.swapup.viewmodel.InfoViewModel
 import com.example.swapup.viewmodel.LoginViewModel
 import com.example.swapup.viewmodel.MainViewModel
 import com.example.swapup.viewmodel.NetworkViewModel
 import com.example.swapup.viewmodel.CreateOfferViewModel
+import com.example.swapup.viewmodel.DemandInfoViewModel
+import com.example.swapup.viewmodel.DemandViewModel
 import com.example.swapup.viewmodel.OfferInfoViewModel
 import com.example.swapup.viewmodel.OfferViewModel
 import com.example.swapup.viewmodel.PdfViewModel
 import com.example.swapup.viewmodel.ProfileViewModel
 import com.example.swapup.viewmodel.SearchViewModel
 import com.example.swapup.viewmodel.SignUpViewModel
-import com.example.swapup.viewmodel.viewmodelFactory.CreateOfferViewModelFactory
-import com.example.swapup.viewmodel.viewmodelFactory.OfferInfoVMFactory
+import com.example.swapup.viewmodel.viewmodelFactory.CreateViewModelFactory
 import com.google.firebase.firestore.FirebaseFirestore
 import com.yariksoffice.lingver.Lingver
 import java.net.URLDecoder
@@ -71,7 +76,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             val status = networkViewModel.networkStatus.collectAsState()
             val navController = rememberNavController()
-            val bookViewModel: BookViewModel = viewModel()
+
 //            Log.d("user","${dataManager.getUser()}")
 //            val startDestination =
 //                if(dataManager.userLogged()){ Routes.Main.name }
@@ -86,6 +91,7 @@ class MainActivity : ComponentActivity() {
                     }
                 }
                 ConnectivityObserver.Status.Available->{
+                    val bookViewModel: BookViewModel = viewModel()
                     val authRepository = AuthRepository(RetrofitInstance.api, dataManager)
                     val fireStoreRepo = FirestoreRepo(FirebaseFirestore.getInstance())
                     NavHost(
@@ -174,11 +180,15 @@ class MainActivity : ComponentActivity() {
                                 )
                             }
                             composable(Routes.Demand.name) {
+                                val demandVM: DemandViewModel = viewModel()
                                 MainScreen(
                                     navController = navController,
                                     vm = mainViewModel,
                                     content = {
-
+                                        DemandScreen(
+                                            navController,
+                                            demandVM
+                                        )
                                     }
                                 )
                             }
@@ -232,10 +242,18 @@ class MainActivity : ComponentActivity() {
                         }
                         composable(Routes.CreateOffer.name){
                             val offerViewModel =
-                                ViewModelProvider(this@MainActivity, CreateOfferViewModelFactory(dataManager, this@MainActivity))[CreateOfferViewModel::class.java]
+                                ViewModelProvider(this@MainActivity, CreateViewModelFactory(dataManager, this@MainActivity))[CreateOfferViewModel::class.java]
                             CreateOffer(
                                 navController,
                                 offerViewModel
+                            )
+                        }
+                        composable(Routes.CreateDemand.name){
+                            val demandVM =
+                                ViewModelProvider(this@MainActivity, CreateViewModelFactory(dataManager, this@MainActivity))[CreateDemandViewModel::class.java]
+                            CreateDemand(
+                                navController,
+                                demandVM
                             )
                         }
                         composable("${Routes.OfferInfo.name}/{uid}"){ stackEntry->
@@ -244,6 +262,14 @@ class MainActivity : ComponentActivity() {
                             OfferInfoScreen(
                                 navController,
                                 offerInfoVM
+                            )
+                        }
+                        composable("${Routes.DemandInfo.name}/{uid}"){ stackEntry->
+                            val uid = stackEntry.arguments?.getString("uid")
+                            val demandInfoVM = DemandInfoViewModel(dataManager, fireStoreRepo, uid!!)
+                            DemandInfo(
+                                navController,
+                                demandInfoVM
                             )
                         }
 
