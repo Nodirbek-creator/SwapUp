@@ -1,9 +1,9 @@
 package com.example.swapup.data.model
 
 data class User(
-    val id: Int,
-    val username: String,
-    val fullname: String,
-    val email: String,
-    val access_token: String,
+    val id: String = "",
+    val username: String = "",
+    val fullname: String = "",
+    val email: String = "",
+    val password: String = "",
 )

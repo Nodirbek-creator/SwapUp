@@ -1,6 +1,7 @@
 package com.example.swapup
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -19,8 +20,7 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import com.example.swapup.connection.ConnectivityObserver
 import com.example.swapup.connection.NetworkConnectivityObserver
-import com.example.swapup.data.network.RetrofitInstance
-import com.example.swapup.data.repository.AuthRepository
+import com.example.swapup.data.repository.FirebaseAuthRepo
 import com.example.swapup.data.repository.FirestoreRepo
 import com.example.swapup.data.sharedpref.DataManager
 import com.example.swapup.navigation.Routes
@@ -77,11 +77,11 @@ class MainActivity : ComponentActivity() {
             val status = networkViewModel.networkStatus.collectAsState()
             val navController = rememberNavController()
 
-//            Log.d("user","${dataManager.getUser()}")
-//            val startDestination =
-//                if(dataManager.userLogged()){ Routes.Main.name }
-//                else {Routes.Login.name}
-//            Log.d("currentUser","${dataManager.getUser()}")
+            val startDestination =
+                if(dataManager.userLogged()){ Routes.Main.name }
+                else {Routes.Login.name}
+            Log.d("currentUser","${dataManager.getUser()}")
+            Log.d("userLogged?","${dataManager.userLogged()}")
             when(status.value) {
                 null ->{
                     Box(modifier = Modifier.fillMaxSize()){
@@ -92,11 +92,11 @@ class MainActivity : ComponentActivity() {
                 }
                 ConnectivityObserver.Status.Available->{
                     val bookViewModel: BookViewModel = viewModel()
-                    val authRepository = AuthRepository(RetrofitInstance.api, dataManager)
+                    val authRepository = FirebaseAuthRepo(FirebaseFirestore.getInstance(), dataManager, this)
                     val fireStoreRepo = FirestoreRepo(FirebaseFirestore.getInstance())
                     NavHost(
                         navController = navController,
-                        startDestination = Routes.Main.name
+                        startDestination = startDestination
                     ) {
                         composable(Routes.Login.name) {
                             val loginViewModel = LoginViewModel(authRepository)
@@ -107,8 +107,7 @@ class MainActivity : ComponentActivity() {
                             SignUpScreen(navController, signUpViewModel)
                         }
                         navigation(startDestination = Routes.Home.name, route = Routes.Main.name) {
-                            val bookViewModel = BookViewModel()
-                            val mainViewModel = MainViewModel(dataManager, bookViewModel, navController)
+                            val mainViewModel = MainViewModel(dataManager, bookViewModel)
                             composable(Routes.Home.name) {
                                 MainScreen(
                                     navController = navController,
@@ -274,12 +273,10 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable(Routes.Profile.name) {
-                            val profileViewModel = ProfileViewModel(dataManager,)
-                            val bookViewModel = BookViewModel()
+                            val profileViewModel = ProfileViewModel(dataManager)
                             ProfileScreen(
                                 navController = navController,
                                 vm = profileViewModel,
-                                bookVM = bookViewModel
                             )
                         }
 

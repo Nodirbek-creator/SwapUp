@@ -117,6 +117,22 @@ class FirestoreRepo(private val firestore: FirebaseFirestore ) {
             null
         }
     }
+    fun getOffersByUsername(username: String): Flow<List<Offer>> = flow{
+        try{
+            val result = offerRef
+                .whereEqualTo("owner", username).get().await()
+            if(result.documents.isEmpty()){
+                emit(emptyList())
+            }
+            val offerList = result.documents.mapNotNull { it.toObject<Offer>() }
+            emit(offerList)
+
+
+        } catch (e: Exception){
+            Log.e("FirestoreRepo","", e)
+        }
+    }
+
     suspend fun disactivateOffer(offer: Offer): String?{
         return try {
             val reference = offerRef.document(offer.uid)
@@ -174,6 +190,19 @@ class FirestoreRepo(private val firestore: FirebaseFirestore ) {
             emit(list)
         } catch (e: Exception){
             Log.w(TAG, "Error getting demands", e)
+        }
+    }
+    fun getDemandsByUsername(username: String): Flow<List<Demand>> = flow{
+        try{
+            val result = demandRef
+                .whereEqualTo("owner", username).get().await()
+            if(result.documents.isEmpty()){
+                emit(emptyList())
+            }
+            val offerList = result.documents.mapNotNull { it.toObject<Demand>() }
+            emit(offerList)
+        } catch (e: Exception){
+            Log.e("FirestoreRepo","", e)
         }
     }
 

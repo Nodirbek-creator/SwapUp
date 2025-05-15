@@ -60,11 +60,26 @@
     <string name="create_offer">Создать предложение</string>
     <string name="unspecified">Не указано</string>
     <string name="owner">Владелец</string>
-    <string name="status">Статус предложения</string>
+    <string name="offer_status">Статус предложения</string>
     <string name="code">Код</string>
     <string name="active">Доступно</string>
     <string name="inactive">Недоступно</string>
     <string name="contact_owner">Свяжитесь с владельцем</string>
     <string name="secret_code">Вставьте секретный код</string>
     <string name="create_demand">Создать спрос</string>
+    <string name="username_notFound">Имя пользователя не найдено</string>
+    <string name="wrong_password">Неверный пароль</string>
+    <string name="login_failed">" Ошибка входа, попробуйте снова"</string>
+    <string name="signup_failed">Ошибка регистрации, попробуйте снова</string>
+    <string name="email_exists">Электронная почта уже зарегистрирована</string>
+    <string name="username_exists">Имя пользователя уже существует</string>
+    <string name="demand_status">Статус спроса</string>
+    <string name="saved_books">Избранные книги</string>
+    <string name="saved">избранные</string>
+    <string name="books">книги</string>
+    <string name="offered">предложенные</string>
+    <string name="demanded">требуемые</string>
+    <string name="no_offers">у вас нету предложений</string>
+    <string name="no_demands">у вас нету спросов</string>
+    <string name="no_saved">у вас нету избранных книг</string>
 </resources>

@@ -9,13 +9,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.swapup.data.model.Login
 import com.example.swapup.data.repository.AuthRepository
+import com.example.swapup.data.repository.FirebaseAuthRepo
 import com.example.swapup.data.result.AuthResult
 import com.example.swapup.viewmodel.state.UiState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class LoginViewModel(
-    private val repository: AuthRepository,
+    private val repository: FirebaseAuthRepo,
 ): ViewModel() {
 //    private val repository = AuthRepository(RetrofitInstance.api)
 
@@ -72,7 +73,7 @@ class LoginViewModel(
                     when(response){
                         is AuthResult.Success ->{
                             _uiState.value = UiState.Success
-                            Log.d("Login","Success")
+                            Log.d(TAG,"Login Success")
                             delay(1000)
                             _uiState.value = UiState.Idle
                         }
@@ -83,10 +84,13 @@ class LoginViewModel(
                         }
                     }
                 } catch (e: Exception){
-                    _uiState.value = UiState.Error(e.localizedMessage ?: "Unknown error")
-                    Log.d("Login","${e.localizedMessage}")
+                    _uiState.value = UiState.Error("Login failed")
+                    Log.e(TAG,"Login Failed", e)
                 }
             }
         }
+    }
+    companion object{
+        private val TAG = "LoginVM"
     }
 }

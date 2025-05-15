@@ -60,12 +60,27 @@
     <string name="create_offer">Create Offer</string>
     <string name="unspecified">Not selected</string>
     <string name="owner">Owner</string>
-    <string name="status">Offer status</string>
+    <string name="offer_status">Offer status</string>
     <string name="code">Code</string>
     <string name="active">Active</string>
     <string name="inactive">Inactive</string>
     <string name="contact_owner">Contact with owner</string>
     <string name="secret_code">Paste secret code</string>
     <string name="create_demand">Create demand</string>
+    <string name="username_notFound">Username not found</string>
+    <string name="wrong_password">Wrong password</string>
+    <string name="login_failed">Login failed, please try again</string>
+    <string name="signup_failed">Sign up failed. Please, try again</string>
+    <string name="email_exists">Email already exists</string>
+    <string name="username_exists">Username already exists</string>
+    <string name="demand_status">Demand status</string>
+    <string name="saved_books">Saved books</string>
+    <string name="saved">saved</string>
+    <string name="books">books</string>
+    <string name="offered">offered</string>
+    <string name="demanded">demanded</string>
+    <string name="no_offers">you have no offers</string>
+    <string name="no_demands">you have no demands</string>
+    <string name="no_saved">you don\'t have saved books</string>
 
 </resources>

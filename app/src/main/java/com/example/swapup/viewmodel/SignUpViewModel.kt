@@ -10,13 +10,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.swapup.data.model.SignUp
 import com.example.swapup.data.repository.AuthRepository
+import com.example.swapup.data.repository.FirebaseAuthRepo
 import com.example.swapup.data.result.AuthResult
 import com.example.swapup.viewmodel.state.UiState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class SignUpViewModel(
-    private val repository: AuthRepository) :ViewModel(){
+    private val repository: FirebaseAuthRepo) :ViewModel(){
 
     private val _uiState = mutableStateOf<UiState>(UiState.Idle)
     val uiState: State<UiState> get() = _uiState
@@ -97,7 +98,7 @@ class SignUpViewModel(
                     when(response){
                         is AuthResult.Success->{
                             _uiState.value = UiState.Success
-                            Log.d("Login","Success")
+                            Log.d(TAG,"Sign up Success")
                             delay(1000)
                             _uiState.value = UiState.Idle
                             onUsernameChange("")
@@ -112,10 +113,15 @@ class SignUpViewModel(
                         }
                     }
                 } catch (e: Exception){
-                    _uiState.value = UiState.Error(e.localizedMessage ?: "Unknown error")
+                    _uiState.value = UiState.Error("SignUp failed")
+                    Log.e(TAG, "SignUp failed",e)
                 }
             }
         }
+
+    }
+    companion object{
+        private val TAG = "SignUpVM"
     }
 
 }

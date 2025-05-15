@@ -179,7 +179,7 @@ fun MainScreen(
 @Composable
 fun NavigationDrawerSheet(
     selectedIndex:Int,
-    user: User?,
+    user: User,
     onClick: (String, Int) -> Unit,
     onProfileClick: () -> Unit,
 ){
@@ -257,22 +257,20 @@ fun NavigationDrawerSheet(
                         modifier = Modifier.size(64.dp),
                     )
                 }
-                user?.let {
-                    Spacer(Modifier.height(12.dp))
-                    Text(
-                        text = user.fullname,
-                        fontWeight = FontWeight.W500,
-                        fontSize = 20.sp,
-                        color = Color.White)
-                    Spacer(Modifier.height(4.dp))
-                    Text(
-                        text = user.username,
-                        fontWeight = FontWeight.W200,
-                        fontSize = 16.sp,
-                        color = Color.White
-                    )
-                    Spacer(Modifier.height(16.dp))
-                }
+                Spacer(Modifier.height(12.dp))
+                Text(
+                    text = user.fullname,
+                    fontWeight = FontWeight.W500,
+                    fontSize = 20.sp,
+                    color = Color.White)
+                Spacer(Modifier.height(4.dp))
+                Text(
+                    text = user.username,
+                    fontWeight = FontWeight.W200,
+                    fontSize = 16.sp,
+                    color = Color.White
+                )
+                Spacer(Modifier.height(16.dp))
             }
             HorizontalDivider(modifier = Modifier.fillMaxWidth(), thickness = 2.dp, color = Color.LightGray)
             Spacer(Modifier.height(8.dp))

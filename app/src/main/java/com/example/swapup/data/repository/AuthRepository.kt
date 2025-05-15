@@ -20,7 +20,7 @@ class AuthRepository(
 
             if(response.isSuccessful){
                 val user = response.body()
-                if(user != null && user.access_token.isNotEmpty()){
+                if(user != null && user.password.isNotEmpty()){
                     dataManager.saveUser(user)
                     AuthResult.Success(user)
                 }
@@ -50,7 +50,7 @@ class AuthRepository(
 
             if(response.isSuccessful){
                 val user = response.body()
-                if(user != null && user.access_token.isNotEmpty()){
+                if(user != null && user.password.isNotEmpty()){
                     dataManager.saveUser(user)
                     AuthResult.Success(user)
                 }

@@ -213,7 +213,7 @@ fun DemandInfo(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = stringResource(R.string.status),
+                                text = stringResource(R.string.offer_status),
                                 color = DarkBlue,
                                 fontSize = 18.sp,
                                 fontWeight = FontWeight.W500

@@ -61,11 +61,26 @@
     <string name="create_offer">Taklif yaratish</string>
     <string name="unspecified">Tanlanmagan</string>
     <string name="owner">Egasi</string>
-    <string name="status">Taklif holati</string>
+    <string name="offer_status">Taklif holati</string>
     <string name="code">Kod</string>
     <string name="active">Faol</string>
     <string name="inactive">Nofaol</string>
     <string name="contact_owner">Egasi bilan bog\'laning</string>
     <string name="secret_code">Maxfiy kodni kiriting</string>
     <string name="create_demand">Talab yaratish</string>
+    <string name="username_notFound">Foydalanuvchi nomi topilmadi</string>
+    <string name="wrong_password">Noto\'g\'ri parol</string>
+    <string name="login_failed">Kirishda xatolik, qaytadan urinib ko‘ring</string>
+    <string name="signup_failed">Ro‘yxatdan o‘tishda xatolik, qayta urinib ko‘ring</string>
+    <string name="email_exists">Email allaqachon ro\'yxatdan o\'tgan</string>
+    <string name="username_exists">Foydalanuvchi nomi allaqachon mavjud</string>
+    <string name="demand_status">Talab holati</string>
+    <string name="saved_books">Saqlangan kitoblar</string>
+    <string name="saved">saqlangan</string>
+    <string name="books">kitoblar</string>
+    <string name="offered">taklif qilingan</string>
+    <string name="demanded">so\'ralgan</string>
+    <string name="no_offers">sizda takliflar yo\'q</string>
+    <string name="no_demands">sizda talablar yo\'q</string>
+    <string name="no_saved">sizda saqlangan kitoblar yo\'q</string>
 </resources>
