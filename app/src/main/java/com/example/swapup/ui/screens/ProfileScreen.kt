@@ -210,7 +210,6 @@ fun ProfileScreen(
                         )
                     }
                 }
-
             }
             item {
                 Spacer(Modifier.height(12.dp))
@@ -307,7 +306,9 @@ fun BookStats(
         colors = CardDefaults.cardColors(
             containerColor = Color(0xFFD9D9D9)
         ),
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),

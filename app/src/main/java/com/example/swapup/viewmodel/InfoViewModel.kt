@@ -79,14 +79,14 @@ class InfoViewModel(
         }
     }
 
-    fun getBookInfo(bookId: Int): Int {
-        return dataManager.getBookInfo(bookId)
+    fun clearCache(){
+        selectedBook = null
+        bookInfo = "Tavsif"
+        bookType = "E-Book"
     }
 
-    fun isSaved(){
-        viewModelScope.launch {
-
-        }
+    fun getBookInfo(bookId: Int): Int {
+        return dataManager.getBookInfo(bookId)
     }
 
     fun saveBook(){
@@ -106,6 +106,7 @@ class InfoViewModel(
             }
         }
     }
+
     fun unsaveBook(){
         viewModelScope.launch {
             try {

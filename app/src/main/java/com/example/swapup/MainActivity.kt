@@ -212,9 +212,9 @@ class MainActivity : ComponentActivity() {
                                 )
                             }
 
+                            val infoViewModel = InfoViewModel(dataManager)
                             val pdfViewModel = PdfViewModel(dataManager)
                             composable("${Routes.Info.name}/{bookId}") {backStack ->
-                                val infoViewModel = InfoViewModel(dataManager)
                                 val bookId = backStack.arguments?.getString("bookId")?.toInt()
                                 InfoScreen(
                                     navController = navController,
