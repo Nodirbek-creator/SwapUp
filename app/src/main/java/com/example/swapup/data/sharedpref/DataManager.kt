@@ -71,6 +71,12 @@ class DataManager(private val activity: ComponentActivity) {
         editor.apply()
     }
 
+    fun clearHistory(){
+        val editor = sharedPreferences.edit()
+        editor.putString("bookId", "")
+        editor.apply()
+    }
+
     fun saveBookInfo(bookId:Int, page: Int){
         val editor = sharedPreferences.edit()
         editor.putInt("$bookId", page)

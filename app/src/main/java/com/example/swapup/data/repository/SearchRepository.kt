@@ -16,4 +16,8 @@ class SearchRepository(
     suspend fun removeFromHistory(bookId: Int){
         dataManager.removedFromHistory(bookId)
     }
+
+    suspend fun clearHistory(){
+        dataManager.clearHistory()
+    }
 }

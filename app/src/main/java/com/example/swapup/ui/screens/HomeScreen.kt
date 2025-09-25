@@ -1,6 +1,7 @@
 package com.example.swapup.ui.screens
 
 import android.content.Context
+import android.os.Build
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -56,7 +57,15 @@ import com.example.swapup.ui.theme.SkyBlue
 import com.example.swapup.viewmodel.BookViewModel
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import com.example.swapup.data.model.Category
@@ -324,7 +333,8 @@ fun TitleText(
 fun BooksCollection(
     bookList: List<Book>,
     context: Context,
-    onBookClick:(Int) -> Unit, ){
+    onBookClick:(Int) -> Unit
+){
     Column(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.Start,
@@ -343,7 +353,7 @@ fun BooksCollection(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(vertical = 6.dp),
-                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                        horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         rowItems.forEach { book->
                             BookCard(
@@ -365,43 +375,49 @@ fun BookCard(
     onClick:(Int) -> Unit,
     context: Context
 ){
-    Card(
-        modifier = Modifier.size(180.dp,280.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.Transparent),
-        onClick = {
-            onClick(book.id)
-        },
-        shape = RectangleShape
-    ) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-            horizontalAlignment = Alignment.Start
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        Card(
+            shape = RoundedCornerShape(5.dp),
+            modifier = Modifier
+                .size((LocalContext.current.display.width*3/20).dp,280.dp)
+                .shadow(4.dp, RoundedCornerShape(5.dp), ambientColor = Color.White),
+            colors = CardDefaults.cardColors(containerColor = Color.White),
+            onClick = {
+                onClick(book.id)
+            }
         ) {
-            ImageLoader(
-                context,
-                imageUrl = book.image,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(220.dp),
-            )
-            Text(
-                text = book.name,
-                overflow = TextOverflow.Ellipsis,
-                textAlign = TextAlign.Start,
-                maxLines = 2,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.W600,
-                color = DarkBlue
-            )
-            Text(
-                text = book.author,
-                overflow = TextOverflow.Ellipsis,
-                textAlign = TextAlign.Start,
-                fontWeight = FontWeight.W400,
-                color = Color.LightGray,
-                fontSize = 14.sp
-            )
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(6.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Spacer(modifier = Modifier.height(1.dp))
+                ImageLoader(
+                    context,
+                    imageUrl = book.image,
+                    modifier = Modifier
+                        .fillMaxWidth(0.9f)
+                        .height(220.dp)
+                )
+                Text(
+                    text = book.name,
+                    overflow = TextOverflow.Ellipsis,
+                    textAlign = TextAlign.Start,
+                    maxLines = 2,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.W600,
+                    color = DarkBlue,
+                    modifier = Modifier.fillMaxWidth(0.9f)
+                )
+                Text(
+                    text = book.author,
+                    overflow = TextOverflow.Ellipsis,
+                    textAlign = TextAlign.Start,
+                    fontWeight = FontWeight.W400,
+                    color = Color.LightGray,
+                    fontSize = 14.sp
+                )
+            }
         }
     }
 }

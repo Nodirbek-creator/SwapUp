@@ -168,7 +168,7 @@ fun InfoScreen(
                                 horizontalArrangement = Arrangement.Center,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Text(if(vm.getBookInfo(bookId) == 0) " O'qishni boshlash " else " O'qishni davom ettirish", color = SkyBlue, fontSize = 18.sp)
+                                Text(if(vm.getBookInfo(bookId) == 0) " O'qishni boshlash " else " O'qishni davom ettirish", color = Color.White, fontSize = 18.sp)
                             }
                             if(vm.getBookInfo(bookId) != 0 && book.count_page != 0){
                                 Row(

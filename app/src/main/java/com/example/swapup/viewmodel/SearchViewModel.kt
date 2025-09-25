@@ -53,15 +53,13 @@ class SearchViewModel(
         viewModelScope.launch {
             if(searchHistory.value.isEmpty()){
                 rep.writeSearchHistory(bookId)
-                getHistory()
             }else if (checkForRepetition(bookId)){
                 rep.writeSearchHistory(bookId)
-                getHistory()
             }else{
                 rep.removeFromHistory(bookId)
                 rep.writeSearchHistory(bookId)
-                getHistory()
             }
+            getHistory()
         }
     }
 
@@ -74,6 +72,13 @@ class SearchViewModel(
             }
         }
         return true
+    }
+
+    fun clearHistory(){
+        viewModelScope.launch {
+            rep.clearHistory()
+            getHistory()
+        }
     }
 
 }

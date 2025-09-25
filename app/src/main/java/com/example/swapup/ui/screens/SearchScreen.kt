@@ -14,14 +14,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -73,7 +72,7 @@ fun SearchScreen(
         OutlinedTextField(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp),
+                .padding(horizontal = 8.dp),
             value = searchQuery,
             onValueChange = vm::updateQuery,
             leadingIcon = {
@@ -113,12 +112,28 @@ fun SearchScreen(
                     searchHistory != ""
                 ){
                     Spacer(modifier = Modifier.height(16.dp))
-                    Text(
-                        stringResource(R.string.search_history),
-                        fontSize = 24.sp,
-                        modifier = Modifier.fillMaxWidth(0.85f),
-                        textAlign = TextAlign.Start
-                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ){
+                        Text(
+                            stringResource(R.string.search_history),
+                            fontSize = 24.sp,
+                            modifier = Modifier.fillMaxWidth(0.9f),
+                            textAlign = TextAlign.Start
+                        )
+                        IconButton(
+                            onClick = {
+                                vm.clearHistory()
+                            }
+                        ) {
+                            Icon(
+                                Icons.Default.Delete,
+                                "Delete history"
+                            )
+                        }
+                    }
                     Spacer(modifier = Modifier.height(16.dp))
                     LazyHorizontalGrid(
                         modifier = Modifier
@@ -129,23 +144,22 @@ fun SearchScreen(
                         rows = GridCells.Fixed(2)
                     ) {
                         items(1){
-                            Spacer(Modifier.width(16.dp))
+                            Spacer(Modifier.width(8.dp))
                         }
                         items(searchHistory.split(":").reversed()) {bookId ->
-                            if(
-                                bookId != ""
-                            ){
+                            if(bookId != ""){
                                 BookCardHorizontal(
                                     book = bookList.find { it.id == bookId.toInt() },
                                     context = context,
-                                    modifier = Modifier.size(width = 250.dp, height = 120.dp)
+                                    modifier = Modifier.size(width = 200.dp, height = 120.dp)
                                 ) {
+                                    navController.navigate("${Routes.Info.name}/$bookId")
                                     vm.writeHistory(bookId.toInt())
                                 }
                             }
                         }
-                        items(2){
-                            Spacer(Modifier.width(16.dp))
+                        items(1){
+                            Spacer(Modifier.width(8.dp))
                         }
                     }
                     Spacer(modifier = Modifier.height(16.dp))
@@ -154,12 +168,12 @@ fun SearchScreen(
             }
             item{
                 Box(
-                    modifier = Modifier.padding(horizontal = 8.dp)
                 ){
                     BooksCollection(
                         bookList = bookList,
                         context = context
                     ) { bookId ->
+                        navController.navigate("${Routes.Info.name}/$bookId")
                         vm.writeHistory(bookId)
                     }
                 }
