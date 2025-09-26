@@ -38,9 +38,11 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
@@ -106,6 +108,7 @@ fun OfferInfoScreen(
                     .windowInsetsPadding(WindowInsets.systemBars)
                     .padding(horizontal = 16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(16.dp)
 
             ) {
                 item {
@@ -357,7 +360,7 @@ fun OfferInfoScreen(
                                         focusManager.clearFocus()
                                         vm.checkSecretCode()
                                     },
-                                    modifier = Modifier.padding(bottom = 16.dp),
+                                    modifier = Modifier.fillMaxWidth(0.9f).height(72.dp).padding(bottom = 16.dp),
                                     shape = RoundedCornerShape(8.dp),
                                     colors = ButtonDefaults.buttonColors(
                                         containerColor = SkyBlue,
@@ -372,16 +375,16 @@ fun OfferInfoScreen(
                                 }
                             }
                             //contact with owner btn
-                            Button(
+                            TextButton(
                                 onClick = {
                                     vm.launchTelegram(context)
                                 },
                                 shape = RoundedCornerShape(8.dp),
                                 modifier = Modifier.fillMaxWidth(),
                                 colors = ButtonDefaults.buttonColors(
-                                    containerColor = SkyBlue,
-                                    contentColor = DarkBlue
-                                ),
+                                    contentColor = DarkBlue,
+                                    containerColor = Color.Transparent
+                                )
                             ) {
                                 Row(
                                     modifier = Modifier.padding(vertical = 6.dp),

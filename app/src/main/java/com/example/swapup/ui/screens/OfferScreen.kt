@@ -82,7 +82,8 @@ fun OfferScreen(
 @Composable
 fun OfferCard(
     offer: Offer,
-    onClick:()-> Unit){
+    onClick:()-> Unit
+){
     val context = LocalContext.current
     var bitmap: Bitmap? = null
     try {

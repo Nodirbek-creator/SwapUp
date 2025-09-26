@@ -379,8 +379,8 @@ fun BookCard(
         Card(
             shape = RoundedCornerShape(5.dp),
             modifier = Modifier
-                .size((LocalContext.current.display.width*3/20).dp,280.dp)
-                .shadow(4.dp, RoundedCornerShape(5.dp), ambientColor = Color.White),
+                .size((LocalContext.current.display.width*3/18).dp,280.dp)
+                .shadow(8.dp, RoundedCornerShape(5.dp), ambientColor = Color.White),
             colors = CardDefaults.cardColors(containerColor = Color.White),
             onClick = {
                 onClick(book.id)
