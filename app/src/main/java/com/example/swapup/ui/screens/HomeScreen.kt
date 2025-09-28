@@ -1,7 +1,9 @@
 package com.example.swapup.ui.screens
 
+import android.content.ContentValues.TAG
 import android.content.Context
 import android.os.Build
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -15,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -66,6 +69,7 @@ import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.drawscope.Fill
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import com.example.swapup.data.model.Category
@@ -93,8 +97,8 @@ fun HomeScreen(
 //    Log.d("selectedCategory","${selectedCategory}")
 //    Log.d("searchQuery","${searchQuery}")
 //    Log.d("categoryList","${categoryList}")
-//    Log.d("mainbook","${mainBook?.name}")
-//    Log.d("bookList","${bookList.size}")
+    Log.d("mainbook","${mainBook?.name}")
+    Log.d("bookList","${bookList.size}")
 
 
     LaunchedEffect(uiState) {
@@ -342,6 +346,7 @@ fun BooksCollection(
     ) {
 
         if(bookList.isNotEmpty()){
+            Log.d(TAG, "BooksCollection: ITSNOTEMPTY")
             val rows = bookList.chunked(2)
             Column(
                 modifier = Modifier
@@ -349,6 +354,7 @@ fun BooksCollection(
                     .padding(horizontal = 16.dp),
             ) {
                 rows.forEachIndexed { index, rowItems ->
+                    Log.d(TAG, "BooksCollection: ${index}")
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -356,6 +362,7 @@ fun BooksCollection(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         rowItems.forEach { book->
+                            Log.d(TAG, "BooksCollection: ${book.name}")
                             BookCard(
                                 book = book,
                                 context = context,
@@ -365,6 +372,9 @@ fun BooksCollection(
                     }
                 }
             }
+        }else{
+            Log.d(TAG, "BooksCollection: ERRRROR")
+            Toast.makeText(context, "ERRORRRR", Toast.LENGTH_SHORT)
         }
     }
 }
@@ -375,11 +385,11 @@ fun BookCard(
     onClick:(Int) -> Unit,
     context: Context
 ){
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+    Log.d(TAG, "BooksCollection: ${Build.VERSION.SDK_INT} >= ${Build.VERSION_CODES.R} -> TRUE")
         Card(
             shape = RoundedCornerShape(5.dp),
             modifier = Modifier
-                .size((LocalContext.current.display.width*3/18).dp,280.dp)
+                .size((LocalConfiguration.current.screenWidthDp*9/20).dp, height = 300.dp)
                 .shadow(8.dp, RoundedCornerShape(5.dp), ambientColor = Color.White),
             colors = CardDefaults.cardColors(containerColor = Color.White),
             onClick = {
@@ -403,8 +413,8 @@ fun BookCard(
                     text = book.name,
                     overflow = TextOverflow.Ellipsis,
                     textAlign = TextAlign.Start,
-                    maxLines = 2,
-                    fontSize = 16.sp,
+                    maxLines = 1,
+                    fontSize = 12.sp,
                     fontWeight = FontWeight.W600,
                     color = DarkBlue,
                     modifier = Modifier.fillMaxWidth(0.9f)
@@ -414,12 +424,12 @@ fun BookCard(
                     overflow = TextOverflow.Ellipsis,
                     textAlign = TextAlign.Start,
                     fontWeight = FontWeight.W400,
-                    color = Color.LightGray,
-                    fontSize = 14.sp
+                    color = Color.Gray,
+                    fontSize = 10.sp,
+                    modifier = Modifier.fillMaxWidth(0.9f)
                 )
             }
         }
-    }
 }
 
 fun buildImageRequest(

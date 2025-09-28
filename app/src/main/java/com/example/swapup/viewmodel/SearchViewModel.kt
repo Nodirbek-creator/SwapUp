@@ -1,6 +1,5 @@
 package com.example.swapup.viewmodel
 
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -30,7 +29,7 @@ class SearchViewModel(
     val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
 
     val bookList = _searchQuery
-        .debounce(300)
+        .debounce(10)
         .flatMapLatest { query->
             repository.searchBook(query)
         }
