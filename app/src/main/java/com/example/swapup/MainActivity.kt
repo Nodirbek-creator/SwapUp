@@ -11,7 +11,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import com.example.swapup.connection.ConnectivityObserver
 import com.example.swapup.connection.NetworkConnectivityObserver
@@ -22,7 +21,6 @@ import com.example.swapup.navigation.AppNavHost
 import com.example.swapup.navigation.Routes
 import com.example.swapup.ui.screens.ErrorScreen
 import com.example.swapup.ui.theme.DarkBlue
-import com.example.swapup.viewmodel.BookViewModel
 import com.example.swapup.viewmodel.NetworkViewModel
 import com.google.firebase.firestore.FirebaseFirestore
 import com.yariksoffice.lingver.Lingver

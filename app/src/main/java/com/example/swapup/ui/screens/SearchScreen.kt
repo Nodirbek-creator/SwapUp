@@ -1,5 +1,7 @@
 package com.example.swapup.ui.screens
 
+import android.content.ContentValues.TAG
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -113,7 +115,9 @@ fun SearchScreen(
                 ){
                     Spacer(modifier = Modifier.height(16.dp))
                     Row(
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ){
@@ -135,13 +139,18 @@ fun SearchScreen(
                         }
                     }
                     Spacer(modifier = Modifier.height(16.dp))
+                    Log.d(TAG, "SearchScreen: ${searchHistory.split(":").size}")
                     LazyHorizontalGrid(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(260.dp),
+                            .height(
+                                if (searchHistory.split(":").size > 2) 260.dp else 130.dp
+                            ),
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         verticalArrangement = Arrangement.spacedBy(8.dp),
-                        rows = GridCells.Fixed(2)
+                        rows = GridCells.Fixed(
+                            if (searchHistory.split(":").size > 2) 2 else 1
+                        )
                     ) {
                         items(1){
                             Spacer(Modifier.width(8.dp))
@@ -167,8 +176,7 @@ fun SearchScreen(
                 }
             }
             item{
-                Box(
-                ){
+                Box{
                     BooksCollection(
                         bookList = bookList,
                         context = context

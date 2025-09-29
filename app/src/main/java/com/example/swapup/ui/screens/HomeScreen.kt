@@ -385,51 +385,50 @@ fun BookCard(
     onClick:(Int) -> Unit,
     context: Context
 ){
-    Log.d(TAG, "BooksCollection: ${Build.VERSION.SDK_INT} >= ${Build.VERSION_CODES.R} -> TRUE")
-        Card(
-            shape = RoundedCornerShape(5.dp),
-            modifier = Modifier
-                .size((LocalConfiguration.current.screenWidthDp*9/20).dp, height = 300.dp)
-                .shadow(8.dp, RoundedCornerShape(5.dp), ambientColor = Color.White),
-            colors = CardDefaults.cardColors(containerColor = Color.White),
-            onClick = {
-                onClick(book.id)
-            }
-        ) {
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.spacedBy(6.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Spacer(modifier = Modifier.height(1.dp))
-                ImageLoader(
-                    context,
-                    imageUrl = book.image,
-                    modifier = Modifier
-                        .fillMaxWidth(0.9f)
-                        .height(220.dp)
-                )
-                Text(
-                    text = book.name,
-                    overflow = TextOverflow.Ellipsis,
-                    textAlign = TextAlign.Start,
-                    maxLines = 1,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.W600,
-                    color = DarkBlue,
-                    modifier = Modifier.fillMaxWidth(0.9f)
-                )
-                Text(
-                    text = book.author,
-                    overflow = TextOverflow.Ellipsis,
-                    textAlign = TextAlign.Start,
-                    fontWeight = FontWeight.W400,
-                    color = Color.Gray,
-                    fontSize = 10.sp,
-                    modifier = Modifier.fillMaxWidth(0.9f)
-                )
-            }
+    Card(
+        shape = RoundedCornerShape(5.dp),
+        modifier = Modifier
+            .size((LocalConfiguration.current.screenWidthDp*9/20).dp, height = 300.dp)
+            .shadow(12.dp, RoundedCornerShape(5.dp), ambientColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        onClick = {
+            onClick(book.id)
         }
+    ) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(6.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Spacer(modifier = Modifier.height(1.dp))
+            ImageLoader(
+                context,
+                imageUrl = book.image,
+                modifier = Modifier
+                    .fillMaxWidth(0.9f)
+                    .height(220.dp)
+            )
+            Text(
+                text = book.name,
+                overflow = TextOverflow.Ellipsis,
+                textAlign = TextAlign.Start,
+                maxLines = 1,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.W600,
+                color = DarkBlue,
+                modifier = Modifier.fillMaxWidth(0.9f)
+            )
+            Text(
+                text = book.author,
+                overflow = TextOverflow.Ellipsis,
+                textAlign = TextAlign.Start,
+                fontWeight = FontWeight.W400,
+                color = Color.Gray,
+                fontSize = 10.sp,
+                modifier = Modifier.fillMaxWidth(0.9f)
+            )
+        }
+    }
 }
 
 fun buildImageRequest(

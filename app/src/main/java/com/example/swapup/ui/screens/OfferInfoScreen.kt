@@ -10,7 +10,9 @@ import android.util.Base64
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -310,6 +312,33 @@ fun OfferInfoScreen(
                             fontWeight = FontWeight.Normal,
                             color = Color.Black
                         )
+                    }
+                    Spacer(Modifier.height(24.dp))
+                }
+
+                item {
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.Start,
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        Text(
+                            text = "Location",
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.W500,
+                            color = DarkBlue,
+                        )
+                        Text(
+                            text = "Beruniy shoh ko'chasi, Тоshkent, Toshkent Viloyati, Узбекистан",
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                        Box(
+                            modifier = Modifier.fillMaxWidth(0.95f).height(150.dp)
+                                .border(1.dp, Color.Gray, RoundedCornerShape(5.dp)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text("Map Placeholder")
+                        }
                     }
                     Spacer(Modifier.height(24.dp))
                 }

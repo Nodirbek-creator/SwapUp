@@ -5,7 +5,9 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -18,6 +20,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -69,293 +72,334 @@ fun CreateDemand(
             Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
         }
     }
-    Column(
+    LazyColumn(
         modifier = Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.systemBars),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(Modifier.height(8.dp))
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
-        ) {
-            IconButton(
-                onClick = {
-                    vm.clearAllFields()
-                    navController.popBackStack()
-                }
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "",
-                    tint = DarkBlue,
-                    modifier = Modifier.size(24.dp)
-                )
-            }
-            Text(
-                text = stringResource(R.string.create_demand),
-                fontSize = 20.sp,
-                fontWeight = FontWeight.W600,
-                color = DarkBlue
-            )
-            Spacer(Modifier.width(32.dp))
-        }
-        Spacer(Modifier.height(24.dp))
-        Column(
-            modifier = Modifier.padding(horizontal = 16.dp).fillMaxWidth(),
-            horizontalAlignment = Alignment.Start,
-            verticalArrangement = Arrangement.spacedBy(4.dp),
-        ) {
-            Text(
-                text = stringResource(R.string.book_title),
-                fontSize = 16.sp,
-                fontWeight = FontWeight.W600,
-                color = DarkBlue,
-            )
-            ValidatedTextField(
-                value = vm.title,
-                onValueChange = vm::updateTitle,
-                onValidate = {vm.validateTitle()},
-                error = vm.titleError,
-                placeholder = stringResource(R.string.book_title_placeholder),
-                modifier = Modifier.fillMaxWidth()
-            )
-        }
-        Spacer(Modifier.height(8.dp))
-        Column(
-            modifier = Modifier.padding(horizontal = 16.dp).fillMaxWidth(),
-            horizontalAlignment = Alignment.Start,
-            verticalArrangement = Arrangement.spacedBy(4.dp),
-        ) {
-            Text(
-                text = stringResource(R.string.book_author),
-                fontSize = 16.sp,
-                fontWeight = FontWeight.W600,
-                color = DarkBlue,
-            )
-            ValidatedTextField(
-                value = vm.author,
-                onValueChange = vm::updateAuthor,
-                onValidate = {vm.validateAuthor()},
-                error = vm.authorError,
-                placeholder = stringResource(R.string.book_author_placeholder),
-                modifier = Modifier.fillMaxWidth()
-            )
-        }
-        Spacer(Modifier.height(8.dp))
-        Column(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-            horizontalAlignment = Alignment.Start,
-            verticalArrangement = Arrangement.spacedBy(4.dp)
-        ) {
-            Text(
-                text = stringResource(R.string.language),
-                fontSize = 16.sp,
-                fontWeight = FontWeight.W600,
-                color = DarkBlue,
-            )
+        item {
+            Spacer(Modifier.height(8.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
+                horizontalArrangement = Arrangement.SpaceBetween,
             ) {
-                Button(
-                    onClick = {vm.updateLanguage(Language.Uzbek)},
-                    shape = RoundedCornerShape(8.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = if(vm.language== Language.Uzbek) DarkBlue else Color.White,
-                        contentColor = if(vm.language== Language.Uzbek) Color.White else DarkBlue,
-                    ),
-                    modifier = Modifier.weight(1f),
-                    border = BorderStroke(1.dp, DarkBlue)
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Start
-                        ) {
-                            Image(
-                                painter = painterResource(R.drawable.uzb),
-                                contentDescription = "uzb",
-                                modifier = Modifier.size(32.dp),
-                                contentScale = ContentScale.Crop
-                            )
-                            Spacer(Modifier.width(12.dp))
-                            Text(
-                                text = stringResource(R.string.uzbek).take(3),
-                                maxLines = 1,
-                                overflow = TextOverflow.Clip,
-                                fontSize = 10.sp,
-                                fontWeight = FontWeight.W500,
-                            )
-                        }
-
+                IconButton(
+                    onClick = {
+                        vm.clearAllFields()
+                        navController.popBackStack()
                     }
-                }
-                Button(
-                    onClick = {vm.updateLanguage(Language.English)},
-                    shape = RoundedCornerShape(8.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = if(vm.language== Language.English) DarkBlue else Color.White,
-                        contentColor = if(vm.language== Language.English) Color.White else DarkBlue,
-                    ),
-                    modifier = Modifier.weight(1f),
-                    border = BorderStroke(1.dp, DarkBlue)
                 ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "",
+                        tint = DarkBlue,
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+                Text(
+                    text = stringResource(R.string.create_demand),
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.W600,
+                    color = DarkBlue
+                )
+                Spacer(Modifier.width(32.dp))
+            }
+            Spacer(Modifier.height(24.dp))
+            Column(
+                modifier = Modifier.padding(horizontal = 16.dp).fillMaxWidth(),
+                horizontalAlignment = Alignment.Start,
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
+                Text(
+                    text = stringResource(R.string.book_title),
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.W600,
+                    color = DarkBlue,
+                )
+                ValidatedTextField(
+                    value = vm.title,
+                    onValueChange = vm::updateTitle,
+                    onValidate = { vm.validateTitle() },
+                    error = vm.titleError,
+                    placeholder = stringResource(R.string.book_title_placeholder),
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+            Spacer(Modifier.height(8.dp))
+            Column(
+                modifier = Modifier.padding(horizontal = 16.dp).fillMaxWidth(),
+                horizontalAlignment = Alignment.Start,
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
+                Text(
+                    text = stringResource(R.string.book_author),
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.W600,
+                    color = DarkBlue,
+                )
+                ValidatedTextField(
+                    value = vm.author,
+                    onValueChange = vm::updateAuthor,
+                    onValidate = { vm.validateAuthor() },
+                    error = vm.authorError,
+                    placeholder = stringResource(R.string.book_author_placeholder),
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+            Spacer(Modifier.height(8.dp))
+            Column(
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                horizontalAlignment = Alignment.Start,
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                Text(
+                    text = stringResource(R.string.language),
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.W600,
+                    color = DarkBlue,
+                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    Button(
+                        onClick = { vm.updateLanguage(Language.Uzbek) },
+                        shape = RoundedCornerShape(8.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = if (vm.language == Language.Uzbek) DarkBlue else Color.White,
+                            contentColor = if (vm.language == Language.Uzbek) Color.White else DarkBlue,
+                        ),
+                        modifier = Modifier.weight(1f),
+                        border = BorderStroke(1.dp, DarkBlue)
                     ) {
                         Row(
+                            modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
                             verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Center
+                            horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Image(
-                                painter = painterResource(R.drawable.eng),
-                                contentDescription = "eng",
-                                modifier = Modifier.size(32.dp),
-                                contentScale = ContentScale.Crop
-                            )
-                            Spacer(Modifier.width(12.dp))
-                            Text(
-                                text = stringResource(R.string.english).take(3),
-                                fontSize = 10.sp,
-                                maxLines = 1,
-                                overflow = TextOverflow.Clip,
-                                fontWeight = FontWeight.W500,
-                            )
-                        }
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.Start
+                            ) {
+                                Image(
+                                    painter = painterResource(R.drawable.uzb),
+                                    contentDescription = "uzb",
+                                    modifier = Modifier.size(32.dp),
+                                    contentScale = ContentScale.Crop
+                                )
+                                Spacer(Modifier.width(12.dp))
+                                Text(
+                                    text = stringResource(R.string.uzbek).take(3),
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Clip,
+                                    fontSize = 10.sp,
+                                    fontWeight = FontWeight.W500,
+                                )
+                            }
 
+                        }
                     }
-                }
-                Button(
-                    onClick = {vm.updateLanguage(Language.Russian)},
-                    shape = RoundedCornerShape(8.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = if(vm.language== Language.Russian) DarkBlue else Color.White,
-                        contentColor = if(vm.language== Language.Russian) Color.White else DarkBlue,
-                    ),
-                    modifier = Modifier.weight(1f),
-                    border = BorderStroke(1.dp, DarkBlue)
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
+                    Button(
+                        onClick = { vm.updateLanguage(Language.English) },
+                        shape = RoundedCornerShape(8.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = if (vm.language == Language.English) DarkBlue else Color.White,
+                            contentColor = if (vm.language == Language.English) Color.White else DarkBlue,
+                        ),
+                        modifier = Modifier.weight(1f),
+                        border = BorderStroke(1.dp, DarkBlue)
                     ) {
                         Row(
+                            modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
                             verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Center
+                            horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Image(
-                                painter = painterResource(R.drawable.ru),
-                                contentDescription = "ru",
-                                modifier = Modifier.size(32.dp),
-                                contentScale = ContentScale.Crop
-                            )
-                            Spacer(Modifier.width(12.dp))
-                            Text(
-                                text = stringResource(R.string.russian).take(3),
-                                fontSize = 10.sp,
-                                maxLines = 1,
-                                overflow = TextOverflow.Clip,
-                                fontWeight = FontWeight.W500,
-                            )
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.Center
+                            ) {
+                                Image(
+                                    painter = painterResource(R.drawable.eng),
+                                    contentDescription = "eng",
+                                    modifier = Modifier.size(32.dp),
+                                    contentScale = ContentScale.Crop
+                                )
+                                Spacer(Modifier.width(12.dp))
+                                Text(
+                                    text = stringResource(R.string.english).take(3),
+                                    fontSize = 10.sp,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Clip,
+                                    fontWeight = FontWeight.W500,
+                                )
+                            }
+
+                        }
+                    }
+                    Button(
+                        onClick = { vm.updateLanguage(Language.Russian) },
+                        shape = RoundedCornerShape(8.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = if (vm.language == Language.Russian) DarkBlue else Color.White,
+                            contentColor = if (vm.language == Language.Russian) Color.White else DarkBlue,
+                        ),
+                        modifier = Modifier.weight(1f),
+                        border = BorderStroke(1.dp, DarkBlue)
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.Center
+                            ) {
+                                Image(
+                                    painter = painterResource(R.drawable.ru),
+                                    contentDescription = "ru",
+                                    modifier = Modifier.size(32.dp),
+                                    contentScale = ContentScale.Crop
+                                )
+                                Spacer(Modifier.width(12.dp))
+                                Text(
+                                    text = stringResource(R.string.russian).take(3),
+                                    fontSize = 10.sp,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Clip,
+                                    fontWeight = FontWeight.W500,
+                                )
+                            }
                         }
                     }
                 }
             }
-        }
-        Spacer(Modifier.height(16.dp))
-        Column(
-            modifier = Modifier.padding(horizontal = 16.dp).fillMaxWidth(),
-            horizontalAlignment = Alignment.Start,
-            verticalArrangement = Arrangement.spacedBy(4.dp),
-        ) {
-            Text(
-                text = stringResource(R.string.book_description),
-                fontSize = 16.sp,
-                fontWeight = FontWeight.W600,
-                color = DarkBlue,
-            )
-            ValidatedTextField(
-                value = vm.description,
-                onValueChange = vm::updateDescription,
-                onValidate = {vm.validateDescription()},
-                error = vm.descriptionError,
-                imeAction = ImeAction.None,
-                placeholder = stringResource(R.string.leave_opinion),
-                modifier = Modifier.fillMaxWidth().height(128.dp),
-                singleLine = false,
-                maxLines = 5,
-            )
-        }
-        Spacer(Modifier.height(8.dp))
-        Button(
-            onClick = {
-                launcher.launch("image/*")
-            },
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = SkyBlue,
-                contentColor = DarkBlue,
-            ),
-            shape = RoundedCornerShape(8.dp)
-        ) {
-            if(vm.photoUri == null){
-                Row(
-                    modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Text(stringResource(R.string.upload_image),fontWeight = FontWeight.W500, fontSize = 16.sp)
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.Send,
-                        contentDescription = "",)
-                }
-            } else{
-                Row(
-                    modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Text(stringResource(R.string.image_saved),fontWeight = FontWeight.W500, fontSize = 16.sp)
-                    Icon(
-                        imageVector = Icons.Default.Check,
-                        contentDescription = "",)
+            Spacer(Modifier.height(16.dp))
+            Column(
+                modifier = Modifier.padding(horizontal = 16.dp).fillMaxWidth(),
+                horizontalAlignment = Alignment.Start,
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
+                Text(
+                    text = stringResource(R.string.book_description),
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.W600,
+                    color = DarkBlue,
+                )
+                ValidatedTextField(
+                    value = vm.description,
+                    onValueChange = vm::updateDescription,
+                    onValidate = { vm.validateDescription() },
+                    error = vm.descriptionError,
+                    imeAction = ImeAction.None,
+                    placeholder = stringResource(R.string.leave_opinion),
+                    modifier = Modifier.fillMaxWidth().height(128.dp),
+                    singleLine = false,
+                    maxLines = 5,
+                )
+            }
+            Spacer(Modifier.height(16.dp))
+            Column(
+                modifier = Modifier.padding(horizontal = 16.dp).fillMaxWidth(),
+                horizontalAlignment = Alignment.Start,
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
+                Text(
+                    text = "Location",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.W600,
+                    color = DarkBlue,
+                )
+                ValidatedTextField(
+                    value = vm.location,
+                    onValueChange = vm::updateLocation,
+                    onValidate = {},
+                    error = vm.authorError,
+                    placeholder = "Beruniy shoh ko'chasi, Тоshkent, Toshkent Viloyati, Узбекистан",
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+            Box(
+                modifier = Modifier.fillMaxWidth(0.95f).height(150.dp)
+                    .border(1.dp, Color.Gray, RoundedCornerShape(5.dp)),
+                contentAlignment = Alignment.Center
+            ) {
+                Text("Map Placeholder")
+            }
+            Spacer(Modifier.height(32.dp))
+            Button(
+                onClick = {
+                    launcher.launch("image/*")
+                },
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = SkyBlue,
+                    contentColor = DarkBlue,
+                ),
+                shape = RoundedCornerShape(8.dp)
+            ) {
+                if (vm.photoUri == null) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Text(
+                            stringResource(R.string.upload_image),
+                            fontWeight = FontWeight.W500,
+                            fontSize = 16.sp
+                        )
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.Send,
+                            contentDescription = "",
+                        )
+                    }
+                } else {
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Text(
+                            stringResource(R.string.image_saved),
+                            fontWeight = FontWeight.W500,
+                            fontSize = 16.sp
+                        )
+                        Icon(
+                            imageVector = Icons.Default.Check,
+                            contentDescription = "",
+                        )
+                    }
                 }
             }
-        }
-        Spacer(Modifier.height(32.dp))
-        Button(
-            onClick = {
-                vm.validateTitle()
-                vm.validateAuthor()
-                vm.validateDescription()
-                if(vm.isEverythingOk()){
-                    vm.createDemand()
-                    vm.clearAllFields()
-                    navController.navigate(Routes.Demand.name)
-                }
-            },
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = SkyBlue,
-                contentColor = DarkBlue,
-            ),
-            shape = RoundedCornerShape(8.dp)
-        ) {
-            Text(
-                modifier = Modifier.padding(vertical = 8.dp),
-                text = "Save",
-                fontWeight = FontWeight.W500,
-                fontSize = 15.sp,)
+            Spacer(Modifier.height(8.dp))
+            Button(
+                onClick = {
+                    vm.validateTitle()
+                    vm.validateAuthor()
+                    vm.validateDescription()
+                    if (vm.isEverythingOk()) {
+                        vm.createDemand()
+                        vm.clearAllFields()
+                        navController.navigate(Routes.Demand.name)
+                    }
+                },
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = SkyBlue,
+                    contentColor = DarkBlue,
+                ),
+                shape = RoundedCornerShape(8.dp)
+            ) {
+                Text(
+                    modifier = Modifier.padding(vertical = 8.dp),
+                    text = "Save",
+                    fontWeight = FontWeight.W500,
+                    fontSize = 15.sp,
+                )
+            }
         }
     }
 

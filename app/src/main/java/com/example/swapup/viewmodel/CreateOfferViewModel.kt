@@ -34,6 +34,8 @@ class CreateOfferViewModel(
         private set
     var isActive by mutableStateOf(true)
         private set
+    var location by mutableStateOf("")
+        private set
     var photoUri by mutableStateOf<Uri?>(null)
         private set
     var language by mutableStateOf(Language.Unspecified)
@@ -70,6 +72,9 @@ class CreateOfferViewModel(
     }
     fun updateLanguage(newLang: Language){
         language = newLang
+    }
+    fun updateLocation(newLocation: String){
+        location = newLocation
     }
 
     fun validateTitle(){
