@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "544192672758",
-    "project_id": "swapup-b55b8",
-    "storage_bucket": "swapup-b55b8.firebasestorage.app"
+    "project_number": "290588168353",
+    "project_id": "readly-5b4ee",
+    "storage_bucket": "readly-5b4ee.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:544192672758:android:78c9bda6e9e61c64094dd7",
+        "mobilesdk_app_id": "1:290588168353:android:8529dc4307cbadc4c4a0e0",
         "android_client_info": {
           "package_name": "com.example.swapup"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyCp0Cp9qNWkFtlHPM_76Itp-8SzFf7_XVg"
+          "current_key": "AIzaSyD-u9GeEFtWTm8aa3xJAKXRaj9_YMsa9rc"
         }
       ],
       "services": {

@@ -10,9 +10,9 @@
               <option name="connection">
                 <ConnectionSetting>
                   <option name="appId" value="com.example.swapup" />
-                  <option name="mobileSdkAppId" value="1:544192672758:android:78c9bda6e9e61c64094dd7" />
-                  <option name="projectId" value="swapup-b55b8" />
-                  <option name="projectNumber" value="544192672758" />
+                  <option name="mobileSdkAppId" value="1:290588168353:android:8529dc4307cbadc4c4a0e0" />
+                  <option name="projectId" value="readly-5b4ee" />
+                  <option name="projectNumber" value="290588168353" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

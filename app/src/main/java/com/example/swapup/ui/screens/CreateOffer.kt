@@ -1,5 +1,6 @@
 package com.example.swapup.ui.screens
 
+import android.Manifest
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -65,16 +66,31 @@ import com.example.swapup.navigation.Routes
 import com.example.swapup.ui.theme.DarkBlue
 import com.example.swapup.ui.theme.SkyBlue
 import com.example.swapup.viewmodel.CreateOfferViewModel
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.Marker
+import com.google.maps.android.compose.rememberCameraPositionState
+import com.google.maps.android.compose.rememberUpdatedMarkerState
+import kotlinx.coroutines.delay
 
 @Composable
 fun CreateOffer(
     navController: NavHostController,
     vm: CreateOfferViewModel
 ) {
-
-
-
     val context = LocalContext.current
+
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            Toast.makeText(context, "Permission granted!", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(context, "Permission denied!", Toast.LENGTH_SHORT).show()
+        }
+    }
+
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()) { uri->
         if(uri == null) return@rememberLauncherForActivityResult
@@ -84,9 +100,18 @@ fun CreateOffer(
         if(vm.photoError != null){
             Toast.makeText(context, vm.photoError, Toast.LENGTH_SHORT).show()
         }
+        if(!vm.hasLocationPermission.value){
+            permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+        }else{
+            vm.getOneShotLocation {location ->
+            }
+            delay(10000000)
+        }
     }
     LazyColumn(
-        modifier = Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.systemBars),
+        modifier = Modifier
+            .fillMaxSize()
+            .windowInsetsPadding(WindowInsets.systemBars),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -120,7 +145,9 @@ fun CreateOffer(
             }
             Spacer(Modifier.height(24.dp))
             Column(
-                modifier = Modifier.padding(horizontal = 16.dp).fillMaxWidth(),
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .fillMaxWidth(),
                 horizontalAlignment = Alignment.Start,
                 verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
@@ -141,7 +168,9 @@ fun CreateOffer(
             }
             Spacer(Modifier.height(8.dp))
             Column(
-                modifier = Modifier.padding(horizontal = 16.dp).fillMaxWidth(),
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .fillMaxWidth(),
                 horizontalAlignment = Alignment.Start,
                 verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
@@ -162,7 +191,9 @@ fun CreateOffer(
             }
             Spacer(Modifier.height(8.dp))
             Column(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
                 horizontalAlignment = Alignment.Start,
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
@@ -188,7 +219,9 @@ fun CreateOffer(
                         border = BorderStroke(1.dp, DarkBlue)
                     ) {
                         Row(
-                            modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp),
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
@@ -225,7 +258,9 @@ fun CreateOffer(
                         border = BorderStroke(1.dp, DarkBlue)
                     ) {
                         Row(
-                            modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp),
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
@@ -262,7 +297,9 @@ fun CreateOffer(
                         border = BorderStroke(1.dp, DarkBlue)
                     ) {
                         Row(
-                            modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp),
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
@@ -291,7 +328,9 @@ fun CreateOffer(
             }
             Spacer(Modifier.height(16.dp))
             Column(
-                modifier = Modifier.padding(horizontal = 16.dp).fillMaxWidth(),
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .fillMaxWidth(),
                 horizontalAlignment = Alignment.Start,
                 verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
@@ -308,7 +347,9 @@ fun CreateOffer(
                     error = vm.descriptionError,
                     imeAction = ImeAction.None,
                     placeholder = stringResource(R.string.leave_opinion),
-                    modifier = Modifier.fillMaxWidth().height(128.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(128.dp),
                     singleLine = false,
                     maxLines = 5,
                 )
@@ -316,7 +357,9 @@ fun CreateOffer(
             Spacer(Modifier.height(8.dp))
             Spacer(Modifier.height(8.dp))
             Column(
-                modifier = Modifier.padding(horizontal = 16.dp).fillMaxWidth(),
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .fillMaxWidth(),
                 horizontalAlignment = Alignment.Start,
                 verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
@@ -336,18 +379,52 @@ fun CreateOffer(
                 )
             }
             Box(
-                modifier = Modifier.fillMaxWidth(0.95f).height(150.dp)
+                modifier = Modifier
+                    .fillMaxWidth(0.95f)
+                    .height(150.dp)
                     .border(1.dp, Color.Gray, RoundedCornerShape(5.dp)),
                 contentAlignment = Alignment.Center
             ) {
-                Text("Map Placeholder")
+                if(vm.hasLocationPermission.value){
+                    GoogleMap(
+                        modifier = Modifier.fillMaxSize(),
+                        cameraPositionState = rememberCameraPositionState {
+                            position = CameraPosition.fromLatLngZoom(
+                                LatLng(vm.latitude, vm.longitude),
+                                10f
+                            )
+                        }
+                    ) {
+                        Marker (
+                            state = rememberUpdatedMarkerState(
+                                position = LatLng(vm.latitude, vm.longitude)
+                            ),
+                            title = vm.location,
+                            contentDescription = vm.location
+                        )
+                    }
+                }else{
+                    GoogleMap(
+                        modifier = Modifier.fillMaxSize(),
+                        cameraPositionState = rememberCameraPositionState {
+                            position = CameraPosition.fromLatLngZoom(
+                                LatLng(vm.latitude, vm.longitude),
+                                10f
+                            )
+                        }
+                    ) {
+
+                    }
+                }
             }
             Spacer(modifier = Modifier.height(32.dp))
             Button(
                 onClick = {
                     launcher.launch("image/*")
                 },
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = SkyBlue,
                     contentColor = DarkBlue,
@@ -356,7 +433,9 @@ fun CreateOffer(
             ) {
                 if (vm.photoUri == null) {
                     Row(
-                        modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 6.dp),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center
                     ) {
@@ -372,7 +451,9 @@ fun CreateOffer(
                     }
                 } else {
                     Row(
-                        modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 6.dp),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center
                     ) {
@@ -401,7 +482,9 @@ fun CreateOffer(
                         navController.navigate(Routes.Offer.name)
                     }
                 },
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = SkyBlue,
                     contentColor = DarkBlue,
