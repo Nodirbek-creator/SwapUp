@@ -223,7 +223,7 @@ fun AppNavHost(
         }
         composable("${Routes.OfferInfo.name}/{uid}"){ stackEntry->
             val uid = stackEntry.arguments?.getString("uid")
-            val offerInfoVM = OfferInfoViewModel(dataManager, firestoreRepo, uid!!)
+            val offerInfoVM = OfferInfoViewModel(dataManager, firestoreRepo, uid!!, context)
             OfferInfoScreen(
                 navController,
                 offerInfoVM
@@ -231,7 +231,7 @@ fun AppNavHost(
         }
         composable("${Routes.DemandInfo.name}/{uid}"){ stackEntry->
             val uid = stackEntry.arguments?.getString("uid")
-            val demandInfoVM = DemandInfoViewModel(dataManager, firestoreRepo, uid!!)
+            val demandInfoVM = DemandInfoViewModel(dataManager, firestoreRepo, uid!!, context)
             DemandInfo(
                 navController,
                 demandInfoVM

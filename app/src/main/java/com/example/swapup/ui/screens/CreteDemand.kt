@@ -1,5 +1,6 @@
 package com.example.swapup.ui.screens
 
+import android.Manifest
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -53,6 +54,13 @@ import com.example.swapup.ui.theme.DarkBlue
 import com.example.swapup.ui.theme.SkyBlue
 import com.example.swapup.viewmodel.CreateDemandViewModel
 import com.example.swapup.viewmodel.state.UiState
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.Marker
+import com.google.maps.android.compose.rememberCameraPositionState
+import com.google.maps.android.compose.rememberUpdatedMarkerState
+import kotlinx.coroutines.delay
 
 @Composable
 fun CreateDemand(
@@ -60,6 +68,15 @@ fun CreateDemand(
     vm: CreateDemandViewModel
 ) {
     val context = LocalContext.current
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            Toast.makeText(context, "Permission granted!", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(context, "Permission denied!", Toast.LENGTH_SHORT).show()
+        }
+    }
     val uiState = vm.uiState
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()) { uri->
@@ -70,6 +87,13 @@ fun CreateDemand(
         if(uiState is UiState.Error){
             val msg = uiState.msg
             Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
+        }
+        if(!vm.hasLocationPermission.value){
+            permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+        }else{
+            vm.getOneShotLocation {location ->
+            }
+            delay(10000000)
         }
     }
     LazyColumn(
@@ -326,7 +350,37 @@ fun CreateDemand(
                     .border(1.dp, Color.Gray, RoundedCornerShape(5.dp)),
                 contentAlignment = Alignment.Center
             ) {
-                Text("Map Placeholder")
+                if(vm.hasLocationPermission.value){
+                    GoogleMap(
+                        modifier = Modifier.fillMaxSize(),
+                        cameraPositionState = rememberCameraPositionState {
+                            position = CameraPosition.fromLatLngZoom(
+                                LatLng(vm.latitude, vm.longitude),
+                                10f
+                            )
+                        }
+                    ) {
+                        Marker (
+                            state = rememberUpdatedMarkerState(
+                                position = LatLng(vm.latitude, vm.longitude)
+                            ),
+                            title = vm.location,
+                            contentDescription = vm.location
+                        )
+                    }
+                }else{
+                    GoogleMap(
+                        modifier = Modifier.fillMaxSize(),
+                        cameraPositionState = rememberCameraPositionState {
+                            position = CameraPosition.fromLatLngZoom(
+                                LatLng(vm.latitude, vm.longitude),
+                                10f
+                            )
+                        }
+                    ) {
+
+                    }
+                }
             }
             Spacer(Modifier.height(32.dp))
             Button(

@@ -75,6 +75,12 @@ import com.example.swapup.ui.theme.DarkBlue
 import com.example.swapup.ui.theme.SkyBlue
 import com.example.swapup.viewmodel.OfferInfoViewModel
 import com.example.swapup.viewmodel.state.UiState
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.Marker
+import com.google.maps.android.compose.rememberCameraPositionState
+import com.google.maps.android.compose.rememberUpdatedMarkerState
 
 
 @Composable
@@ -329,7 +335,7 @@ fun OfferInfoScreen(
                             color = DarkBlue,
                         )
                         Text(
-                            text = "Beruniy shoh ko'chasi, Тоshkent, Toshkent Viloyati, Узбекистан",
+                            text = vm.location,
                             modifier = Modifier.fillMaxWidth()
                         )
                         Box(
@@ -337,7 +343,23 @@ fun OfferInfoScreen(
                                 .border(1.dp, Color.Gray, RoundedCornerShape(5.dp)),
                             contentAlignment = Alignment.Center
                         ) {
-                            Text("Map Placeholder")
+                            GoogleMap(
+                                modifier = Modifier.fillMaxSize(),
+                                cameraPositionState = rememberCameraPositionState {
+                                    position = CameraPosition.fromLatLngZoom(
+                                        LatLng(offer.latitude, offer.longitude),
+                                        10f
+                                    )
+                                }
+                            ) {
+                                Marker (
+                                    state = rememberUpdatedMarkerState(
+                                        position = LatLng(offer.latitude, offer.longitude)
+                                    ),
+                                    title = vm.location,
+                                    contentDescription = vm.location
+                                )
+                            }
                         }
                     }
                     Spacer(Modifier.height(24.dp))

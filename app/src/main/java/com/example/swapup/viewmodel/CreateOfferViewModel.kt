@@ -31,6 +31,7 @@ import com.example.swapup.data.repository.FirestoreRepo
 import com.example.swapup.data.sharedpref.DataManager
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
+import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.tasks.CancellationTokenSource
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
@@ -132,7 +133,9 @@ class CreateOfferViewModel(
                     description = description,
                     active = true,
                     language = language.name,
-                    owner = owner
+                    owner = owner,
+                    latitude = latitude,
+                    longitude = longitude
                 )
                 repo.createOffer(offer)
             } catch (e: Exception){

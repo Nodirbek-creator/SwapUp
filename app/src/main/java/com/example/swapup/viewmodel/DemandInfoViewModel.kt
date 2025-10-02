@@ -1,9 +1,12 @@
 package com.example.swapup.viewmodel
 
 import android.content.ActivityNotFoundException
+import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
+import android.location.Geocoder
 import android.net.Uri
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -20,11 +23,13 @@ import com.example.swapup.data.sharedpref.DataManager
 import com.example.swapup.viewmodel.state.UiState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.util.Locale
 
 class DemandInfoViewModel(
     private val dataManager: DataManager,
     private val repo: FirestoreRepo,
     private val uid: String,
+    private val context: Context
 ): ViewModel() {
     private val currentUser = dataManager.getUser()
 
@@ -32,7 +37,8 @@ class DemandInfoViewModel(
     val uiState: UiState get() = _uiState.value
 
     var languageBox by mutableStateOf<LanguageBox?>(null)
-
+    var location by mutableStateOf("Beruniy shoh ko'chasi, Тоshkent, Toshkent Viloyati, Узбекистан")
+        private set
     var secretCode by mutableStateOf("")
         private set
     var secretCodeError by mutableStateOf<String?>(null)
@@ -103,6 +109,7 @@ class DemandInfoViewModel(
             }
             else{
                 _demand.value = result!!
+                getLocation()
                 languageBox = when(result.language){
                     Language.Uzbek.name ->{
                         LanguageBox(R.drawable.uzb, R.string.uzbek,)
@@ -136,6 +143,20 @@ class DemandInfoViewModel(
             // Open in browser if Telegram is not installed
             val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://t.me/${username.removePrefix("@")}"))
             context.startActivity(browserIntent)
+        }
+    }
+
+    fun getLocation(){
+        viewModelScope.launch {
+            val geocoder = Geocoder(context, Locale.getDefault())
+            try {
+                val result = demand.value?.let { geocoder.getFromLocation(it.latitude, it.longitude, 1) }
+                if(!result.isNullOrEmpty()){
+                    location = result[0].getAddressLine(0)
+                }
+            }catch (e: Exception){
+                Log.d(TAG, "getCoordinates: ${e.message}")
+            }
         }
     }
 }
