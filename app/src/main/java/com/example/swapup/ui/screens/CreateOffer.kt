@@ -69,6 +69,7 @@ import com.example.swapup.viewmodel.CreateOfferViewModel
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.google.maps.android.compose.rememberUpdatedMarkerState
@@ -393,7 +394,8 @@ fun CreateOffer(
                                 LatLng(vm.latitude, vm.longitude),
                                 10f
                             )
-                        }
+                        },
+                        properties = MapProperties(isMyLocationEnabled = true)
                     ) {
                         Marker (
                             state = rememberUpdatedMarkerState(

@@ -4,7 +4,7 @@
     <string name="username_format">Username должен начинаться на @ и состоять минимум из 5 символов</string>
     <string name="password_format">Пароль должен состоять минимум из 8 символов</string>
     <string name="fullname_format">Разделите имя и фамилию пробелом</string>
-    <string name="TG_channel">" "</string>
+    <string name="TG_channel">https://t.me/DilmurodBaxtiyorov</string>
     <string name="password">Пароль</string>
     <string name="fullname">Имя, Фамилия</string>
     <string name="login">Вход</string>
@@ -19,7 +19,7 @@
     <string name="search">Поиск</string>
     <string name="demand">Спрос</string>
     <string name="settings">Настройки</string>
-    <string name="telegram">Наш телеграм канал</string>
+    <string name="telegram">Связаться с разработчиком</string>
     <string name="share">Поделиться</string>
     <string name="logout">Выйти из аккаунта</string>
     <string name="profile">Профиль</string>

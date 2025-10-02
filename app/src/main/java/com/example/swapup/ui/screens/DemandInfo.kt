@@ -465,6 +465,7 @@ fun DemandInfo(
                                 color = DarkBlue,
                             )
                             DemandCodeRow(demand = demand, vm = vm, clipboardManager = clipboardManager)
+                            Spacer(modifier = Modifier.height(24.dp))
                         }
                     }
                 }
@@ -488,20 +489,19 @@ fun DemandCodeRow(
     clipboardManager: ClipboardManager
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+        modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Start
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
         SelectionContainer {
             Text(
                 text = demand.uid,
                 fontWeight = FontWeight.W400,
                 color = Color.Gray,
-                fontSize = 16.sp,
+                fontSize = 12.sp,
                 textAlign = TextAlign.Start
             )
         }
-        Spacer(Modifier.width(16.dp))
         Button(
             onClick = {
                 val clipData = ClipData.newPlainText("offer id", demand.uid).apply {

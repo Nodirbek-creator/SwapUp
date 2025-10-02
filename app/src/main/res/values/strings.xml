@@ -3,7 +3,7 @@
     <string name="username_format">Username must start with @ and be at least 5 characters long</string>
     <string name="password_format">Password must be at least 8 characters long</string>
     <string name="fullname_format">Separate name and surname with space</string>
-    <string name="TG_channel" translatable="false">https://t.me/freestyle_path</string>
+    <string name="TG_channel" translatable="false">https://t.me/DilmurodBaxtiyorov</string>
     <string name="password">Password</string>
     <string name="fullname">Full name</string>
     <string name="login">Login</string>
@@ -19,7 +19,7 @@
     <string name="offer">Offer</string>
     <string name="demand">Demand</string>
     <string name="settings">Settings</string>
-    <string name="telegram">Our Telegram channel</string>
+    <string name="telegram">Contact Developer</string>
     <string name="share">Share</string>
     <string name="logout">Log out</string>
     <string name="profile">Profile</string>

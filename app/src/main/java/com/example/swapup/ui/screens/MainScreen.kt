@@ -95,7 +95,7 @@ fun MainScreen(
                                 context.startActivity(intent)
                             } catch (e: ActivityNotFoundException) {
                                 // Open in browser if Telegram is not installed
-                                val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://t.me/freestyle_path"))
+                                val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://t.me/DilmurodBaxtiyorov"))
                                 context.startActivity(browserIntent)
                             }
                         }

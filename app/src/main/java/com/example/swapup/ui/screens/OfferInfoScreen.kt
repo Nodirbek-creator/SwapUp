@@ -140,6 +140,7 @@ fun OfferInfoScreen(
                         Spacer(Modifier.width(12.dp))
                     }
                 }
+
                 item {
                     BitmapImageLoader(
                         photoUri = offer.photo,
@@ -170,8 +171,6 @@ fun OfferInfoScreen(
 
                     Spacer(Modifier.height(8.dp))
                 }
-
-
 
                 item{
                     Column(
@@ -471,6 +470,7 @@ fun OfferInfoScreen(
                                 color = DarkBlue,
                             )
                             OfferCodeRow(offer = offer, vm = vm, clipboardManager = clipboardManager)
+                            Spacer(modifier = Modifier.height(24.dp))
                         }
                     }
                 }
@@ -495,20 +495,19 @@ fun OfferCodeRow(
     clipboardManager: ClipboardManager
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+        modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Start
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
         SelectionContainer {
             Text(
                 text = offer.uid,
                 fontWeight = FontWeight.W400,
                 color = Color.Gray,
-                fontSize = 16.sp,
+                fontSize = 12.sp,
                 textAlign = TextAlign.Start
             )
         }
-        Spacer(Modifier.width(16.dp))
         Button(
             onClick = {
                 val clipData = ClipData.newPlainText("offer id", offer.uid).apply {

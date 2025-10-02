@@ -308,9 +308,9 @@ fun InfoScreen(
                                                     containerColor = if (bookType == "AudioBook") DarkBlue else Color.Transparent
                                                 ),
                                                 shape = RoundedCornerShape(8.dp),
-                                                modifier = Modifier.fillMaxWidth(0.85f)
+                                                modifier = Modifier.fillMaxWidth(0.9f)
                                             ) {
-                                                Text("Audio Kitob")
+                                                Text("Audio Kitob", maxLines = 1, overflow = TextOverflow.Ellipsis)
                                             }
                                         }
                                     }
@@ -430,6 +430,7 @@ fun InfoScreen(
                                         tint = Color.LightGray,
                                         modifier = Modifier.size(20.dp)
                                     )
+                                    Spacer(modifier = Modifier.width(2.dp))
                                     Text("${book.count_page} bet", color = Color.LightGray, fontSize = 12.sp)
                                     Spacer(modifier = Modifier.width(16.dp))
                                     Icon(
@@ -438,6 +439,7 @@ fun InfoScreen(
                                         tint = Color.LightGray,
                                         modifier = Modifier.size(20.dp)
                                     )
+                                    Spacer(modifier = Modifier.width(2.dp))
                                     Text("${book.year} yil", color = Color.LightGray, fontSize = 12.sp)
                                     Spacer(modifier = Modifier.width(16.dp))
                                     Icon(
@@ -446,6 +448,7 @@ fun InfoScreen(
                                         tint = Color.LightGray,
                                         modifier = Modifier.size(20.dp)
                                     )
+                                    Spacer(modifier = Modifier.width(2.dp))
                                     Text(
                                         book.lang,
                                         color = Color.LightGray,

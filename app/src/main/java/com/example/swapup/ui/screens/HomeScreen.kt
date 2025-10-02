@@ -70,6 +70,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import com.example.swapup.data.model.Category
@@ -209,7 +210,6 @@ fun Categories(
     selectedCategory: Category,
 ){
     if(categoryList.isNotEmpty()){
-        val scope = rememberCoroutineScope()
         val listState = rememberLazyListState()
         LaunchedEffect(selectedCategory) {
             val index = categoryList.indexOf(selectedCategory)

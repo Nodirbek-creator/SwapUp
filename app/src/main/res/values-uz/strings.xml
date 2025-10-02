@@ -4,7 +4,7 @@
     <string name="username_format">Username @ belgisi bilan boshlanishi va kamida 5ta simvoldan iborat bo\'lishi lozim.</string>
     <string name="password_format">Parol kamida 8ta simvoldan iborat bo\'lishi lozim</string>
     <string name="fullname_format">Ism va Familiya probel bilan ajratilishi lozim</string>
-    <string name="TG_channel">" "</string>
+    <string name="TG_channel">https://t.me/DilmurodBaxtiyorov</string>
     <string name="password">Parol</string>
     <string name="fullname">Ism, Familiya</string>
     <string name="login">Kirish</string>
@@ -21,7 +21,7 @@
     <string name="offer">Taklif</string>
     <string name="demand">Talab</string>
     <string name="settings">Sozlamalar</string>
-    <string name="telegram">Telegram kanalimiz</string>
+    <string name="telegram">Dasturchi bilan bog\'lanish</string>
     <string name="share">Ulashish</string>
     <string name="logout">Hisobdan chiqish</string>
     <string name="profile">Shaxsiy kabinet</string>

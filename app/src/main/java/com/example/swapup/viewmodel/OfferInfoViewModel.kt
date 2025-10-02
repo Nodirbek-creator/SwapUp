@@ -49,6 +49,7 @@ class OfferInfoViewModel(
     init {
         getOfferById()
     }
+
     private val _offer = MutableLiveData<Offer>()
     val offer: LiveData<Offer> get() = _offer
 
